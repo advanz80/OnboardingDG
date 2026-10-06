@@ -1,7 +1,7 @@
 // Tekent de campus in chunks van 1024×1024 (canvas-textures).
 import { P } from '../gfx/palette.js';
 import { rng, circle, ellipse, rrect, makeTexture } from '../gfx/draw.js';
-import { LAND, ISLAND, ROADS, ROUNDABOUT, PATHS, PARKINGS, PLAZA, POND, BUILDINGS, NEIGHBOURS, WORLD_W, WORLD_H, sampleSmooth } from './layout.js';
+import { LAND, MOAT, BIGPOND, ROADS, ROUNDABOUT, PATHS, PARKINGS, PLAZA, POND, BUILDINGS, NEIGHBOURS, WORLD_W, WORLD_H, sampleSmooth } from './layout.js';
 
 export const CHUNK = 1024;
 
@@ -53,7 +53,7 @@ export function onInfrastructure(x, y, m = 0) {
   if (DENSE_ROADS.some((p) => distToDense(x, y, p.dense) < p.w / 2 + m)) return true;
   if (DENSE_PATHS.some((p) => distToDense(x, y, p.dense) < p.w / 2 + m)) return true;
   if (Math.hypot(x - ROUNDABOUT.x, y - ROUNDABOUT.y) < ROUNDABOUT.r + m) return true;
-  if ([...PARKINGS, PLAZA].some((r) => inRect(x, y, r, m))) return true;
+  if ([...PARKINGS, PLAZA, BIGPOND, MOAT.outer].some((r) => inRect(x, y, r, m))) return true;
   if (((x - POND.x) / (POND.rx + m)) ** 2 + ((y - POND.y) / (POND.ry + m)) ** 2 < 1) return true;
   for (const b of [...BUILDINGS, ...NEIGHBOURS]) if (b.parts.some((r) => inRect(x, y, r, m))) return true;
   return false;
@@ -133,11 +133,6 @@ export function drawTerrain(ctx) {
   const r = rng(42);
   ctx.lineJoin = 'round'; ctx.lineCap = 'round';
 
-  // oever van de Schootense Loop: ondiep water + riet
-  polyPath(ctx, LAND);
-  ctx.strokeStyle = 'rgba(128,212,242,0.5)'; ctx.lineWidth = 90; ctx.stroke();
-  ctx.strokeStyle = 'rgba(160,226,248,0.6)'; ctx.lineWidth = 44; ctx.stroke();
-
   // gras
   polyPath(ctx, LAND); ctx.fillStyle = P.grass; ctx.fill();
   ctx.save(); polyPath(ctx, LAND); ctx.clip();
@@ -167,21 +162,38 @@ export function drawTerrain(ctx) {
     const n = 3 + Math.floor(r() * 5);
     for (let k = 0; k < n; k++) flower(ctx, x + (r() - 0.5) * 46, y + (r() - 0.5) * 28, col, 5 + r() * 1.5);
   }
-  // riet langs de oever
-  ctx.strokeStyle = '#4e8a3a'; ctx.lineWidth = 3;
-  for (let i = 0; i < LAND.length - 1; i++) {
-    const [x, y] = LAND[i];
-    if (x < 0 || x > WORLD_W || y < 0 || y > WORLD_H || r() < 0.3) continue;
-    for (let k = 0; k < 3; k++) { const dx = (r() - 0.5) * 20; ctx.beginPath(); ctx.moveTo(x + dx, y - 6); ctx.lineTo(x + dx + (r() - 0.5) * 6, y - 26 - r() * 10); ctx.stroke(); }
+  ctx.restore();
+
+  // grote vijver ten oosten van Driessen
+  rrect(ctx, BIGPOND.x - 12, BIGPOND.y - 12, BIGPOND.w + 24, BIGPOND.h + 24, 26); ctx.fillStyle = '#4e9a3a'; ctx.fill();
+  rrect(ctx, BIGPOND.x, BIGPOND.y, BIGPOND.w, BIGPOND.h, 18); ctx.fillStyle = P.water; ctx.fill();
+  rrect(ctx, BIGPOND.x + 14, BIGPOND.y + 14, BIGPOND.w * 0.5, BIGPOND.h - 28, 12); ctx.fillStyle = 'rgba(128,212,242,0.6)'; ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 2.4;
+  for (let i = 0; i < 40; i++) { const x = BIGPOND.x + 12 + r() * (BIGPOND.w - 40), y = BIGPOND.y + 12 + r() * (BIGPOND.h - 24); ctx.beginPath(); ctx.moveTo(x, y); ctx.quadraticCurveTo(x + 8, y - 3, x + 16, y); ctx.stroke(); }
+  for (let i = 0; i < 6; i++) { // waterlelies
+    const x = BIGPOND.x + 24 + r() * (BIGPOND.w - 48), y = BIGPOND.y + 30 + r() * (BIGPOND.h - 60);
+    ctx.fillStyle = '#5fb044'; ctx.beginPath(); ctx.arc(x, y, 12, 0.3, Math.PI * 2 - 0.3); ctx.lineTo(x, y); ctx.closePath(); ctx.fill();
+    if (r() < 0.5) { ctx.fillStyle = '#ff9ecf'; circle(ctx, x + 3, y - 2, 4); ctx.fill(); }
+  }
+  rrect(ctx, BIGPOND.x, BIGPOND.y, BIGPOND.w, BIGPOND.h, 18); ctx.strokeStyle = P.line; ctx.lineWidth = 3; ctx.stroke();
+
+  // gracht vol formulieren rond de Toren van Paperassen
+  const mo = MOAT.outer, mi = MOAT.inner;
+  rrect(ctx, mo.x - 10, mo.y - 10, mo.w + 20, mo.h + 20, 16); ctx.fillStyle = '#9c9389'; ctx.fill();
+  rrect(ctx, mo.x, mo.y, mo.w, mo.h, 12); ctx.fillStyle = '#e9e4d8'; ctx.fill();
+  ctx.save(); rrect(ctx, mo.x, mo.y, mo.w, mo.h, 12); ctx.clip();
+  const binderCols = ['#e8504c', '#3d8fe0', '#f6c33b', '#4cc764', '#8e5bd8'];
+  for (let i = 0; i < 420; i++) {
+    const x = mo.x + r() * mo.w, y = mo.y + r() * mo.h;
+    ctx.save(); ctx.translate(x, y); ctx.rotate(r() * Math.PI);
+    if (r() < 0.8) { ctx.fillStyle = r() < 0.5 ? '#ffffff' : '#f4efe4'; ctx.fillRect(-11, -14, 22, 28); ctx.strokeStyle = '#b9b3a8'; ctx.lineWidth = 1; ctx.strokeRect(-11, -14, 22, 28); }
+    else { ctx.fillStyle = binderCols[Math.floor(r() * binderCols.length)]; ctx.fillRect(-8, -18, 16, 36); ctx.strokeStyle = P.line; ctx.lineWidth = 1.4; ctx.strokeRect(-8, -18, 16, 36); }
+    ctx.restore();
   }
   ctx.restore();
-  polyPath(ctx, LAND); ctx.strokeStyle = '#4e9a3a'; ctx.lineWidth = 6; ctx.stroke();
-
-  // eilandje met de toren
-  ellipse(ctx, ISLAND.x, ISLAND.y, ISLAND.rx + 40, ISLAND.ry + 30); ctx.fillStyle = 'rgba(160,226,248,0.6)'; ctx.fill();
-  ellipse(ctx, ISLAND.x, ISLAND.y + 8, ISLAND.rx, ISLAND.ry); ctx.fillStyle = '#c9a85e'; ctx.fill();
-  ellipse(ctx, ISLAND.x, ISLAND.y, ISLAND.rx, ISLAND.ry); ctx.fillStyle = P.grass; ctx.fill();
-  ctx.strokeStyle = '#4e9a3a'; ctx.lineWidth = 5; ctx.stroke();
+  rrect(ctx, mo.x, mo.y, mo.w, mo.h, 12); ctx.strokeStyle = P.line; ctx.lineWidth = 3; ctx.stroke();
+  // het eiland binnen de gracht
+  rrect(ctx, mi.x, mi.y, mi.w, mi.h, 10); ctx.fillStyle = '#c9c2b8'; ctx.fill(); ctx.strokeStyle = P.line; ctx.lineWidth = 3; ctx.stroke();
 
   // wegen
   for (const p of DENSE_ROADS) { polyline(ctx, p.dense); ctx.strokeStyle = ASPHALT_EDGE; ctx.lineWidth = p.w + 12; ctx.stroke(); }

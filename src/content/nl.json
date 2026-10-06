@@ -134,7 +134,7 @@
       },
       {
         "speaker": "buddy",
-        "text": "Ze hebben prinses Mensenmens ontvoerd, onze allerbelangrijkste klant! Ze zit opgesloten in de Toren van Paperassen, aan de Schootense Loop."
+        "text": "Ze hebben prinses Mensenmens ontvoerd, onze allerbelangrijkste klant! Ze zit opgesloten in de Toren van Paperassen, midden op de campus tussen Bloeij en ROVC."
       },
       {
         "speaker": "buddy",
@@ -182,7 +182,7 @@
     "guardNoBridge": [
       {
         "speaker": "player",
-        "text": "Daar staat de Toren van Paperassen… maar zonder brug kom ik niet over de Loop."
+        "text": "Daar staat de Toren van Paperassen… maar zonder brug kom ik niet over die gracht vol formulieren."
       },
       {
         "speaker": "player",
@@ -235,7 +235,7 @@
         },
         {
           "speaker": "npc",
-          "text": "Jij wilt naar de Toren van Paperassen, toch? Dan heb je een brug over de Loop nodig. En bij ons bouw je bruggen met skills!"
+          "text": "Jij wilt naar de Toren van Paperassen, toch? Dan heb je een brug over de gracht vol formulieren nodig. En bij ons bouw je bruggen met skills!"
         },
         {
           "speaker": "npc",

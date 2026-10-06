@@ -20,11 +20,12 @@ export class BhcMission extends MissionBase {
     const { width, height } = DESIGN;
     makeBhcBg(this);
     this.add.image(0, 0, 'bhc_sky').setOrigin(0).setDepth(-100);
-    this.sea = this.add.tileSprite(0, 300, width, height - 300, 'water').setOrigin(0).setDepth(-99);
-    this.seaWaves = this.add.tileSprite(0, 300, width, height - 300, 'waves').setOrigin(0).setDepth(-98).setAlpha(0.6);
-    this.add.rectangle(0, 300, width, 6, HEX.foam).setOrigin(0, 0.5).setDepth(-97);
-    // de Toren van Paperassen op zijn eilandje in de Loop
-    this.add.ellipse(1140, 352, 190, 40, HEX.grass).setStrokeStyle(4, 0x4e9a3a).setDepth(-96);
+    // de gracht vol formulieren rond de toren
+    this.sea = this.add.tileSprite(0, 300, width, height - 300, 'paper_moat').setOrigin(0).setDepth(-99);
+    this.seaWaves = this.add.tileSprite(0, 300, width, height - 300, 'paper_moat').setOrigin(0).setDepth(-98).setAlpha(0.35).setTileScale(0.7);
+    this.add.rectangle(0, 300, width, 8, 0x9c9389).setOrigin(0, 0.5).setDepth(-97);
+    // de Toren van Paperassen op zijn eiland
+    this.add.ellipse(1140, 352, 190, 40, 0xc9c2b8).setStrokeStyle(4, HEX.ink).setDepth(-96);
     this.add.image(1140, 360, 'papertower').setScale(0.36).setOrigin(0.5, 1).setDepth(-96);
     // grasoever linksonder
     this.add.image(0, 370, 'bhc_beach').setOrigin(0).setDepth(-95);

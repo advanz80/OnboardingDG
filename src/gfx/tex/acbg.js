@@ -210,6 +210,19 @@ function plant(c, x, y, s = 1) {
 
 /** BHC: de Schootense Loop, met aan de overkant de campus. */
 export function makeBhcBg(scene) {
+  makeTexture(scene, 'paper_moat', 256, 256, (c) => {
+    c.fillStyle = '#e9e4d8'; c.fillRect(0, 0, 256, 256);
+    const r = rng(14), cols = ['#e8504c', '#3d8fe0', '#f6c33b', '#4cc764', '#8e5bd8'];
+    for (let i = 0; i < 90; i++) {
+      const x = r() * 256, y = r() * 256;
+      for (const [ox, oy] of [[0, 0], [256, 0], [-256, 0], [0, 256], [0, -256]]) {   // naadloos tegelen
+        c.save(); c.translate(x + ox, y + oy); c.rotate(r() * Math.PI);
+        if (i % 6) { c.fillStyle = i % 2 ? '#ffffff' : '#f4efe4'; c.fillRect(-11, -14, 22, 28); c.strokeStyle = '#b9b3a8'; c.lineWidth = 1; c.strokeRect(-11, -14, 22, 28); }
+        else { c.fillStyle = cols[i % cols.length]; c.fillRect(-8, -18, 16, 36); c.strokeStyle = P.line; c.lineWidth = 1.4; c.strokeRect(-8, -18, 16, 36); }
+        c.restore();
+      }
+    }
+  });
   makeTexture(scene, 'bhc_sky', W, 300, (c) => {
     sky(c, W, 300, 11, { clouds: 4 });
     // overkant: grasoever met de campus
@@ -218,7 +231,7 @@ export function makeBhcBg(scene) {
     c.fillStyle = '#6aae55'; c.fillRect(0, 294, W, 6);
   });
   makeTexture(scene, 'bhc_beach', 210, 350, (c) => {
-    // grasoever met riet aan deze kant
+    // grasrand aan deze kant van de gracht
     c.save();
     c.beginPath(); c.moveTo(0, 10); c.lineTo(150, 50); c.quadraticCurveTo(185, 200, 200, 350); c.lineTo(0, 350); c.closePath();
     c.clip(); lawn(c, 0, 0, 210, 350, 12);

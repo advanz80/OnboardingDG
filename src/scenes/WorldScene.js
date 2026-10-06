@@ -17,7 +17,7 @@ import { buildTerrainChunks, inPoly, inRect, onInfrastructure } from '../world/t
 import { makeCampusBuildings } from '../gfx/tex/campus.js';
 import { TOWER_TOP } from '../gfx/tex/rompslomp.js';
 import {
-  WORLD_W, WORLD_H, LAND, PLAZA, POND, BRIDGE, TOWER, SPAWN, GATE, STATIONS, PETRA, GUARD,
+  WORLD_W, WORLD_H, LAND, PLAZA, POND, BIGPOND, MOAT, BRIDGE, TOWER, SPAWN, GATE, STATIONS, PETRA, GUARD,
   BRIDGE_SIGN, FINALE_RETURN, BUILDINGS, NEIGHBOURS, TREES, BADGE_SPOTS, pt,
 } from '../world/layout.js';
 
@@ -48,12 +48,13 @@ export class WorldScene extends Phaser.Scene {
 
     const cam = this.cameras.main;
     cam.setBounds(0, 0, WORLD_W, WORLD_H);
-    cam.setBackgroundColor(P.water);
+    cam.setBackgroundColor(P.grass);
 
     // water (schermvullend, scrolt mee)
     const { width, height } = this.scale;
     this.water = this.add.tileSprite(0, 0, width, height, 'water').setOrigin(0).setScrollFactor(0).setDepth(-2000);
     this.waves = this.add.tileSprite(0, 0, width, height, 'waves').setOrigin(0).setScrollFactor(0).setDepth(-1999).setAlpha(0.6);
+    this.water.setVisible(false); this.waves.setVisible(false);   // geen open water rond de campus
 
     buildTerrainChunks(this);
     makeCampusBuildings(this, BUILDINGS);
@@ -123,6 +124,7 @@ export class WorldScene extends Phaser.Scene {
     for (const [bx, by] of BADGE_SPOTS) if (Math.hypot(x - bx, y - by) < 70) return false;
     for (const c of this.colliders) if (Math.hypot(x - c.x, y - c.y) < 90) return false;
     if (Math.hypot(x - SPAWN.x, y - SPAWN.y) < 150 || Math.hypot(x - PETRA.x, y - PETRA.y) < 120) return false;
+    if (Math.hypot(x - FINALE_RETURN.x, y - FINALE_RETURN.y) < 240) return false;   // aanloop naar de brug vrijhouden
     return true;
   }
 
@@ -150,6 +152,9 @@ export class WorldScene extends Phaser.Scene {
       this.tweens.add({ targets: cl, scaleX: { from: 0.42, to: 0.36 }, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
     });
     for (const x of [868, 884, 900, 916, 932, 948]) { const [bx, by] = pt(x, 763); this.addProp('bush', bx, by, { r: 12 }, { scale: 0.5 }).setTint(0xc9a0ff); }
+    // grote vijver oost van Driessen en het eiland van de toren
+    this.colliders.push({ x: BIGPOND.x + BIGPOND.w / 2, y: BIGPOND.y + BIGPOND.h / 2, w: BIGPOND.w, h: BIGPOND.h, rect: true });
+    { const mi = MOAT.inner; this.colliders.push({ x: mi.x + mi.w / 2, y: mi.y + (mi.h - 40) / 2, w: mi.w, h: mi.h - 40, rect: true }); }
     // vijver
     for (let k = -2; k <= 2; k++) this.colliders.push({ x: POND.x, y: POND.y + k * POND.ry * 0.38, r: POND.rx * (1 - Math.abs(k) * 0.15) });
 
@@ -268,8 +273,8 @@ export class WorldScene extends Phaser.Scene {
     }).setDepth(TOWER.y + 3);
 
     // tijdelijk: piratenspullen aan de oever van de Schootense Loop
-    [[2990, 1990], [3030, 2010]].forEach(([x, y]) => this.addProp('barrel', x, y, { r: 18 }));
-    this.addProp('crate', 2950, 2015, { r: 20 });
+    [[BRIDGE_SIGN.x + 70, BRIDGE_SIGN.y + 20], [BRIDGE_SIGN.x + 105, BRIDGE_SIGN.y + 34]].forEach(([x, y]) => this.addProp('barrel', x, y, { r: 18 }));
+    this.addProp('crate', BRIDGE_SIGN.x + 60, BRIDGE_SIGN.y + 60, { r: 20 });
 
     // brug
     this.bridgeLayer = this.add.container(0, 0).setDepth(BRIDGE.y + BRIDGE.h - 40);
@@ -339,7 +344,7 @@ export class WorldScene extends Phaser.Scene {
     // rondlopende collega's en piraten
     const r = rng(99);
     const homes = [[...pt(1050, 620), 'c'], [...pt(900, 668), 'c'], [...pt(745, 740), 'c'], [...pt(620, 560), 'c'], [...pt(1000, 575), 'c'],
-      [...pt(860, 800), 'c'], [...pt(1140, 470), 'c'], [...pt(590, 680), 'c'], [3050, 1990, 'p'], [3330, 1850, 'p']];
+      [...pt(860, 800), 'c'], [...pt(1140, 470), 'c'], [...pt(590, 680), 'c'], [...pt(700, 620), 'p'], [...pt(790, 560), 'p']];
     homes.forEach(([x, y, type], i) => {
       const key = `amb_${i}`;
       makeCharacter(this, key, type === 'p' ? pirateLook(r) : randomLook(r));
@@ -503,6 +508,7 @@ export class WorldScene extends Phaser.Scene {
   // ── Botsing ──────────────────────────────────────────────────────────
   walkable(x, y) {
     const onBoards = this.bridgeBuilt && inRect(x, y, BRIDGE, -8);
+    if (!onBoards && inRect(x, y, MOAT.outer) && !inRect(x, y, MOAT.inner)) return false;   // gracht vol formulieren
     if (!onBoards) {
       if (!inPoly(x, y, LAND)) return false;
       if (y > WORLD_H - 20 || x < 20 || x > WORLD_W - 20) return false;

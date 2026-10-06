@@ -32,9 +32,8 @@ export function sampleSmooth(pts, closed = true, seg = 10) {
   return out;
 }
 
-// Land: alles behalve de Schootense Loop in de zuidoosthoek (het enige water).
-const BANK = sampleSmooth([[3820, 1690], [3400, 1880], [2900, 2150], [2300, 2440]], false, 14);
-export const LAND = [[-80, -80], [WORLD_W + 80, -80], ...BANK, [-80, WORLD_H + 80]];
+// Land: de hele wereld (geen open water rond de campus).
+export const LAND = [[-80, -80], [WORLD_W + 80, -80], [WORLD_W + 80, WORLD_H + 80], [-80, WORLD_H + 80]];
 export const GRASS = LAND;
 
 // Wegen (asfalt, begaanbaar). w = breedte in wereld-pixels.
@@ -74,6 +73,8 @@ export const PARKINGS = [
 export const PLAZA = rect(1005, 585, 1082, 650);
 // Vijver bij Het Atelier
 export const POND = { x: pt(1005, 722)[0], y: pt(1005, 722)[1], rx: 34, ry: 96 };
+// Grote rechthoekige vijver ten oosten van Driessen (ongeveer even lang als het pand)
+export const BIGPOND = rect(1218, 490, 1262, 648);
 
 // Gebouwen. rects = plattegrond-rechthoeken [x0, y0, x1, y1]; H = gevelhoogte (wereld-px).
 // mission: welk station hoort erbij (alleen voor de huisstijlkleur van de gevel).
@@ -92,7 +93,6 @@ export const BUILDINGS = [
 ];
 // Gebouwen van buren (niet van de campus): alleen decor.
 export const NEIGHBOURS = [
-  bld('amada', '', [[655, 465, 790, 605]], { H: 100 }),
   bld('n3', '', [[905, 500, 970, 570]]),
   bld('n8', '', [[605, 672, 670, 750]], { H: 80 }),
 ];
@@ -113,12 +113,13 @@ export const GATE = { x: pt(990, 455)[0], y: pt(990, 455)[1] };
 export const PETRA = { x: pt(1022, 495)[0], y: pt(1022, 495)[1] };
 
 // De Toren van Paperassen van Kapitein Rompslomp, op een eilandje in de Schootense Loop.
-export const TOWER = { x: 3480, y: 2290 };
-export const ISLAND = { x: 3470, y: 2270, rx: 260, ry: 100 };
-export const BRIDGE = { x: 3200, y: 1900, w: 96, h: 290 };            // verschijnt na BHC
-export const GUARD = { x: 3248, y: 2150 };
-export const BRIDGE_SIGN = { x: 3100, y: 1950 };
-export const FINALE_RETURN = { x: 3150, y: 1930 };
+// Staat op het grote terrein tussen Bloeij en ROVC, omringd door een gracht vol formulieren.
+export const MOAT = { outer: rect(670, 480, 775, 600), inner: rect(688, 498, 757, 583) };
+export const TOWER = { x: pt(722, 580)[0], y: pt(722, 580)[1] };
+export const BRIDGE = { x: pt(722, 0)[0] - 48, y: pt(0, 581)[1], w: 96, h: pt(0, 602)[1] - pt(0, 581)[1] };   // verschijnt na BHC
+export const GUARD = { x: pt(722, 0)[0], y: pt(0, 588)[1] };
+export const BRIDGE_SIGN = { x: pt(740, 0)[0], y: pt(0, 612)[1] };
+export const FINALE_RETURN = { x: pt(722, 0)[0], y: pt(0, 616)[1] };
 
 // Bomen (rijen van de plattegrond + langs de wegen)
 export const TREES = [
@@ -127,11 +128,11 @@ export const TREES = [
   pt(1040, 610), pt(1075, 612), pt(1045, 520), pt(1015, 515),
   ...[420, 480, 540, 620, 680, 760, 880, 940].map((x) => pt(x, 830)),
   ...[620, 700, 780, 860, 940].map((x) => pt(x, 385)),
-  pt(1200, 470), pt(1230, 560), pt(1240, 640),
+  pt(1200, 470), pt(1285, 560), pt(1280, 640),
 ];
 
 // Badges voor de BHC-zoektocht (verspreid over de campus)
 export const BADGE_SPOTS = [
   pt(440, 620), pt(590, 700), pt(640, 480), pt(820, 470), pt(872, 560), pt(940, 480), pt(1140, 462),
-  pt(1240, 620), pt(1125, 690), pt(985, 760), pt(760, 730), pt(650, 790), pt(900, 425),
+  pt(1285, 610), pt(1125, 690), pt(985, 760), pt(760, 730), pt(650, 790), pt(900, 425),
 ];
