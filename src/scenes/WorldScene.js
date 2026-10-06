@@ -13,11 +13,11 @@ import { logo, bake } from '../ui/widgets.js';
 import { showDialog } from './DialogScene.js';
 import { makeCharacter, ensureAnims, randomLook, pirateLook, faceMove } from '../gfx/CharacterFactory.js';
 import { rng } from '../gfx/draw.js';
-import { buildTerrainChunks, inPoly, inRect } from '../world/terrain.js';
-import { distToPolyline } from '../world/util.js';
+import { buildTerrainChunks, inPoly, inRect, onInfrastructure } from '../world/terrain.js';
+import { makeCampusBuildings } from '../gfx/tex/campus.js';
 import {
-  WORLD_W, WORLD_H, LAND, GRASS, PATHS, PLAZA, PIER, JETTIES, BRIDGE, SHIP, SPAWN, GATE, STATIONS, PETRA, GUARD,
-  BRIDGE_SIGN, BUILDINGS, BUNGALOWS, UMBRELLAS, TOWELS, LIFEGUARD, BADGE_SPOTS,
+  WORLD_W, WORLD_H, LAND, PLAZA, POND, BRIDGE, SHIP, SPAWN, GATE, STATIONS, PETRA, GUARD,
+  BRIDGE_SIGN, FINALE_RETURN, BUILDINGS, NEIGHBOURS, TREES, BADGE_SPOTS, pt,
 } from '../world/layout.js';
 
 const SPEED = 270;
@@ -55,6 +55,8 @@ export class WorldScene extends Phaser.Scene {
     this.waves = this.add.tileSprite(0, 0, width, height, 'waves').setOrigin(0).setScrollFactor(0).setDepth(-1999).setAlpha(0.6);
 
     buildTerrainChunks(this);
+    makeCampusBuildings(this, BUILDINGS);
+    makeCampusBuildings(this, NEIGHBOURS, true);
     this.buildDecor();
     this.buildStations();
     this.buildShipArea();
@@ -113,13 +115,10 @@ export class WorldScene extends Phaser.Scene {
   }
 
   isOpenGround(x, y, margin = 60) {
-    if (!inPoly(x, y, GRASS) || !inPoly(x, y, LAND)) return false;
+    if (!inPoly(x, y, LAND)) return false;
     if (y > WORLD_H - 30 || x < 30 || x > WORLD_W - 30) return false;
-    for (const p of PATHS) if (distToPolyline(x, y, p.pts) < p.w / 2 + margin) return false;
-    if (Math.hypot(x - PLAZA.x, y - PLAZA.y) < PLAZA.r + margin) return false;
+    if (onInfrastructure(x, y, margin)) return false;
     for (const st of Object.values(STATIONS)) if (Math.hypot(x - st.x, y - st.y) < 200) return false;
-    for (const [bx, by] of BUNGALOWS) if (Math.abs(x - bx) < 140 && y > by - 200 && y < by + 70) return false;
-    for (const b of BUILDINGS) if (Math.abs(x - b.x) < 230 && y > b.y - 300 && y < b.y + 80) return false;
     for (const [bx, by] of BADGE_SPOTS) if (Math.hypot(x - bx, y - by) < 70) return false;
     for (const c of this.colliders) if (Math.hypot(x - c.x, y - c.y) < 90) return false;
     if (Math.hypot(x - SPAWN.x, y - SPAWN.y) < 150 || Math.hypot(x - PETRA.x, y - PETRA.y) < 120) return false;
@@ -127,97 +126,65 @@ export class WorldScene extends Phaser.Scene {
   }
 
   buildDecor() {
-    for (const b of BUILDINGS) this.addProp(b.key, b.x, b.y, { w: b.col.w, h: b.col.h, rect: true, oy: b.col.h / 2 - 10 });
-    for (const [x, y, v] of BUNGALOWS) this.addProp(`bungalow${v}`, x, y, { w: 170, h: 70, rect: true, oy: 30 });
+    // gebouwen: elk deel is een eigen blok, gesorteerd op de onderkant
+    for (const b of [...BUILDINGS, ...NEIGHBOURS]) {
+      b.parts.forEach((p, i) => {
+        this.add.image(p.x, p.y, `bld_${b.id}_${i}`).setOrigin(0).setDepth(p.y + p.h);
+        this.colliders.push({ x: p.x + p.w / 2, y: p.y + p.h / 2, w: p.w, h: p.h, rect: true });
+      });
+    }
+    // vijver
+    for (let k = -2; k <= 2; k++) this.colliders.push({ x: POND.x, y: POND.y + k * POND.ry * 0.38, r: POND.rx * (1 - Math.abs(k) * 0.15) });
 
-    // strand
-    UMBRELLAS.forEach(([x, y, v]) => this.addProp(`umbrella${v}`, x, y, { r: 10 }));
-    TOWELS.forEach(([x, y]) => this.addProp('towel', x, y, null, { oy: 0.5, depth: -500 }).setAngle(Phaser.Math.Between(-20, 20)));
-    this.addProp('lifeguard', LIFEGUARD.x, LIFEGUARD.y, { w: 80, h: 30, rect: true, oy: 10 });
-    const ball = this.add.image(760, 830, 'beachball').setDepth(830);
-    this.tweens.add({ targets: ball, y: 800, duration: 600, yoyo: true, repeat: -1, ease: 'Quad.Out' });
+    // bomen van de plattegrond
+    const trees = ['tree_round', 'tree_round2'];
+    TREES.forEach(([x, y], i) => this.addProp(trees[i % 2], x, y, { r: 20 }, { scale: 0.8 + ((i * 37) % 10) / 30 }));
 
-    // fontein op het plein
-    const f = this.add.graphics().setDepth(PLAZA.y + 30);
-    f.fillStyle(0x1e1426, 0.2).fillEllipse(PLAZA.x, PLAZA.y + 36, 190, 50);
-    f.fillStyle(HEX.stone).lineStyle(5, HEX.ink).fillEllipse(PLAZA.x, PLAZA.y + 10, 180, 70).strokeEllipse(PLAZA.x, PLAZA.y + 10, 180, 70);
-    f.fillStyle(HEX.water).fillEllipse(PLAZA.x, PLAZA.y + 6, 150, 50);
-    f.fillStyle(HEX.stone).fillRect(PLAZA.x - 10, PLAZA.y - 50, 20, 56).strokeRect(PLAZA.x - 10, PLAZA.y - 50, 20, 56);
-    f.fillStyle(HEX.stone).fillEllipse(PLAZA.x, PLAZA.y - 50, 60, 20).strokeEllipse(PLAZA.x, PLAZA.y - 50, 60, 20);
-    bake(this, f, 'fountain', PLAZA.x - 100, PLAZA.y - 70, 200, 130);
-    this.colliders.push({ x: PLAZA.x, y: PLAZA.y + 10, r: 90 });
-    const spray = this.add.particles(PLAZA.x, PLAZA.y - 56, 'px_drop', {
-      speedY: { min: -260, max: -180 }, speedX: { min: -70, max: 70 }, gravityY: 600, lifespan: 750,
-      scale: { start: 0.7, end: 0.3 }, tint: [0xffffff, HEX.waterLight], frequency: 40, quantity: 2,
-    });
-    spray.setDepth(PLAZA.y + 31);
+    // terras: parasols en bankjes
+    [[0.25, 0.4, 0], [0.7, 0.35, 1], [0.5, 0.8, 3]].forEach(([fx, fy, v]) => this.addProp(`umbrella${v}`, PLAZA.x + PLAZA.w * fx, PLAZA.y + PLAZA.h * fy, { r: 10 }));
+    for (const [x, y] of [pt(1010, 600), pt(1088, 640), pt(600, 640), pt(1150, 460)]) this.addProp('bench', x, y, { w: 96, h: 22, rect: true, oy: 10 });
 
-    // lantaarns langs de paden
-    for (const [x, y] of [[1490, 1760], [1610, 1760], [1440, 1080], [1570, 900], [1050, 1290], [700, 1100], [1900, 1400], [2350, 1460], [2520, 1180]]) {
+    // lantaarns langs de wegen
+    for (const [x, y] of [pt(600, 640), pt(720, 641), pt(840, 642), pt(978, 500), pt(978, 600), pt(1050, 676), pt(586, 470), pt(586, 560)]) {
       this.addProp('lamp', x, y, { r: 8 });
     }
 
     // entreebord
     const gate = this.add.container(GATE.x, GATE.y).setDepth(GATE.y);
-    const gbg = this.add.nineslice(0, -150, 'ui_btn', undefined, 380, 80, 20, 20, 20, 24).setTint(HEX.blue);
-    gate.add(this.add.rectangle(-180, -60, 16, 150, HEX.wood).setStrokeStyle(4, HEX.ink));
-    gate.add(this.add.rectangle(180, -60, 16, 150, HEX.wood).setStrokeStyle(4, HEX.ink));
+    const gbg = this.add.nineslice(0, -150, 'ui_btn', undefined, 420, 80, 20, 20, 20, 24).setTint(0x3D2152);
+    gate.add(this.add.rectangle(-190, -60, 16, 150, HEX.stoneDark).setStrokeStyle(4, HEX.ink));
+    gate.add(this.add.rectangle(190, -60, 16, 150, HEX.stoneDark).setStrokeStyle(4, HEX.ink));
     gate.add(gbg);
-    gate.add(this.add.text(0, -154, 'PORT ZÉLANDE', titleStyle(40, P.cream, { strokeThickness: 6 })).setOrigin(0.5));
-    // vlaggetjes
-    for (let i = 0; i < 7; i++) {
-      const fl = this.add.triangle(-150 + i * 50, -104, 0, 0, 24, 0, 12, 22, [HEX.red, HEX.gold, HEX.teal, HEX.pink][i % 4]).setStrokeStyle(2, HEX.ink);
-      gate.add(fl);
-      this.tweens.add({ targets: fl, angle: { from: -8, to: 8 }, duration: 700 + i * 60, yoyo: true, repeat: -1 });
-    }
+    gate.add(this.add.text(0, -154, 'HUMAN CAMPUS', titleStyle(40, P.cream, { strokeThickness: 6 })).setOrigin(0.5));
 
-    // handmatige palmen langs strand en paden
-    const palms = [[200, 1000], [520, 930], [780, 930], [1150, 900], [1380, 880], [1700, 1040], [1880, 820], [2160, 820], [2260, 1100],
-      [1280, 1730], [1820, 1730], [1290, 1250], [1810, 1250], [2900, 1000], [2500, 1130], [150, 1200], [1080, 1080]];
-    palms.forEach(([x, y]) => this.addPalm(x, y, 0.9 + Math.random() * 0.25));
-
-    // willekeurig decor: palmen, ronde (fruit)bomen, bloeiende struiken, stenen en stronken
+    // willekeurig groen: bomen, struiken, stenen
     const r = rng(1234);
     let placed = 0, tries = 0;
-    const trees = ['tree_round', 'tree_round2', 'tree_orange', 'tree_apple'];
     const bushes = ['bush', 'bush_white', 'bush_red'];
-    while (placed < 60 && tries++ < 4000) {
-      const x = r() * WORLD_W, y = 800 + r() * (WORLD_H - 800);
-      if (!this.isOpenGround(x, y, 70)) continue;
+    while (placed < 70 && tries++ < 5000) {
+      const x = r() * WORLD_W, y = r() * WORLD_H;
+      if (!this.isOpenGround(x, y, 50)) continue;
       const roll = r();
-      if (roll < 0.25) this.addPalm(x, y, 0.8 + r() * 0.4);
-      else if (roll < 0.55) this.addProp(trees[Math.floor(r() * trees.length)], x, y, { r: 20 }, { scale: 0.85 + r() * 0.3 });
-      else if (roll < 0.85) this.addProp(bushes[Math.floor(r() * bushes.length)], x, y, { r: 26 });
-      else if (roll < 0.93) this.addProp('rock', x, y, { r: 22 });
-      else this.addProp('stump', x, y, { r: 18 });
+      if (roll < 0.5) this.addProp(trees[Math.floor(r() * trees.length)], x, y, { r: 20 }, { scale: 0.8 + r() * 0.3 });
+      else if (roll < 0.9) this.addProp(bushes[Math.floor(r() * bushes.length)], x, y, { r: 26 });
+      else this.addProp('rock', x, y, { r: 22 });
       placed++;
     }
     tries = 0; placed = 0;
     while (placed < 24 && tries++ < 3000) {
-      const x = r() * WORLD_W, y = 800 + r() * (WORLD_H - 800);
+      const x = r() * WORLD_W, y = r() * WORLD_H;
       if (!this.isOpenGround(x, y, 20)) continue;
       this.add.image(x, y, 'flowers').setOrigin(0.5, 1).setDepth(y - 40);
       placed++;
     }
-
-    // tuinmeubels: brievenbussen en hekjes bij bungalows, bankjes, bloempotten
-    const awayFromPaths = (x, y, m) => PATHS.every((p) => distToPolyline(x, y, p.pts) > p.w / 2 + m);
-    for (const [bx, by] of BUNGALOWS) {
-      if (awayFromPaths(bx + 104, by + 16, 12)) this.addProp('mailbox', bx + 104, by + 16, { r: 9 });
-      for (const fx of [bx - 128, bx + 150]) {
-        if (inPoly(fx, by + 34, GRASS) && awayFromPaths(fx, by + 34, 50)) this.addProp('fence', fx, by + 34, { w: 76, h: 14, rect: true, oy: 6 });
-      }
-    }
-    for (const [x, y] of [[1360, 1560], [1740, 1560], [1000, 1310], [2140, 1610], [1180, 1000]]) this.addProp('bench', x, y, { w: 96, h: 22, rect: true, oy: 10 });
     for (const st of Object.values(STATIONS)) this.addProp('flowerpot', st.x - 96, st.y + 6, { r: 10 });
-    for (const x of [1455, 1645]) this.addProp('flowerpot', x, 1252, { r: 10 });
 
     // vlinders (weinig, voor de sfeer)
     if (!this.anims.exists('butterfly_fly')) this.anims.create({ key: 'butterfly_fly', frames: [{ key: 'butterfly', frame: 'f0' }, { key: 'butterfly', frame: 'f1' }], frameRate: 10, repeat: -1 });
     const bCols = [0xffffff, 0xffe066, 0xff9ecf, 0x9fd8ff];
     for (let i = 0; i < 8; i++) {
       let x = 0, y = 0;
-      for (let k = 0; k < 40; k++) { x = r() * WORLD_W; y = 900 + r() * (WORLD_H - 950); if (inPoly(x, y, GRASS)) break; }
+      for (let k = 0; k < 40; k++) { x = r() * WORLD_W; y = r() * WORLD_H; if (this.isOpenGround(x, y, 0)) break; }
       const b = this.add.sprite(x, y, 'butterfly', 'f0').setDepth(7000).setTint(bCols[i % bCols.length]).play('butterfly_fly');
       const wander = () => {
         const nx = x + Phaser.Math.Between(-140, 140), ny = y + Phaser.Math.Between(-90, 90);
@@ -227,18 +194,6 @@ export class WorldScene extends Phaser.Scene {
       wander();
       this.tweens.add({ targets: b, scaleY: 0.85, duration: 300, yoyo: true, repeat: -1 });
     }
-
-    // boten in de jachthaven
-    this.boats = [];
-    const boat = (key, x, y, flip) => {
-      const b = this.add.image(x, y, key).setOrigin(0.5, 0.8).setDepth(y).setFlipX(!!flip);
-      this.tweens.add({ targets: b, y: y + 5, angle: { from: -2, to: 2 }, duration: 1600 + Math.random() * 600, yoyo: true, repeat: -1, ease: 'Sine.InOut', delay: Math.random() * 800 });
-      this.boats.push(b);
-      return b;
-    };
-    boat('boat0', 2620, 760); boat('boat1', 2620, 900, true); boat('boat2', 2800, 800);
-    boat('yacht', 2830, 560, true); boat('boat1', 2200, 420); boat('boat2', 1100, 400, true); boat('boat0', 300, 640);
-    boat('sloop', 1640, 520);
   }
 
   buildStations() {
@@ -291,12 +246,9 @@ export class WorldScene extends Phaser.Scene {
     this.add.sprite(SHIP.x - 60, SHIP.y - 108, 'npc_jan', 'tired').setOrigin(0.5, 1).setDepth(SHIP.y - 59);
     this.add.image(SHIP.x - 60, SHIP.y - 98, 'cage').setOrigin(0.5, 1).setScale(0.75).setDepth(SHIP.y - 58);
 
-    // piratenkamp bij de pier
-    [[1300, 760], [1760, 720], [1880, 760]].forEach(([x, y]) => this.addProp('tent', x, y, { r: 50, oy: 10 }));
-    [[1360, 790], [1400, 770], [1720, 770], [1830, 800]].forEach(([x, y]) => this.addProp('barrel', x, y, { r: 18 }));
-    [[1260, 800], [1940, 800]].forEach(([x, y]) => this.addProp('crate', x, y, { r: 20 }));
-    this.addProp('chest', 1560, 790, { r: 24 });
-    this.addProp('cannon', 1420, 690, { r: 30 });
+    // tijdelijk: piratenspullen aan de oever van de Schootense Loop
+    [[2990, 1990], [3030, 2010]].forEach(([x, y]) => this.addProp('barrel', x, y, { r: 18 }));
+    this.addProp('crate', 2950, 2015, { r: 20 });
 
     // brug
     this.bridgeLayer = this.add.container(0, 0).setDepth(BRIDGE.y + BRIDGE.h - 40);
@@ -363,8 +315,8 @@ export class WorldScene extends Phaser.Scene {
 
     // rondlopende collega's en piraten
     const r = rng(99);
-    const homes = [[1550, 1550, 'c'], [1100, 1400, 'c'], [700, 900, 'c'], [2300, 1550, 'c'], [2600, 1200, 'c'], [1550, 1800, 'c'], [900, 1700, 'c'], [2700, 1800, 'c'],
-      [1500, 760, 'p'], [1680, 760, 'p'], [2560, 1000, 'p'], [300, 820, 'p']];
+    const homes = [[...pt(1050, 620), 'c'], [...pt(900, 668), 'c'], [...pt(745, 740), 'c'], [...pt(620, 560), 'c'], [...pt(1000, 575), 'c'],
+      [...pt(860, 800), 'c'], [...pt(1140, 470), 'c'], [...pt(590, 680), 'c'], [3050, 1990, 'p'], [3330, 1850, 'p']];
     homes.forEach(([x, y, type], i) => {
       const key = `amb_${i}`;
       makeCharacter(this, key, type === 'p' ? pirateLook(r) : randomLook(r));
@@ -440,7 +392,7 @@ export class WorldScene extends Phaser.Scene {
   }
 
   goFinale() {
-    SaveManager.state.pos = { x: BRIDGE_SIGN.x, y: BRIDGE_SIGN.y + 80 };
+    SaveManager.state.pos = { ...FINALE_RETURN };
     SaveManager.save();
     const cam = this.cameras.main;
     Audio.sfx('whoosh');
@@ -527,8 +479,7 @@ export class WorldScene extends Phaser.Scene {
 
   // ── Botsing ──────────────────────────────────────────────────────────
   walkable(x, y) {
-    let onBoards = inRect(x, y, PIER, -6) || JETTIES.some((j) => inRect(x, y, j, -4));
-    if (this.bridgeBuilt && inRect(x, y, BRIDGE, -8)) onBoards = true;
+    const onBoards = this.bridgeBuilt && inRect(x, y, BRIDGE, -8);
     if (!onBoards) {
       if (!inPoly(x, y, LAND)) return false;
       if (y > WORLD_H - 20 || x < 20 || x > WORLD_W - 20) return false;

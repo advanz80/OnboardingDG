@@ -1,6 +1,16 @@
-// Plattegrond van het park. Coördinaten in wereld-pixels.
-export const WORLD_W = 3072;
-export const WORLD_H = 2048;
+// Plattegrond van Brainport Human Campus (Helmond). Coördinaten in wereld-pixels.
+//
+// Alles is overgenomen van de officiële plattegrond (docs: "HC Plattegrond 2026 A3").
+// Met `pt(px, py)` schrijf je punten in pixels van die plattegrond (gerenderd op
+// 80 dpi, 1323×935); ze worden hier omgerekend naar de spelwereld. Zo kun je een
+// gebouw of weg verschuiven door de plattegrond ernaast te leggen.
+const S = 4;            // 1 px plattegrond = 4 px in het spel
+const OX = 375, OY = 290;
+export const pt = (px, py) => [(px - OX) * S, (py - OY) * S];
+const rect = (x0, y0, x1, y1) => { const [ax, ay] = pt(x0, y0), [bx, by] = pt(x1, y1); return { x: ax, y: ay, w: bx - ax, h: by - ay }; };
+
+export const WORLD_W = 3712;
+export const WORLD_H = 2368;
 
 /** Catmull-Rom → dicht polygoon (voor tekenen én botsing). */
 export function sampleSmooth(pts, closed = true, seg = 10) {
@@ -22,81 +32,103 @@ export function sampleSmooth(pts, closed = true, seg = 10) {
   return out;
 }
 
-// Kustlijn (land ligt "onder" deze lijn). Water: noorden + jachthaven-inham.
-const COAST_RAW = [
-  [-80, 1080], [110, 920], [320, 740], [600, 650], [900, 618], [1200, 640], [1500, 628], [1800, 650],
-  [2100, 624], [2330, 676], [2420, 770], [2480, 900], [2700, 946], [2850, 870], [2910, 720], [2990, 610],
-  [3160, 570], [3160, 2140], [-80, 2140],
-];
-export const LAND = sampleSmooth(COAST_RAW, true, 12);
+// Land: alles behalve de Schootense Loop in de zuidoosthoek (het enige water).
+const BANK = sampleSmooth([[3820, 1690], [3400, 1880], [2900, 2150], [2300, 2440]], false, 14);
+export const LAND = [[-80, -80], [WORLD_W + 80, -80], ...BANK, [-80, WORLD_H + 80]];
+export const GRASS = LAND;
 
-// Gras ligt iets landinwaarts (strand ertussen).
-const GRASS_RAW = [
-  [-80, 1300], [160, 1090], [380, 930], [620, 880], [900, 860], [1200, 830], [1400, 790], [1800, 760],
-  [2100, 740], [2300, 790], [2380, 900], [2460, 1010], [2700, 1050], [2930, 950], [3020, 760],
-  [3160, 720], [3160, 2140], [-80, 2140],
+// Wegen (asfalt, begaanbaar). w = breedte in wereld-pixels.
+const road = (w, ...pts) => ({ w, pts: pts.map(([x, y]) => pt(x, y)) });
+export const ROADS = [
+  road(84, [330, 470], [404, 430]),                                                   // Schootense Dreef (west)
+  road(84, [466, 412], [700, 416], [985, 425], [1150, 372], [1330, 305]),              // Schootense Dreef
+  road(84, [340, 770], [560, 790], [800, 808], [1000, 806], [1120, 772], [1270, 692], [1330, 662]), // Vlamovenweg
+  road(72, [575, 422], [575, 650], [573, 790]),                                        // west: langs Bloeij
+  road(72, [575, 652], [700, 655], [870, 658], [1000, 662], [1090, 664], [1240, 676], [1280, 690]), // Tunnelovenweg
+  road(72, [990, 430], [992, 540], [995, 660]),                                        // ingang campus vanaf de Dreef
+  road(60, [700, 655], [700, 800]),                                                    // naar parkeerplaats IJk
 ];
-export const GRASS = sampleSmooth(GRASS_RAW, true, 12);
+export const ROUNDABOUT = { x: pt(430, 415)[0], y: pt(430, 415)[1], r: 150 };
 
-// Paden: [punten], breedte
+// Voetpaden (stenen tegels)
 export const PATHS = [
-  { pts: [[1550, 2100], [1550, 1850], [1550, 1680]], w: 90 },                        // ingang → plein
-  { pts: [[1550, 1250], [1520, 1000], [1500, 800], [1500, 690]], w: 76 },             // plein → pier
-  { pts: [[1330, 1450], [1100, 1380], [800, 1200], [560, 1030], [520, 820]], w: 70 },  // plein → bouwplaats
-  { pts: [[1770, 1450], [2000, 1440], [2200, 1520]], w: 70 },                         // plein → zwembad
-  { pts: [[2200, 1520], [2450, 1300], [2600, 1110], [2630, 980]], w: 66 },            // zwembad → jachthaven
-  { pts: [[1100, 1380], [1000, 1600], [800, 1780], [500, 1850]], w: 56 },             // bungalows west
-  { pts: [[2000, 1440], [2100, 1700], [2400, 1820], [2800, 1760]], w: 56 },            // bungalows oost
-  { pts: [[1400, 1250], [1100, 1050], [900, 960]], w: 56 },                           // naar het strand
+  { pts: [pt(422, 450), pt(432, 600), pt(440, 775)], w: 48 },     // Schootensepad
+  { pts: [pt(1000, 560), pt(1030, 585)], w: 52 },                 // binnenterrein → terras
+  { pts: [pt(985, 672), pt(988, 790)], w: 48 },                   // langs de vijver
+  { pts: [pt(790, 700), pt(785, 664)], w: 44 },                   // fietsenstalling IJk
+  { pts: [pt(520, 528), pt(520, 545), pt(568, 545)], w: 44 },     // Bloeij
+  { pts: [pt(560, 718), pt(575, 718)], w: 44 },                   // BHC
 ];
 
-export const PLAZA = { x: 1550, y: 1460, r: 240 };
-
-// Pier & steigers (begaanbaar water)
-export const PIER = { x: 1460, y: 330, w: 84, h: 380 };              // pier naar het noorden
-export const JETTIES = [
-  { x: 2530, y: 700, w: 46, h: 260 },
-  { x: 2690, y: 680, w: 46, h: 280 },
-  { x: 2480, y: 760, w: 260, h: 40 },
+// Parkeerplaatsen (asfalt met vakken). P1–P6 en de B/H/G-vakken van de plattegrond.
+export const PARKINGS = [
+  { ...rect(975, 312, 1100, 352), label: 'P1' },
+  { ...rect(1005, 435, 1085, 470), label: 'P2' },
+  { ...rect(1095, 398, 1150, 450), label: 'B' },
+  { ...rect(1150, 690, 1205, 715), label: 'H' },
+  { ...rect(708, 690, 790, 788), label: 'P4' },
+  { ...rect(880, 765, 960, 795), label: 'B' },
+  { ...rect(478, 612, 565, 628), label: 'P6' },
 ];
-export const BRIDGE = { x: 520, y: 380, w: 96, h: 330 };              // verschijnt na BHC
-export const SHIP = { x: 610, y: 400 };                                // onderkant-midden van het piratenschip
 
-export const SPAWN = { x: 1550, y: 1820 };
-export const GATE = { x: 1550, y: 2030 };
+// Terras op het binnenterrein (tussen ROVC en Driessen)
+export const PLAZA = rect(1005, 585, 1095, 650);
+// Vijver bij Het Atelier
+export const POND = { x: pt(1005, 722)[0], y: pt(1005, 722)[1], rx: 34, ry: 96 };
 
-// Missiepunten: kraam + NPC
+// Gebouwen. rects = plattegrond-rechthoeken [x0, y0, x1, y1]; H = gevelhoogte (wereld-px).
+// mission: welk station hoort erbij (alleen voor de huisstijlkleur van de gevel).
+const bld = (id, name, rects, opts = {}) => ({ id, name, parts: rects.map((r) => rect(...r)), H: 90, ...opts });
+export const BUILDINGS = [
+  bld('driessen', 'Driessen', [[1065, 485, 1185, 530], [1105, 530, 1170, 600], [1100, 600, 1210, 650]], { H: 110, brand: 'driessen' }),
+  bld('rovc', 'ROVC', [[875, 597, 970, 650]], { color: '#3D2152' }),
+  bld('ijk', 'IJk', [[800, 688, 955, 760]], { H: 100, brand: 'ijk' }),
+  bld('atelier', 'Het Atelier', [[1018, 676, 1082, 748]], { H: 110, brand: ['haert', 'reijn'] }),
+  bld('bloeij', 'Bloeij', [[478, 462, 562, 518]], { brand: 'bloeij' }),
+  bld('loods', 'Loods', [[478, 560, 562, 605]], { H: 80, color: '#8a8f99' }),
+  bld('bhc', 'BHC', [[484, 640, 556, 700]], { brand: 'bhc' }),
+];
+// Gebouwen van buren (niet van de campus): alleen decor.
+export const NEIGHBOURS = [
+  bld('amada', '', [[655, 465, 790, 605]], { H: 100 }),
+  bld('n3', '', [[905, 500, 970, 570]]),
+  bld('n8', '', [[605, 672, 670, 750]], { H: 80 }),
+];
+
+// Missiepunten: kraam + NPC, voor de ingang van het eigen gebouw
+const station = (px, py) => { const [x, y] = pt(px, py); return { x, y, npc: { x: x + 70, y: y + 56 } }; };
 export const STATIONS = {
-  bhc: { x: 360, y: 1010, npc: { x: 430, y: 1070 } },
-  driessen: { x: 1250, y: 1560, npc: { x: 1330, y: 1620 } },
-  bloeij: { x: 930, y: 1000, npc: { x: 1000, y: 1060 } },
-  ijk: { x: 2080, y: 1330, npc: { x: 2150, y: 1390 } },
-  haert: { x: 2830, y: 1110, npc: { x: 2760, y: 1160 } },
-  reijn: { x: 1700, y: 830, npc: { x: 1620, y: 880 } },
+  bhc: station(498, 722),
+  driessen: station(1035, 556),
+  bloeij: station(493, 542),
+  ijk: station(835, 780),
+  haert: station(1020, 764),
+  reijn: station(1112, 735),
 };
 
-export const PETRA = { x: 1660, y: 1850 };
-export const GUARD = { x: 568, y: 420 };
-export const BRIDGE_SIGN = { x: 600, y: 760 };
+export const SPAWN = { x: pt(992, 490)[0], y: pt(992, 490)[1] };
+export const GATE = { x: pt(990, 455)[0], y: pt(990, 455)[1] };
+export const PETRA = { x: pt(1022, 495)[0], y: pt(1022, 495)[1] };
 
-// Vaste gebouwen (x,y = onderkant midden) + botsrechthoek
-export const BUILDINGS = [
-  { key: 'reception', x: 1550, y: 1235, col: { w: 300, h: 70 } },
-  { key: 'dome', x: 2380, y: 1290, col: { w: 360, h: 90 } },
+// Tijdelijk (tot het nieuwe thema): piratenschip in de Schootense Loop.
+export const SHIP = { x: 3420, y: 2290 };
+export const BRIDGE = { x: 3200, y: 1900, w: 96, h: 290 };            // verschijnt na BHC
+export const GUARD = { x: 3248, y: 2150 };
+export const BRIDGE_SIGN = { x: 3100, y: 1950 };
+export const FINALE_RETURN = { x: 3150, y: 1930 };
+
+// Bomen (rijen van de plattegrond + langs de wegen)
+export const TREES = [
+  ...[485, 500, 515, 530, 545, 560, 575, 590, 605].map((y) => pt(855 + (y % 2) * 4, y)),
+  pt(995, 690), pt(975, 705),
+  pt(1040, 610), pt(1075, 612), pt(1045, 520), pt(1015, 515),
+  ...[420, 480, 540, 620, 680, 760, 880, 940].map((x) => pt(x, 830)),
+  ...[620, 700, 780, 860, 940].map((x) => pt(x, 385)),
+  pt(1200, 470), pt(1230, 560), pt(1240, 640),
 ];
 
-export const BUNGALOWS = [
-  [380, 1350, 0], [640, 1300, 1], [300, 1620, 2], [620, 1560, 3], [880, 1500, 0], [420, 1900, 1], [700, 1920, 2], [1000, 1880, 3],
-  [2200, 1960, 0], [2480, 1990, 2], [2700, 1600, 1], [2950, 1560, 3], [2950, 1880, 0], [2350, 1700, 3], [1950, 1930, 1],
-];
-
-// Strand-decor
-export const UMBRELLAS = [[420, 860, 0], [620, 780, 1], [840, 760, 2], [1080, 770, 3], [1280, 740, 0], [720, 860, 3]];
-export const TOWELS = [[470, 880], [680, 800], [900, 780], [1140, 790], [1320, 770]];
-export const LIFEGUARD = { x: 1000, y: 720 };
-
-// Badges voor de BHC-zoektocht
+// Badges voor de BHC-zoektocht (verspreid over de campus)
 export const BADGE_SPOTS = [
-  [250, 1500], [760, 1700], [1150, 1960], [1900, 1640], [2600, 1450], [2960, 1300], [2320, 1000], [1880, 900], [1180, 920],
-  [520, 1250], [2050, 2000], [1200, 1200], [2780, 1880],
+  pt(440, 620), pt(590, 700), pt(640, 480), pt(820, 470), pt(872, 560), pt(940, 480), pt(1140, 462),
+  pt(1240, 620), pt(1125, 690), pt(985, 760), pt(760, 730), pt(650, 790), pt(900, 425),
 ];
