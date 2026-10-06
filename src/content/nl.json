@@ -739,23 +739,23 @@
     "reijn": {
       "title": "Quickscan bij de crew",
       "zone": "Het Atelier",
-      "npc": "Bootsvrouw Wendy",
+      "npc": "Directeur Wendy",
       "intro": [
         {
           "speaker": "npc",
-          "text": "Psst… jij bent toch {naam}? Ik ben Wendy, bootsvrouw bij de kantoorpiraten van Rompslomp. Of nou ja… nog wel."
+          "text": "Hoi {naam}! Ik ben Wendy, directeur van Reijn. Wij zijn de HR-consultants van Driessen Groep: wij helpen organisaties hun mensen en structuur op orde te krijgen."
         },
         {
           "speaker": "npc",
-          "text": "Het is hier één grote chaos. Niemand is gelukkig. De helft wil eigenlijk overstappen."
+          "text": "Moet je horen: een groepje kantoorpiraten van Rompslomp klopte net bij ons aan. Het is daar één grote chaos, niemand is gelukkig en de helft wil eigenlijk overstappen."
         },
         {
           "speaker": "npc",
-          "text": "Ik hoorde dat je met Reijn werkt, de HR-consultants. Kun jij een quickscan doen bij onze crew?"
+          "text": "Help jij mij met een quickscan bij die crew? Stel goede vragen, ontdek wat er écht speelt en kies het passende advies."
         },
         {
           "speaker": "npc",
-          "text": "Als jouw advies hout snijdt, lopen er vast een paar crewleden over naar jouw kant. Handig voor straks…"
+          "text": "Als ons advies hout snijdt, lopen er vast een paar crewleden over naar onze kant. Handig voor straks in de toren…"
         }
       ],
       "howTo": [
@@ -793,11 +793,11 @@
       "outro": [
         {
           "speaker": "npc",
-          "text": "Weet je wat? Je hebt gelijk. Zo kan het niet langer."
+          "text": "Kijk eens aan: de crew knikt. Zo kan het bij Rompslomp niet langer, en dat weten ze nu zelf ook."
         },
         {
           "speaker": "npc",
-          "text": "Wij helpen je straks in de toren. En hier: het sleutelfragment dat de kapitein bij ons had verstopt. Namens Reijn!"
+          "text": "Een paar van hen helpen je straks in de toren. En dit sleutelfragment had de kapitein bij hen verstopt. Namens Reijn: goed gedaan!"
         }
       ],
       "questions": {

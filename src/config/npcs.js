@@ -16,7 +16,7 @@ export const NPC_LOOKS = {
   ijk: { skin: '#f8d5b5', hair: '#5f5f69', hairStyle: 'spiky', temples: '#a9a9b3', age: 42, shirt: BRANDS.ijk.css, top: 'hoodie', pants: '#3a4a6b', bottom: 'pants', eyes: 'round', shoes: '#e8504c' },
   // Roel (Haert)
   haert: { skin: '#f8d5b5', hair: '#6e6e78', hairStyle: 'crew', temples: '#c4c4cc', age: 48, shirt: BRANDS.haert.css, top: 'shirt', pants: '#5b4636', bottom: 'pants', eyes: 'dot', glasses: 'rect', badge: '#ffffff', beard: null, shoes: '#5b4636' },
-  // Wendy (Reijn)
+  // Wendy (directeur Reijn)
   reijn: { skin: '#f8d5b5', hair: '#5a3825', hairStyle: 'curly', shirt: '#f4efe4', top: 'tee', pattern: 'stripes', patternColor: BRANDS.reijn.css, pants: '#3b2f3f', bottom: 'shorts', eyes: 'lashes', accessory: 'earrings', shoes: '#3b2f3f' },
   // Prinses Mensenmens (sleutel blijft 'jan' zodat bestaande code werkt)
   jan: { skin: '#f5c9a0', hair: '#e8c46a', hairStyle: 'long', shirt: '#ff9ecf', top: 'blouse', pattern: 'dots', patternColor: '#ffffff', pants: '#8e5bd8', bottom: 'skirt', eyes: 'lashes', hat: 'crown', accessory: 'earrings', shoes: '#f6c33b' },
