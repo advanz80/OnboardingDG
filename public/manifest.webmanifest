@@ -1,8 +1,8 @@
 {
   "id": "/OnboardingDG/",
-  "name": "OnboardingDG — Driessen Groep",
-  "short_name": "OnboardingDG",
-  "description": "Bevrijd Jan Driessen uit handen van de piraten!",
+  "name": "Driessen's Den",
+  "short_name": "Driessen's Den",
+  "description": "Red prinses Mensenmens uit de klauwen van Kapitein Rompslomp!",
   "start_url": "./",
   "scope": "./",
   "display": "fullscreen",

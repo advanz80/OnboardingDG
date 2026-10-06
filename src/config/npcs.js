@@ -18,7 +18,9 @@ export const NPC_LOOKS = {
   haert: { skin: '#f8d5b5', hair: '#6e6e78', hairStyle: 'crew', temples: '#c4c4cc', age: 48, shirt: BRANDS.haert.css, top: 'shirt', pants: '#5b4636', bottom: 'pants', eyes: 'dot', glasses: 'rect', badge: '#ffffff', beard: null, shoes: '#5b4636' },
   // Wendy (Reijn)
   reijn: { skin: '#f8d5b5', hair: '#5a3825', hairStyle: 'curly', shirt: '#f4efe4', top: 'tee', pattern: 'stripes', patternColor: BRANDS.reijn.css, pants: '#3b2f3f', bottom: 'shorts', eyes: 'lashes', accessory: 'earrings', shoes: '#3b2f3f' },
-  jan: { skin: '#f5c9a0', hair: '#9a9aa6', hairStyle: 'short', shirt: '#ffffff', top: 'shirt', coat: '#2d3a5a', tie: BRANDS.driessen.css, pants: '#2d3a5a', bottom: 'pants', eyes: 'dot', glasses: true, shoes: '#5b4636' },
-  captain: { skin: '#f5c9a0', hair: '#5a3825', hairStyle: 'short', shirt: '#f4efe4', top: 'shirt', coat: P.pirateRed, pants: '#3b2f3f', bottom: 'pants', hat: 'captain', beard: '#8a4a22', eyepatch: true, hook: true, angry: true, shoes: '#3b2f3f' },
+  // Prinses Mensenmens (sleutel blijft 'jan' zodat bestaande code werkt)
+  jan: { skin: '#f5c9a0', hair: '#e8c46a', hairStyle: 'long', shirt: '#ff9ecf', top: 'blouse', pattern: 'dots', patternColor: '#ffffff', pants: '#8e5bd8', bottom: 'skirt', eyes: 'lashes', hat: 'crown', accessory: 'earrings', shoes: '#f6c33b' },
+  // Kapitein Rompslomp: grijs pak, stropdas van rode tape, leesbril
+  captain: { skin: '#f5c9a0', hair: '#9a9aa6', hairStyle: 'short', shirt: '#f4efe4', top: 'shirt', coat: '#5b5f6b', tie: P.pirateRed, pants: '#3b3f55', bottom: 'pants', hat: 'captain', beard: '#9a9aa6', eyepatch: true, glasses: 'rect', hook: true, angry: true, badge: '#ffffff', shoes: '#3b2f3f' },
   guard: { skin: '#b57b4c', hair: '#2d1e14', hairStyle: 'bald', shirt: '#f4efe4', top: 'tee', pattern: 'stripes', patternColor: P.pirateRed, pants: '#3b2f3f', bottom: 'shorts', hat: 'bandana', bandana: '#3b2f3f', beard: '#2d1e14', eyepatch: true, shoes: '#3b2f3f' },
 };

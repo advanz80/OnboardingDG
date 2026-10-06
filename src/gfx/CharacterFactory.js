@@ -42,7 +42,9 @@ export function pirateLook(r = Math.random, extra = {}) {
     shirt: '#f4efe4', top: 'tee', pattern: 'stripes', patternColor: pick(r, [P.pirateRed, '#2d4a8a', '#3b2f3f']),
     pants: pick(r, ['#3b2f3f', '#5b4636', '#2d3a4a']), bottom: r() < 0.5 ? 'pants' : 'shorts', shoes: '#3b2f3f',
     hat: pick(r, ['bandana', 'tricorn', 'bandana']), bandana: pick(r, [P.pirateRed, '#2d4a8a', '#3b2f3f']),
-    beard: r() < 0.6 ? pick(r, HAIRS.slice(0, 6)) : null, eyepatch: r() < 0.4, eyes: 'dot', ...extra,
+    beard: r() < 0.6 ? pick(r, HAIRS.slice(0, 6)) : null, eyepatch: r() < 0.4, eyes: 'dot',
+    // kantoortwist: stropdas en soms een naambadge
+    tie: pick(r, [P.pirateRed, '#2d4a8a', '#f6c33b', '#8e5bd8']), badge: r() < 0.4 ? '#ffffff' : null, ...extra,
   };
 }
 
@@ -593,6 +595,13 @@ function drawHat(ctx, L, cx, hy, dir) {
         ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.3; ctx.beginPath(); ctx.moveTo(hx - 4, hy - 19.5); ctx.lineTo(hx + 4, hy - 22); ctx.moveTo(hx + 4, hy - 19.5); ctx.lineTo(hx - 4, hy - 22); ctx.stroke();
       }
       if (L.hat === 'captain') { ctx.beginPath(); ctx.moveTo(hx + 7, hy - 31); ctx.quadraticCurveTo(hx + 30, hy - 52, hx + 22, hy - 24); ctx.quadraticCurveTo(hx + 18, hy - 33, hx + 7, hy - 31); paint(ctx, P.red, 1.2); }
+      break;
+    }
+    case 'crown': {
+      const p = () => { ctx.beginPath(); ctx.moveTo(hx - 16, hy - 14); ctx.lineTo(hx - 18, hy - 34); ctx.lineTo(hx - 9, hy - 24); ctx.lineTo(hx, hy - 38); ctx.lineTo(hx + 9, hy - 24); ctx.lineTo(hx + 18, hy - 34); ctx.lineTo(hx + 16, hy - 14); ctx.closePath(); };
+      soft(ctx, p, P.gold, hy - 38, hy - 14, 1.4);
+      if (dir !== 'back') for (const [x, col] of [[-8, P.red], [0, '#8e5bd8'], [8, P.teal]]) { ell(ctx, hx + x, hy - 18, 2.4, 2.4); paint(ctx, col, 0.8); }
+      for (const x of [-18, 0, 18]) { ell(ctx, hx + x, hy + (x ? -34 : -38), 2, 2); paint(ctx, '#ffffff', 0.8); }
       break;
     }
     case 'sunglasses': {

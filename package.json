@@ -1,8 +1,8 @@
 {
-  "name": "portzelande",
+  "name": "onboardingdg",
   "private": true,
   "version": "1.0.0",
-  "description": "Pirates of Port Zélande — browsergame voor Driessen Groep",
+  "description": "Driessen's Den — onboarding-browsergame voor Driessen Groep",
   "type": "module",
   "scripts": {
     "dev": "vite",

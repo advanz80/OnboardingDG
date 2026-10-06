@@ -109,8 +109,9 @@ export const SPAWN = { x: pt(992, 490)[0], y: pt(992, 490)[1] };
 export const GATE = { x: pt(990, 455)[0], y: pt(990, 455)[1] };
 export const PETRA = { x: pt(1022, 495)[0], y: pt(1022, 495)[1] };
 
-// Tijdelijk (tot het nieuwe thema): piratenschip in de Schootense Loop.
-export const SHIP = { x: 3420, y: 2290 };
+// De Toren van Paperassen van Kapitein Rompslomp, op een eilandje in de Schootense Loop.
+export const TOWER = { x: 3480, y: 2290 };
+export const ISLAND = { x: 3470, y: 2270, rx: 260, ry: 100 };
 export const BRIDGE = { x: 3200, y: 1900, w: 96, h: 290 };            // verschijnt na BHC
 export const GUARD = { x: 3248, y: 2150 };
 export const BRIDGE_SIGN = { x: 3100, y: 1950 };

@@ -6,9 +6,10 @@ import { Audio } from '../core/AudioEngine.js';
 
 const SPEAKERS = {
   petra: { tex: 'npc_petra', color: HEX.teal },
+  buddy: { tex: 'npc_buddy', color: 0x4cb35a },
   jan: { tex: 'npc_jan', color: HEX.red },
   captain: { tex: 'npc_captain', color: HEX.pirateRed },
-  guard: { tex: 'npc_guard', color: HEX.pirate },
+  guard: { tex: 'npc_guard', color: HEX.purple },
   player: { tex: 'player', color: HEX.gold },
 };
 

@@ -1,7 +1,7 @@
 {
   "game": {
-    "title": "Pirates of Port Zélande",
-    "subtitle": "Een teamuitje dat uit de hand liep",
+    "title": "Driessen's Den",
+    "subtitle": "Red prinses Mensenmens van Kapitein Rompslomp",
     "version": "v1.0"
   },
   "menu": {
@@ -83,7 +83,7 @@
     "toMenu": "Naar hoofdmenu",
     "saved": "Voortgang opgeslagen",
     "fragmentGot": "Sleutelfragment van {bedrijf}!",
-    "allFragments": "Alle 6 fragmenten! Op naar het piratenschip!",
+    "allFragments": "Alle 6 fragmenten! Op naar de Toren van Rompslomp!",
     "moveHintKeys": "Lopen: WASD of pijltjes · Praten: spatie",
     "moveHintTouch": "Sleep op de linkerhelft om te lopen · tik ! om te praten",
     "closer": "Loop eerst dichterbij!"
@@ -93,7 +93,7 @@
     "next": "Verder",
     "continue": "Verder",
     "retry": "Nog een keer",
-    "back": "Terug naar het park",
+    "back": "Terug naar de campus",
     "score": "Score",
     "time": "Tijd",
     "best": "Beste",
@@ -114,74 +114,75 @@
     "skip": "Overslaan"
   },
   "npc": {
-    "petra": "Parkmanager Petra",
-    "jan": "Jan Driessen",
-    "captain": "Kapitein Kostenpost",
-    "parrot": "Polly Policy",
-    "guard": "Piraat Pieterbaas",
-    "player": "{naam}"
+    "petra": "Receptionist Petra",
+    "jan": "Prinses Mensenmens",
+    "captain": "Kapitein Rompslomp",
+    "parrot": "Kroko Paragraaf",
+    "guard": "Kroko Paragraaf",
+    "player": "{naam}",
+    "buddy": "Buddy"
   },
   "story": {
     "intro": [
       {
-        "speaker": "petra",
-        "text": "Daar ben je eindelijk, {naam}! Ramp! Paniek! Bijltjesdag!"
+        "speaker": "buddy",
+        "text": "Hoi {naam}! Ik ben Buddy, jouw maatje hier op de Brainport Human Campus. Ik loop overal met je mee!"
       },
       {
-        "speaker": "petra",
-        "text": "Het hele Driessen Groep-teamuitje was net begonnen: bitterballen, bootjes, een quiz over loonstroken…"
+        "speaker": "buddy",
+        "text": "Je komt alleen op een gekke dag… Vanochtend kwam Kapitein Rompslomp de campus op. Met kantoorpiraten, stapels formulieren en een paarse krokodil."
       },
       {
-        "speaker": "petra",
-        "text": "…en toen voer er een piratenschip het Grevelingenmeer op. Kapitein Kostenpost heeft het hele park gekaapt!"
+        "speaker": "buddy",
+        "text": "Ze hebben prinses Mensenmens ontvoerd, onze allerbelangrijkste klant! Ze zit opgesloten in de Toren van Paperassen, aan de Schootense Loop."
       },
       {
-        "speaker": "petra",
-        "text": "En erger nog: ze hebben Jan Driessen ontvoerd. Hij zit in een kooi op hun schip. Zonder koffie."
+        "speaker": "buddy",
+        "text": "Werkdruk, regeltjes, bureaucratie, eindeloze administratie… zolang Rompslomp de baas is, is er geen werkgeluk te bekennen."
       },
       {
-        "speaker": "petra",
-        "text": "De kooi zit dicht met een slot van zes sleutelfragmenten. Elk bedrijf van de groep heeft er één verstopt."
+        "speaker": "buddy",
+        "text": "De toren zit op slot met zes sleutelfragmenten. Elk bedrijf van Driessen Groep heeft er één."
       },
       {
-        "speaker": "petra",
-        "text": "Help de collega's van Driessen, Bloeij, IJk, Haert, Reijn en Brainport Human Campus, dan krijg je de fragmenten."
+        "speaker": "buddy",
+        "text": "Help de collega's van Driessen, Bloeij, IJk, Haert, Reijn en Brainport Human Campus, dan krijg je de fragmenten. Ik maak het je zo makkelijk mogelijk!"
       },
       {
-        "speaker": "petra",
-        "text": "Volg de gekleurde pijlen aan de rand van je scherm. Bij elke kraam staat iemand die je hulp kan gebruiken."
+        "speaker": "buddy",
+        "text": "Volg de gekleurde pijlen aan de rand van je scherm. Bij elk gebouw staat iemand die je hulp kan gebruiken. Praat met mij als je even niet weet waar je heen moet."
       },
       {
-        "speaker": "petra",
-        "text": "Tip: begin bij de Brainport Human Campus. Zonder brug kom je nooit bij dat schip!"
+        "speaker": "buddy",
+        "text": "Tip: begin bij Brainport Human Campus, linksonder op de campus. Zonder brug komen we nooit bij die toren!"
       }
     ],
     "petraAgain": [
       {
-        "speaker": "petra",
-        "text": "Je hebt al {aantal} van de 6 fragmenten. Hup, {naam}, het park rekent op je!"
+        "speaker": "buddy",
+        "text": "Je hebt al {aantal} van de 6 fragmenten. Goed bezig, {naam}! Volg de pijlen naar de volgende."
       }
     ],
     "petraDone": [
       {
-        "speaker": "petra",
-        "text": "Alle zes! Over de brug naar het schip en bevrijd Jan. Wij houden de bitterballen warm."
+        "speaker": "buddy",
+        "text": "Alle zes! Over de brug naar de toren en bevrijd prinses Mensenmens. Ik ben vlak achter je!"
       }
     ],
     "guardBlock": [
       {
         "speaker": "guard",
-        "text": "Ho ho, landrot! Zonder alle zes sleutelfragmenten kom je niet langs Pieterbaas."
+        "text": "Snap snap! Zonder alle zes sleutelfragmenten kom je niet langs Kroko Paragraaf."
       },
       {
         "speaker": "guard",
-        "text": "Je hebt er pas {aantal}. Kom maar terug als je compleet bent. Arrr."
+        "text": "Je hebt er pas {aantal}. Dien eerst maar een volledig dossier in. In drievoud."
       }
     ],
     "guardNoBridge": [
       {
         "speaker": "player",
-        "text": "Daar ligt het piratenschip… Maar zonder brug kan ik er niet komen."
+        "text": "Daar staat de Toren van Paperassen… maar zonder brug kom ik niet over de Loop."
       },
       {
         "speaker": "player",
@@ -191,34 +192,41 @@
     "guardOpen": [
       {
         "speaker": "guard",
-        "text": "Zes fragmenten?! Eh… ik ga even… pauze nemen. Wettelijk recht, toch?"
+        "text": "Zes fragmenten?! Volledig dossier… Eh… ik ga even… pauze nemen. Artikel 4, lid 2."
       }
     ],
-    "toFinale": "Naar het piratenschip!",
+    "toFinale": "Naar de Toren van Paperassen!",
     "ambient": [
-      "Iemand mijn zwembroek gezien?",
-      "Ik kwam voor de teambuilding, niet voor de piraten.",
-      "Is dit nog werktijd?",
-      "Die papegaai heeft mijn badge gejat!",
-      "Volgend jaar gewoon bowlen.",
-      "Arrr… ik bedoel: goedemiddag.",
-      "Heeft iemand de wifi-code?",
-      "Ik heb de piraten om hun cv gevraagd. Ze hadden er geen.",
-      "Die kapitein wil zelfs bezuinigen op de zon.",
-      "Stiekem zijn de bitterballen hier best goed."
+      "Ik moest vandaag zes formulieren invullen om een pen te lenen.",
+      "Mijn inbox heeft een inbox.",
+      "Is dit nog werktijd of al overwerk?",
+      "Die krokodil heeft mijn parkeerkaart gejat!",
+      "Weet iemand of ik voor koffie een aanvraag moet indienen?",
+      "Ik heb de kantoorpiraten om hun cv gevraagd. In drievoud, zeiden ze.",
+      "Volgens Rompslomp is lachen tijdens werktijd niet declarabel.",
+      "Heeft iemand de wifi-code? Of moet ik die ook aanvragen?",
+      "Ik mis prinses Mensenmens. Met haar was werken gewoon leuk.",
+      "Stiekem is de koffie hier best goed."
     ],
     "pirateAmbient": [
-      "Arrr! Dit park is van ons!",
-      "Wie heeft mijn ooglapje gezien?",
-      "Ik ben eigenlijk zzp-piraat.",
-      "De kapitein zegt dat vakantiedagen piratenverspilling zijn.",
-      "Mijn functieomschrijving? 'Arrr.' Meer stond er niet."
+      "Arrr! Eerst een formulier invullen!",
+      "Wie heeft mijn nietmachine gezien?",
+      "Ik ben eigenlijk zzp-piraat. Facturen? Graag via de portal.",
+      "De kapitein zegt dat vakantiedagen een administratieve last zijn.",
+      "Mijn functieomschrijving? 'Arrr.' Met bijlage A tot en met F."
+    ],
+    "buddyTips": [
+      "Ik heb je planning al even op een rijtje gezet. Volg de pijlen!",
+      "Formulieren? Die heb ik vooraf ingevuld. Graag gedaan!",
+      "Diep ademhalen. Eén ding tegelijk, dan komt alles goed.",
+      "Wist je dat je op tegels en paden net zo snel loopt? Gewoon even ter info.",
+      "Ik hou de administratie bij, jij doet het leuke werk."
     ]
   },
   "missions": {
     "bhc": {
       "title": "Brug van badges",
-      "zone": "Bouwplaats",
+      "zone": "Brainport Human Campus",
       "npc": "Campus-coach Judith",
       "intro": [
         {
@@ -227,11 +235,11 @@
         },
         {
           "speaker": "npc",
-          "text": "Jij wilt naar dat piratenschip, toch? Dan heb je een brug nodig. En bij ons bouw je bruggen met skills!"
+          "text": "Jij wilt naar de Toren van Paperassen, toch? Dan heb je een brug over de Loop nodig. En bij ons bouw je bruggen met skills!"
         },
         {
           "speaker": "npc",
-          "text": "Helaas hebben de papegaaien van de kapitein onze skill-badges over het hele park verspreid."
+          "text": "Helaas hebben de kantoorpiraten van Rompslomp onze skill-badges over de hele campus verspreid."
         },
         {
           "speaker": "npc",
@@ -241,11 +249,11 @@
       "howTo": [
         {
           "icon": "map",
-          "text": "Er liggen 9 badges in het park. Volg de pijlen en loop eroverheen."
+          "text": "Er liggen 9 badges op de campus. Volg de pijlen en loop eroverheen."
         },
         {
           "icon": "warning",
-          "text": "Pas op voor de papegaaien: die jatten een badge en verstoppen hem opnieuw."
+          "text": "Pas op voor de handlangers van Rompslomp: die jatten een badge en verstoppen hem opnieuw."
         },
         {
           "icon": "clock",
@@ -254,7 +262,7 @@
       ],
       "huntStart": "Zoek de 9 badges!",
       "badgeGot": "Badge: {badge}!",
-      "stolen": "Papegaai! Badge gejat!",
+      "stolen": "Gejat! Badge kwijt!",
       "huntDone": "Alle badges! Terug naar Judith!",
       "huntTimeout": "Tijd op! De laatste badges vliegen vanzelf naar je toe…",
       "buildTitle": "Bouw de brug",
@@ -296,16 +304,16 @@
     },
     "driessen": {
       "title": "Werven & plaatsen",
-      "zone": "Receptieplein",
+      "zone": "Voordeur Driessen",
       "npc": "Recruiter Kieran",
       "intro": [
         {
           "speaker": "npc",
-          "text": "{naam}! Kieran hier, van Driessen. De piraten hebben al het parkpersoneel weggejaagd!"
+          "text": "{naam}! Kieran hier, van Driessen. Rompslomp heeft al het campuspersoneel bedolven onder formulieren. Ze zijn gevlucht!"
         },
         {
           "speaker": "npc",
-          "text": "Geen strandwacht, geen kok, geen monteur… en de koffieautomaat is ook stuk. Dit is een crisis."
+          "text": "Geen receptionist, geen kok, geen monteur… en de koffieautomaat is ook stuk. Dit is een crisis."
         },
         {
           "speaker": "npc",
@@ -313,7 +321,7 @@
         },
         {
           "speaker": "npc",
-          "text": "Let op: er zitten ook een paar piraten in vermomming tussen. Die herken je aan het ooglapje."
+          "text": "Let op: er zitten ook een paar kantoorpiraten in vermomming tussen. Die herken je aan het ooglapje."
         }
       ],
       "howTo": [
@@ -327,7 +335,7 @@
         },
         {
           "icon": "skull",
-          "text": "Piraat in vermomming? Sleep hem naar de prullenbak!"
+          "text": "Kantoorpiraat in vermomming? Sleep hem naar de prullenbak!"
         },
         {
           "icon": "clock",
@@ -340,14 +348,14 @@
       "perfect": "Perfecte match!",
       "skillOnly": "Goed, maar niet op het juiste moment",
       "wrongSkill": "Die kan dat niet!",
-      "pirateHired": "Je hebt een piraat aangenomen!",
-      "pirateRejected": "Piraat ontmaskerd!",
+      "pirateHired": "Je hebt een kantoorpiraat aangenomen!",
+      "pirateRejected": "Kantoorpiraat ontmaskerd!",
       "goodRejected": "Zonde, dat was een prima kandidaat",
       "combo": "Combo x{n}!",
       "outro": [
         {
           "speaker": "npc",
-          "text": "Het park draait weer! De strandwacht zwaait, de kok kookt en de barista… barista't."
+          "text": "De campus draait weer! De receptionist lacht, de kok kookt en de barista… barista't."
         },
         {
           "speaker": "npc",
@@ -355,11 +363,11 @@
         }
       ],
       "roles": {
-        "lifeguard": "Strandwacht",
+        "lifeguard": "Receptionist",
         "cook": "Kok",
         "mechanic": "Monteur",
         "barista": "Barista",
-        "entertainer": "Animator",
+        "entertainer": "Eventmanager",
         "cleaner": "Schoonmaker"
       },
       "shifts": {
@@ -393,22 +401,22 @@
         "Kapitein Haak-Nee",
         "Blauwbaard B.V.",
         "Één-Oog Erik",
-        "Zeerover Zef"
+        "Paperclip Piet"
       ],
-      "pirateCv": "CV: '7 zeeën ervaring'"
+      "pirateCv": "CV: '7 jaar formulieren'"
     },
     "bloeij": {
       "title": "Fit aan het werk",
-      "zone": "Strand",
+      "zone": "Bloeij",
       "npc": "Vitaliteitscoach Anne",
       "intro": [
         {
           "speaker": "npc",
-          "text": "Hé {naam}, ik ben Anne van Bloeij. Kijk dat strand eens: overal uitgeputte collega's."
+          "text": "Hé {naam}, ik ben Anne van Bloeij. Kijk eens om je heen: overal uitgeputte collega's."
         },
         {
           "speaker": "npc",
-          "text": "De piraten lopen rond met megafoons en jagen iedereen de stress in. Arm strand."
+          "text": "De kantoorpiraten lopen rond met megafoons en deadlines en jagen iedereen de stress in."
         },
         {
           "speaker": "npc",
@@ -434,7 +442,7 @@
         },
         {
           "icon": "megaphone",
-          "text": "Ontwijk de piraten met megafoons: die zorgen voor stress!"
+          "text": "Ontwijk de kantoorpiraten met megafoons: die zorgen voor stress!"
         }
       ],
       "vitality": "Teamvitaliteit",
@@ -478,7 +486,7 @@
         {
           "name": "Hassan",
           "complaint": "back",
-          "line": "Mijn rug! Ik kan niet meer tillen bij de bootverhuur."
+          "line": "Mijn rug! Ik moest de hele dag dozen vol dossiers tillen."
         },
         {
           "name": "Marieke",
@@ -508,7 +516,7 @@
         {
           "name": "Oscar",
           "complaint": "low",
-          "line": "Ik zit sinds de lunch alleen maar op deze ligstoel. Geen energie."
+          "line": "Ik zit sinds de lunch alleen maar op dit bankje. Geen energie."
         }
       ],
       "answers": {
@@ -522,12 +530,12 @@
     },
     "ijk": {
       "title": "Data stroomt, loon klopt",
-      "zone": "Pomphal onder het zwembad",
+      "zone": "IJk",
       "npc": "Payroll-held Bart",
       "intro": [
         {
           "speaker": "npc",
-          "text": "{naam}! Bart van IJk hier. De piraten hebben de loonadministratie gesaboteerd!"
+          "text": "{naam}! Bart van IJk hier. Rompslomps kantoorpiraten hebben de loonadministratie gesaboteerd!"
         },
         {
           "speaker": "npc",
@@ -539,7 +547,7 @@
         },
         {
           "speaker": "npc",
-          "text": "Iedereen moet vrijdag wel gewoon betaald worden. Ook de piraten, helaas."
+          "text": "Iedereen moet vrijdag wel gewoon betaald worden. Ook de kantoorpiraten, helaas."
         }
       ],
       "howTo": [
@@ -606,16 +614,16 @@
     },
     "haert": {
       "title": "De regisseur",
-      "zone": "Jachthaven",
+      "zone": "Het Atelier",
       "npc": "Regisseur Roel",
       "intro": [
         {
           "speaker": "npc",
-          "text": "Ahoy {naam}! Roel van Haert. Ik regel de inhuur van specialisten voor de opdrachtgevers in het park."
+          "text": "Hoi {naam}! Roel van Haert. Ik regel de inhuur van specialisten voor de opdrachtgevers op de campus."
         },
         {
           "speaker": "npc",
-          "text": "Door de piraten is het hier een gekkenhuis: iedereen heeft nú een specialist nodig."
+          "text": "Door Rompslomp is het hier een gekkenhuis: iedereen heeft nú een specialist nodig."
         },
         {
           "speaker": "npc",
@@ -623,7 +631,7 @@
         },
         {
           "speaker": "npc",
-          "text": "En pas op: een piraat probeert 'gelukszoekers' tussen de aanbieders te smokkelen. Check altijd het KvK-nummer!"
+          "text": "En pas op: een kantoorpiraat probeert 'gelukszoekers' tussen de aanbieders te smokkelen. Check altijd het KvK-nummer!"
         }
       ],
       "howTo": [
@@ -676,16 +684,16 @@
       ],
       "jobs": [
         {
-          "title": "Bootmonteur",
-          "client": "Jachthaven"
+          "title": "Onderhoudsmonteur",
+          "client": "Driessen"
         },
         {
-          "title": "Zwembadtechnicus",
-          "client": "Subtropisch zwembad"
+          "title": "Installatietechnicus",
+          "client": "De Loods"
         },
         {
           "title": "Interim-chef-kok",
-          "client": "Strandpaviljoen"
+          "client": "Bedrijfsrestaurant"
         },
         {
           "title": "IT-specialist",
@@ -693,27 +701,11 @@
         },
         {
           "title": "Elektricien",
-          "client": "Bungalowpark"
+          "client": "Het Atelier"
         },
         {
           "title": "Projectleider",
-          "client": "Parkdirectie"
-        },
-        {
-          "title": "Duikinstructeur",
-          "client": "Watersportcentrum"
-        },
-        {
-          "title": "Hovenier",
-          "client": "Groenbeheer"
-        },
-        {
-          "title": "Data-analist",
-          "client": "Marketing"
-        },
-        {
-          "title": "Event-manager",
-          "client": "Feestzaal"
+          "client": "Campusdirectie"
         }
       ],
       "providers": [
@@ -739,12 +731,12 @@
     },
     "reijn": {
       "title": "Quickscan aan dek",
-      "zone": "Piratenkamp op de pier",
+      "zone": "Het Atelier",
       "npc": "Bootsvrouw Wendy",
       "intro": [
         {
           "speaker": "npc",
-          "text": "Psst… jij bent toch {naam}? Ik ben Wendy, bootsvrouw bij de piraten. Of nou ja… nog wel."
+          "text": "Psst… jij bent toch {naam}? Ik ben Wendy, bootsvrouw bij de kantoorpiraten van Rompslomp. Of nou ja… nog wel."
         },
         {
           "speaker": "npc",
@@ -798,7 +790,7 @@
         },
         {
           "speaker": "npc",
-          "text": "Wij helpen je straks op het schip. En hier: het sleutelfragment dat de kapitein bij ons had verstopt. Namens Reijn!"
+          "text": "Wij helpen je straks in de toren. En hier: het sleutelfragment dat de kapitein bij ons had verstopt. Namens Reijn!"
         }
       ],
       "questions": {
@@ -1043,29 +1035,29 @@
     }
   },
   "finale": {
-    "title": "Het piratenschip",
+    "title": "De Toren van Paperassen",
     "intro": [
       {
         "speaker": "captain",
-        "text": "Arrr! Dus jij bent die {naam} die mijn hele park op stelten zet?"
+        "text": "Arrr! Dus jij bent die {naam} die mijn hele campus op stelten zet? Heb je daar wel een formulier voor?"
       },
       {
         "speaker": "captain",
-        "text": "Ik ben Kapitein Kostenpost! Personeel? Overbodig! Vitaliteit? Onzin! Loonstroken? Overrated!"
+        "text": "Ik ben Kapitein Rompslomp! Werkgeluk? Niet in de begroting! Overleg? Eerst een vergaderverzoek! Mensen? Dat zijn dossiers!"
       },
       {
         "speaker": "jan",
-        "text": "{naam}! Wat fijn dat je er bent! Ik zit hier al de hele middag zonder koffie."
+        "text": "{naam}! Wat fijn dat je er bent! Ik zit hier al de hele dag tussen de ordners. Help!"
       },
       {
         "speaker": "captain",
-        "text": "Stil daar, Driessen! Wil je hem bevrijden? Dan moet je eerst langs mij. Arrr!"
+        "text": "Stil daar, prinses! Wil je haar bevrijden? Dan moet je eerst langs mij én langs Kroko Paragraaf. Arrr!"
       }
     ],
     "helpers": "{n} overgelopen crewleden helpen je!",
     "noHelpers": "Je staat er alleen voor… succes!",
-    "phase1": "Fase 1: Bemanning matchen",
-    "phase1How": "Kies voor elke post aan dek de crew met de juiste vaardigheid. Elke goede match vuurt een kanon af!",
+    "phase1": "Fase 1: De juiste mens op de juiste plek",
+    "phase1How": "Kies voor elke post in de toren de crew met de juiste vaardigheid. Elke goede match schiet een gat in de papierberg!",
     "phase2": "Fase 2: Koppelen",
     "phase2How": "Verbind de touwen van de katrol naar de sloten van de kooi. Tik op een stuk om het te draaien.",
     "phase3": "Fase 3: Adviseren",
@@ -1077,33 +1069,33 @@
     "hit": "Raak!",
     "miss": "Mis!",
     "posts": {
-      "cannon": "Kanon",
-      "helm": "Roer",
-      "galley": "Kombuis",
-      "crow": "Kraaiennest"
+      "cannon": "Archief",
+      "helm": "Planning",
+      "galley": "Kantine",
+      "crow": "Uitkijkpost"
     },
     "skills": {
-      "cannon": "Knallen",
-      "helm": "Sturen",
+      "cannon": "Ordenen",
+      "helm": "Plannen",
       "galley": "Koken",
       "crow": "Uitkijken",
-      "decoy": "Grog drinken"
+      "decoy": "Formulieren stempelen"
     },
     "claims": [
       {
-        "claim": "Personeel is alleen maar een kostenpost! Weg ermee!",
+        "claim": "Elk verlofverzoek in drievoud, met stempel en handtekening van drie managers!",
         "options": [
-          "Mensen zijn je belangrijkste kapitaal: werf en plaats ze goed, dan verdienen ze zichzelf terug.",
-          "Klopt, robots zijn goedkoper.",
-          "Dan huren we gewoon nog meer piraten in."
+          "Slimme HR-processen en selfservice maken verlof aanvragen in één klik mogelijk.",
+          "Klopt, en liefst met een postduif.",
+          "Dan schaffen we verlof gewoon af."
         ],
         "answer": 0
       },
       {
-        "claim": "Ziek? Gewoon harder werken, dan gaat het vanzelf over!",
+        "claim": "Ziek? Eerst formulier Z-12 invullen, dan pas beter worden!",
         "options": [
-          "Een emmer grog lost alles op.",
-          "Goede begeleiding en vitaliteit voorkomen langdurig verzuim, en dat scheelt juist geld.",
+          "Een stempel geneest alles.",
+          "Goede begeleiding en aandacht voor vitaliteit voorkomen langdurig verzuim, en dat scheelt juist geld.",
           "Ziek melden is muiterij!"
         ],
         "answer": 1
@@ -1112,31 +1104,31 @@
         "claim": "Salarisadministratie doe ik met een veer en een inktpot. Software is onzin!",
         "options": [
           "Inkt is ook best duur, ja.",
-          "Je kunt het beter aan de papegaai vragen.",
+          "Je kunt het beter aan de krokodil vragen.",
           "Goede HR-software voorkomt fouten. Iedereen krijgt correct en op tijd betaald."
         ],
         "answer": 2
       },
       {
-        "claim": "Externe specialisten? Allemaal gelukszoekers! Ik vertrouw niemand!",
+        "claim": "Externe specialisten? Eerst veertien aanbestedingsrondes en een notaris!",
         "options": [
-          "Met een goede regisseur kies je betrouwbare, gecontroleerde specialisten tegen een eerlijke prijs.",
+          "Met een goede regisseur kies je snel betrouwbare, gecontroleerde specialisten tegen een eerlijke prijs.",
           "Je hebt gelijk, iedereen is een piraat.",
           "Kies gewoon de goedkoopste."
         ],
         "answer": 0
       },
       {
-        "claim": "Cultuur? Ik schreeuw gewoon harder, dan luistert iedereen wel!",
+        "claim": "Cultuur? Ik stuur gewoon meer memo's, dan luistert iedereen wel!",
         "options": [
-          "Een grotere megafoon helpt.",
-          "Psychologische veiligheid en goed leiderschap maken een crew sterker dan schreeuwen.",
-          "Dan maar een strengere plank."
+          "Een grotere stapel memo's helpt.",
+          "Psychologische veiligheid en goed leiderschap maken een team sterker dan regeltjes.",
+          "Dan maar een strenger reglement."
         ],
         "answer": 1
       },
       {
-        "claim": "Samenwerken met scholen en overheid? Zonde van de tijd!",
+        "claim": "Samenwerken met scholen en overheid? Daar zijn geen formulieren voor!",
         "options": [
           "Klopt, iedereen voor zich.",
           "Scholen zijn voor landrotten.",
@@ -1146,10 +1138,10 @@
       }
     ],
     "captainHurt": [
-      "Au! Mijn begroting!",
+      "Au! Mijn formulieren!",
       "Arrr! Dat was een goede!",
       "Nee! Niet dat argument!",
-      "Mijn hoed! Mijn prachtige hoed!"
+      "Mijn stempel! Mijn prachtige stempel!"
     ],
     "captainLaugh": [
       "Hahaha! Precies wat ik dacht!",
@@ -1159,11 +1151,11 @@
     "victory": [
       {
         "speaker": "captain",
-        "text": "Nee! Mijn argumenten zijn op! Mijn kostenposten! Mijn… ARRRR!"
+        "text": "Nee! Mijn regels zijn op! Mijn formulieren! Mijn… ARRRR!"
       },
       {
         "speaker": "captain",
-        "text": "Ik ga wel een cursus doen. Iets met 'mensgericht leiderschap'. Ahoi!"
+        "text": "Misschien… misschien kan het ook wel wat simpeler. Ik ga een cursus doen. Iets met 'minder regels, meer mensen'."
       },
       {
         "speaker": "jan",
@@ -1171,11 +1163,11 @@
       },
       {
         "speaker": "jan",
-        "text": "Werven, fit houden, goed betalen, slim inhuren, sterk organiseren en samen bouwen aan talent."
+        "text": "Werven, fit houden, goed betalen, slim inhuren, sterk organiseren en samen bouwen aan talent. Minder rompslomp, meer werkgeluk!"
       },
       {
         "speaker": "jan",
-        "text": "Iedereen naar het strand: de bitterballen zijn van mij!"
+        "text": "Iedereen naar het terras: de koffie is van mij!"
       }
     ],
     "lose": "De kapitein houdt het nog vol… probeer deze fase opnieuw!",
@@ -1189,10 +1181,11 @@
       "schild tegen één fout in fase 3",
       "in fase 3 één fout antwoord weggestreept",
       "+10 seconden in fase 2"
-    ]
+    ],
+    "buddyHelp": "Buddy helpt mee!"
   },
   "credits": {
-    "title": "Jan is vrij!",
+    "title": "Prinses Mensenmens is vrij!",
     "yourScore": "Jouw score",
     "yourTime": "Jouw tijd",
     "submit": "Op het leaderboard!",
@@ -1201,7 +1194,7 @@
     "savedOffline": "Geen internet: je score wordt later alsnog verstuurd.",
     "playAgain": "Terug naar het menu",
     "lines": [
-      "PIRATES OF PORT ZÉLANDE",
+      "DRIESSEN'S DEN",
       "",
       "Met dank aan alle collega's van",
       "Driessen · Bloeij · IJk · Haert · Reijn · Brainport Human Campus",
@@ -1209,14 +1202,14 @@
       "Held van de dag",
       "{naam}",
       "",
-      "Kapitein Kostenpost",
-      "volgt nu een cursus mensgericht leiderschap",
+      "Kapitein Rompslomp",
+      "volgt nu een cursus 'minder regels, meer mensen'",
       "",
-      "Polly Policy",
+      "Kroko Paragraaf",
       "is omgeschoold tot vlogger",
       "",
-      "Geen piraten werden gekwetst tijdens dit teamuitje.",
-      "Wel een paar begrotingen.",
+      "Er werden geen mensen gekwetst tijdens dit avontuur.",
+      "Wel een paar formulieren.",
       "",
       "Bedankt voor het spelen!"
     ],

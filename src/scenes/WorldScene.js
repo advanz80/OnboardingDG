@@ -15,8 +15,9 @@ import { makeCharacter, ensureAnims, randomLook, pirateLook, faceMove } from '..
 import { rng } from '../gfx/draw.js';
 import { buildTerrainChunks, inPoly, inRect, onInfrastructure } from '../world/terrain.js';
 import { makeCampusBuildings } from '../gfx/tex/campus.js';
+import { TOWER_TOP } from '../gfx/tex/rompslomp.js';
 import {
-  WORLD_W, WORLD_H, LAND, PLAZA, POND, BRIDGE, SHIP, SPAWN, GATE, STATIONS, PETRA, GUARD,
+  WORLD_W, WORLD_H, LAND, PLAZA, POND, BRIDGE, TOWER, SPAWN, GATE, STATIONS, PETRA, GUARD,
   BRIDGE_SIGN, FINALE_RETURN, BUILDINGS, NEIGHBOURS, TREES, BADGE_SPOTS, pt,
 } from '../world/layout.js';
 
@@ -90,7 +91,7 @@ export class WorldScene extends Phaser.Scene {
           onDone: () => {
             s.seenIntro = true; SaveManager.save();
             this.hud.toast(t(isTouch(this) ? 'hud.moveHintTouch' : 'hud.moveHintKeys'), HEX.cream, 'shoe', 4000);
-            this.time.delayedCall(4600, () => this.hud.toast(t('missions.bhc.zone') + ' → ' + BRANDS.bhc.name, BRANDS.bhc.color, 'map'));
+            this.time.delayedCall(4600, () => this.hud.toast('→ ' + BRANDS.bhc.name, BRANDS.bhc.color, 'map'));
           },
         });
       });
@@ -237,14 +238,18 @@ export class WorldScene extends Phaser.Scene {
   }
 
   buildShipArea() {
-    // piratenschip
-    this.ship = this.add.image(SHIP.x, SHIP.y, 'pirateship').setOrigin(0.5, 0.86).setScale(0.9).setDepth(SHIP.y - 60);
-    this.tweens.add({ targets: this.ship, y: SHIP.y + 6, angle: { from: -1.2, to: 1.2 }, duration: 2200, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
-    // kapitein + Jan in kooi op het dek
-    this.deckCaptain = this.add.sprite(SHIP.x + 120, SHIP.y - 110, 'npc_captain', 'idle').setOrigin(0.5, 1).setDepth(SHIP.y - 59);
+    // Toren van Paperassen met Rompslomp en prinses Mensenmens (in een kooi) bovenop
+    const topY = TOWER.y - TOWER_TOP;
+    this.tower = this.add.image(TOWER.x, TOWER.y, 'papertower').setOrigin(0.5, 1).setDepth(TOWER.y);
+    this.deckCaptain = this.add.sprite(TOWER.x + 70, topY + 4, 'npc_captain', 'angry').setOrigin(0.5, 1).setDepth(TOWER.y + 1);
     this.tweens.add({ targets: this.deckCaptain, y: this.deckCaptain.y - 6, duration: 300, yoyo: true, repeat: -1, repeatDelay: 900 });
-    this.add.sprite(SHIP.x - 60, SHIP.y - 108, 'npc_jan', 'tired').setOrigin(0.5, 1).setDepth(SHIP.y - 59);
-    this.add.image(SHIP.x - 60, SHIP.y - 98, 'cage').setOrigin(0.5, 1).setScale(0.75).setDepth(SHIP.y - 58);
+    this.add.sprite(TOWER.x - 60, topY + 2, 'npc_jan', 'sad').setOrigin(0.5, 1).setDepth(TOWER.y + 1);
+    this.add.image(TOWER.x - 60, topY + 12, 'cage').setOrigin(0.5, 1).setScale(0.75).setDepth(TOWER.y + 2);
+    // dwarrelende formulieren
+    this.add.particles(TOWER.x, topY - 40, 'paper_sheet', {
+      x: { min: -160, max: 160 }, speedY: { min: 20, max: 60 }, speedX: { min: -40, max: 40 }, rotate: { min: 0, max: 360 },
+      lifespan: 6000, frequency: 700, scale: { min: 0.6, max: 1 }, alpha: { start: 1, end: 0 },
+    }).setDepth(TOWER.y + 3);
 
     // tijdelijk: piratenspullen aan de oever van de Schootense Loop
     [[2990, 1990], [3030, 2010]].forEach(([x, y]) => this.addProp('barrel', x, y, { r: 18 }));
@@ -257,6 +262,7 @@ export class WorldScene extends Phaser.Scene {
 
     this.sign = this.addProp('sign', BRIDGE_SIGN.x, BRIDGE_SIGN.y, { r: 14 });
     this.signText = this.add.text(BRIDGE_SIGN.x, BRIDGE_SIGN.y - 65, 'BRUG\nIN AANBOUW', textStyle(13, P.ink, { align: 'center' })).setOrigin(0.5).setDepth(BRIDGE_SIGN.y + 1);
+    this.sign.setVisible(!this.bridgeBuilt); this.signText.setVisible(!this.bridgeBuilt);
     for (let i = 0; i < 3; i++) this.addProp('pillar', BRIDGE.x + 10 + i * 30, BRIDGE.y + BRIDGE.h + 20, null, { scale: 0.5 }).setAlpha(this.bridgeBuilt ? 0 : 1);
     this.interactables.push({
       x: BRIDGE_SIGN.x, y: BRIDGE_SIGN.y, r: 110, active: () => !this.bridgeBuilt, label: () => t('hud.talk'),
@@ -299,19 +305,20 @@ export class WorldScene extends Phaser.Scene {
   }
 
   buildNPCs() {
-    // Petra bij de ingang
-    this.petra = this.add.sprite(PETRA.x, PETRA.y, 'npc_petra', 'idle').setOrigin(0.5, 0.92).setDepth(PETRA.y).setScale(CS);
-    this.tweens.add({ targets: this.petra, scaleY: { from: CS, to: CS * 1.04 }, duration: 900, yoyo: true, repeat: -1 });
-    this.colliders.push({ x: PETRA.x, y: PETRA.y, r: 18 });
-    const pIt = {
-      x: PETRA.x, y: PETRA.y, r: 100, label: () => t('hud.talk'),
+    // Buddy: wacht bij de ingang en loopt na de intro overal met je mee. Praten = aantikken.
+    const bpos = SaveManager.state.seenIntro && SaveManager.state.pos ? { x: SaveManager.state.pos.x - 70, y: SaveManager.state.pos.y + 10 } : PETRA;
+    this.buddy = this.add.sprite(bpos.x, bpos.y, 'npc_buddy', 'idle').setOrigin(0.5, 0.92).setScale(CS);
+    this.buddyAnim = ensureAnims(this, 'npc_buddy');
+    this.dyn.push(this.buddy);
+    this.buddyTip = 30000;
+    this.buddyIt = {
+      x: bpos.x, y: bpos.y, r: 130,
       act: () => {
         const n = SaveManager.fragmentCount();
         showDialog(this, { lines: n === 6 ? t('story.petraDone') : t('story.petraAgain', { aantal: n }) });
       },
     };
-    this.interactables.push(pIt);
-    this.makeTappable(this.petra, pIt);
+    this.makeTappable(this.buddy, this.buddyIt);
 
     // rondlopende collega's en piraten
     const r = rng(99);
@@ -662,6 +669,28 @@ export class WorldScene extends Phaser.Scene {
     for (const it of this.interactables) if (it.obj) { it.x = it.obj.spr.x; it.y = it.obj.spr.y; }
   }
 
+  updateBuddy(dt) {
+    const b = this.buddy, p = this.player;
+    this.buddyIt.x = b.x; this.buddyIt.y = b.y;
+    if (this.buddyBubble) this.buddyBubble.spr = b;
+    if (!SaveManager.state.seenIntro) { faceMove(b, 'npc_buddy', 0, 0); return; }
+    const dx = p.x - b.x, dy = p.y - b.y, d = Math.hypot(dx, dy);
+    if (d > 1400) { b.setPosition(p.x - 60, p.y + 10); return; }     // bijv. na een missie of teleport
+    if (d > 95) {
+      const sp = (d > 260 ? SPEED * 1.25 : SPEED * 0.9) * dt / 1000;
+      b.x += (dx / d) * Math.min(sp, d - 80); b.y += (dy / d) * Math.min(sp, d - 80);
+      faceMove(b, 'npc_buddy', dx, dy);
+    } else faceMove(b, 'npc_buddy', 0, 0);
+    // af en toe een handige tip
+    this.buddyTip -= dt;
+    if (this.buddyTip <= 0 && !this.dialogOpen && !this.busy && !this.hunt) {
+      this.buddyTip = 40000 + Math.random() * 20000;
+      const w = this.buddyBubble || (this.buddyBubble = { spr: b, type: 'c', bubble: null });
+      this.say(w, Phaser.Utils.Array.GetRandom(t('story.buddyTips')));
+    }
+    if (this.buddyBubble?.bubble) this.buddyBubble.bubble.setPosition(b.x, b.y - 136);
+  }
+
   update(_time, dt) {
     dt = Math.min(dt, 50);
     // water mee laten scrollen
@@ -672,6 +701,7 @@ export class WorldScene extends Phaser.Scene {
     this.waves.tilePositionY = cam.scrollY - _time * 0.006;
 
     this.updateWanderers(dt);
+    this.updateBuddy(dt);
 
     const p = this.player;
     const canMove = !this.dialogOpen && !this.busy && !this.hud?.paused;
@@ -727,7 +757,7 @@ export class WorldScene extends Phaser.Scene {
     } else this.zoneTimer = 0;
     if (zone !== this.currentZone) {
       this.currentZone = zone;
-      if (zone && this.hud?.scene.isActive() && !this.hunt) this.hud.toast(`${t(`missions.${zone}.zone`)} · ${BRANDS[zone].name}`, BRANDS[zone].color, null, 1600);
+      if (zone && this.hud?.scene.isActive() && !this.hunt) { const z = t(`missions.${zone}.zone`), n = BRANDS[zone].name; this.hud.toast(z === n ? n : `${z} · ${n}`, BRANDS[zone].color, null, 1600); }
     }
   }
 

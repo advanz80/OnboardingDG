@@ -1,4 +1,4 @@
-# OnboardingDG 🏴‍☠️
+# Driessen's Den 🐊📄
 
 **Speel online:** https://advanz80.github.io/OnboardingDG/
 
@@ -7,9 +7,11 @@
 > advanz80.github.io: deze variant gebruikt eigen localStorage-sleutels (`odg.*`), een eigen
 > leaderboard (`app = 'OnboardingDG'`) en een eigen app-id in het manifest.
 
-Een top-down avonturengame in de browser voor de collega's van Driessen Groep.
-Piraten hebben Port Zélande gekaapt en Jan Driessen opgesloten op hun schip. Help de zes
-bedrijven van de groep, verzamel zes sleutelfragmenten en versla Kapitein Kostenpost.
+Een top-down onboarding-game in de browser voor (nieuwe) collega's van Driessen Groep, op
+een nagetekende Brainport Human Campus in Helmond. Kapitein Rompslomp (werkdruk, regeltjes,
+bureaucratie en administratie) en zijn paarse krokodil Kroko Paragraaf houden prinses
+Mensenmens gevangen in de Toren van Paperassen. Samen met je maatje Buddy help je de zes
+bedrijven van de groep, verzamel je zes sleutelfragmenten en bevrijd je de prinses.
 
 - **Speelduur:** ca. 20–30 minuten
 - **Besturing:** WASD/pijltjes + spatie (of E/Enter). Op telefoon/tablet: virtuele joystick

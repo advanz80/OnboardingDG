@@ -1,7 +1,7 @@
 // Tekent de campus in chunks van 1024×1024 (canvas-textures).
 import { P } from '../gfx/palette.js';
 import { rng, circle, ellipse, rrect, makeTexture } from '../gfx/draw.js';
-import { LAND, ROADS, ROUNDABOUT, PATHS, PARKINGS, PLAZA, POND, BUILDINGS, NEIGHBOURS, WORLD_W, WORLD_H, sampleSmooth } from './layout.js';
+import { LAND, ISLAND, ROADS, ROUNDABOUT, PATHS, PARKINGS, PLAZA, POND, BUILDINGS, NEIGHBOURS, WORLD_W, WORLD_H, sampleSmooth } from './layout.js';
 
 export const CHUNK = 1024;
 
@@ -176,6 +176,12 @@ export function drawTerrain(ctx) {
   }
   ctx.restore();
   polyPath(ctx, LAND); ctx.strokeStyle = '#4e9a3a'; ctx.lineWidth = 6; ctx.stroke();
+
+  // eilandje met de toren
+  ellipse(ctx, ISLAND.x, ISLAND.y, ISLAND.rx + 40, ISLAND.ry + 30); ctx.fillStyle = 'rgba(160,226,248,0.6)'; ctx.fill();
+  ellipse(ctx, ISLAND.x, ISLAND.y + 8, ISLAND.rx, ISLAND.ry); ctx.fillStyle = '#c9a85e'; ctx.fill();
+  ellipse(ctx, ISLAND.x, ISLAND.y, ISLAND.rx, ISLAND.ry); ctx.fillStyle = P.grass; ctx.fill();
+  ctx.strokeStyle = '#4e9a3a'; ctx.lineWidth = 5; ctx.stroke();
 
   // wegen
   for (const p of DENSE_ROADS) { polyline(ctx, p.dense); ctx.strokeStyle = ASPHALT_EDGE; ctx.lineWidth = p.w + 12; ctx.stroke(); }

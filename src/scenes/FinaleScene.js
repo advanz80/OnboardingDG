@@ -1,4 +1,4 @@
-// Finale op het piratenschip: drie fases (matchen, koppelen, adviseren) tegen Kapitein Kostenpost.
+// Finale bovenop de Toren van Paperassen: drie fases (matchen, koppelen, adviseren) tegen Kapitein Rompslomp.
 // Overgelopen crewleden uit de Reijn-missie geven bonussen.
 import Phaser from 'phaser';
 import { DESIGN } from '../core/layout.js';
@@ -13,12 +13,12 @@ import { dragTap } from '../ui/dragtap.js';
 import { makeCharacter, pirateLook } from '../gfx/CharacterFactory.js';
 import { makeTexture, circle, style } from '../gfx/draw.js';
 import { showDialog } from './DialogScene.js';
-import { makeDeckTexture } from './missions/ReijnMission.js';
+import { makeTowerTopBg } from '../gfx/tex/rompslomp.js';
 import { PipePuzzle } from './missions/PipePuzzle.js';
 import { rng } from '../gfx/draw.js';
 import { BRANDS } from '../config/brands.js';
 
-const POSTS = [['cannon', 'cannon'], ['helm', 'ship'], ['galley', 'chefhat'], ['crow', 'magnifier']];
+const POSTS = [['cannon', 'notebook'], ['helm', 'clock'], ['galley', 'chefhat'], ['crow', 'magnifier']];
 
 export class FinaleScene extends MissionBase {
   constructor() { super('Finale', 'finale', { thresholds: [300, 800, 1200] }); }
@@ -45,23 +45,30 @@ export class FinaleScene extends MissionBase {
   }
 
   drawBackground() {
-    makeDeckTexture(this);
-    this.add.image(0, 0, 'deck_bg').setOrigin(0).setDepth(-100);
-    const { width } = DESIGN;
-    // zeilen op de achtergrond
-    this.add.image(width / 2, 250, 'pirateship').setScale(1.1).setAlpha(0.18).setDepth(-90).setOrigin(0.5, 0.7);
-    // kooi met Jan
+    const { width, height } = DESIGN;
+    if (!this.textures.exists('tower_bg')) makeTowerTopBg(this, width, height);
+    this.add.image(0, 0, 'tower_bg').setOrigin(0).setDepth(-100);
+    // dwarrelende formulieren
+    this.add.particles(0, -40, 'paper_sheet', {
+      x: { min: 0, max: width }, speedY: { min: 30, max: 70 }, speedX: { min: -30, max: 30 }, rotate: { min: 0, max: 360 },
+      lifespan: 9000, frequency: 900, alpha: { start: 0.9, end: 0.2 },
+    }).setDepth(-50);
+    // kooi met prinses Mensenmens
     this.jan = this.add.sprite(640, 330, 'npc_jan', 'tired').setOrigin(0.5, 1).setScale(1.2).setDepth(10);
     this.cage = this.add.image(640, 345, 'cage').setOrigin(0.5, 1).setScale(1.1).setDepth(11);
     this.tweens.add({ targets: this.jan, x: 646, duration: 1200, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
     // kapitein
     this.captain = this.add.sprite(1110, 560, 'npc_captain', 'idle').setOrigin(0.5, 0.92).setScale(2).setDepth(20);
     this.capTween = this.tweens.add({ targets: this.captain, scaleY: 2.06, duration: 600, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
-    this.parrot = this.add.sprite(1150, 330, 'parrot', 'f0').setDepth(21).setScale(0.8);
-    this.tweens.add({ targets: this.parrot, y: 320, duration: 400, yoyo: true, repeat: -1 });
+    // Kroko Paragraaf naast de kapitein
+    this.parrot = this.add.sprite(960, 570, 'npc_guard', 'angry').setOrigin(0.5, 0.92).setScale(1.5).setDepth(19);
+    this.tweens.add({ targets: this.parrot, y: 560, duration: 400, yoyo: true, repeat: -1 });
     // speler + kanon
     this.playerSpr = this.add.sprite(170, 600, 'player', 'idle').setOrigin(0.5, 0.92).setScale(1.7).setDepth(20);
     this.cannon = this.add.image(300, 620, 'cannon').setScale(1.1).setDepth(19).setFlipX(true);
+    // Buddy staat naast de speler
+    this.buddySpr = this.add.sprite(330, 560, 'npc_buddy', 'happy').setOrigin(0.5, 0.92).setScale(1.5).setDepth(18);
+    this.tweens.add({ targets: this.buddySpr, scaleY: 1.56, duration: 500, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
     // overgelopen crew
     const n = SaveManager.state?.crewDefected || 0;
     this.helpers = n;
@@ -193,8 +200,7 @@ export class FinaleScene extends MissionBase {
         const x = 505 + (i % 2) * 280, y = 360 + Math.floor(i / 2) * 125;
         const c = this.add.container(x, y);
         c.add(card(this, 0, 0, 264, 112, 0xfff3d6));
-        if (key === 'cannon') c.add(this.add.image(-82, 0, 'cannon').setScale(0.6));
-        else c.add(this.add.image(-82, 0, 'icons', icon).setDisplaySize(64, 64));
+        c.add(this.add.image(-82, 0, 'icons', icon).setDisplaySize(64, 64));
         c.add(this.add.text(-40, 0, this.T(`posts.${key}`), textStyle(28, P.ink)).setOrigin(0, 0.5));
         c.setSize(264, 112);
         c.post = key;
@@ -368,7 +374,10 @@ export class FinaleScene extends MissionBase {
       onUpdate: () => { c.x = sx + 300 * p.t; c.y = sy - Math.sin(p.t * Math.PI) * 300 + p.t * 120; c.angle = 720 * p.t; },
       onComplete: () => { Audio.sfx('splash'); burst(this, 1260, 560, 'splash', 30, { speed: { min: 200, max: 500 } }); c.setVisible(false); },
     });
-    this.tweens.add({ targets: this.parrot, x: 1400, y: 100, duration: 1500, ease: 'Quad.In' });
+    this.parrot.setFrame('surprised');
+    this.tweens.killTweensOf(this.parrot);
+    this.tweens.add({ targets: this.parrot, x: 1450, duration: 1500, ease: 'Quad.In' });
+    this.buddySpr.setFrame('cheer');
     this.time.delayedCall(1600, () => {
       // kooi open
       Audio.sfx('unlock');

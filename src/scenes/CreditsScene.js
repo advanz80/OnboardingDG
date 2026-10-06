@@ -1,4 +1,4 @@
-// Eindscène: feest op het strand met de bevrijde Jan, aftiteling, score en leaderboard-inzending.
+// Eindscène: feest met de bevrijde prinses Mensenmens, aftiteling, score en leaderboard-inzending.
 import Phaser from 'phaser';
 import { t } from '../core/i18n.js';
 import { P, HEX, textStyle, titleStyle, FONT } from '../gfx/palette.js';
@@ -22,10 +22,12 @@ export class CreditsScene extends Phaser.Scene {
     Audio.music('credits');
     if (!this.textures.exists('sunset_bg')) makeSunsetBg(this, width, height);
     this.add.image(0, 0, 'sunset_bg').setOrigin(0);
-    const ship = this.add.image(-200, 420, 'pirateship').setScale(0.35).setOrigin(0.5, 0.86);
-    this.tweens.add({ targets: ship, x: width + 200, duration: 40000, repeat: -1 });
+    // Kroko Paragraaf loopt beteuterd weg
+    const croc = this.add.sprite(-80, 470, 'npc_guard', 'side_walk1').setOrigin(0.5, 0.92).setScale(1.2);
+    this.time.addEvent({ delay: 240, loop: true, callback: () => croc.setFrame(croc.frame.name === 'side_walk1' ? 'side_walk2' : 'side_walk1') });
+    this.tweens.add({ targets: croc, x: width + 80, duration: 30000, repeat: -1 });
     // feestende cast
-    const cast = ['player', 'npc_jan', 'npc_petra', ...MISSION_IDS.map((id) => `npc_${id}`)];
+    const cast = ['player', 'npc_jan', 'npc_buddy', ...MISSION_IDS.map((id) => `npc_${id}`)];
     cast.forEach((key, i) => {
       if (!this.textures.exists(key)) return;
       const x = 120 + i * 120, y = 660 + (i % 2) * 20;

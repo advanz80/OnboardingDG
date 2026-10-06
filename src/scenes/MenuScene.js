@@ -3,7 +3,7 @@ import { t } from '../core/i18n.js';
 import { P, HEX, textStyle, titleStyle } from '../gfx/palette.js';
 import { isTouch } from '../core/Controls.js';
 import { button, roundButton, panel, logo, transitionTo, dim, bake } from '../ui/widgets.js';
-import { makeMenuClouds, makeMenuBeach } from '../gfx/tex/acbg.js';
+import { makeMenuClouds } from '../gfx/tex/acbg.js';
 import { BRANDS, MISSION_IDS } from '../config/brands.js';
 import { SaveManager } from '../core/SaveManager.js';
 import { Audio } from '../core/AudioEngine.js';
@@ -25,8 +25,8 @@ export class MenuScene extends Phaser.Scene {
     sky.fillRect(0, 0, width, height * 0.55);
     bake(this, sky, 'menu_sky', 0, 0, width, Math.ceil(height * 0.55));
     // zon
-    const sun = this.add.circle(1040, 150, 70, 0xffe066).setStrokeStyle(6, HEX.ink);
-    const rays = this.add.image(1040, 150, 'rays').setScale(1.2).setAlpha(0.6).setTint(0xfff3b0);
+    const sun = this.add.circle(190, 300, 70, 0xffe066).setStrokeStyle(6, HEX.ink);
+    const rays = this.add.image(190, 300, 'rays').setScale(1.2).setAlpha(0.6).setTint(0xfff3b0);
     this.tweens.add({ targets: rays, angle: 360, duration: 40000, repeat: -1 });
     rays.setDepth(-1); sun.setDepth(0);
     // wolken
@@ -36,27 +36,26 @@ export class MenuScene extends Phaser.Scene {
       c.setScale(0.7 + Math.random() * 0.5);
       this.tweens.add({ targets: c, x: width + 200, duration: 60000 + i * 15000, repeat: -1, onRepeat: () => { c.x = -200; } });
     }
-    // zee
-    const seaY = height * 0.55;
-    this.add.tileSprite(0, seaY, width, height - seaY, 'water').setOrigin(0);
-    this.waves = this.add.tileSprite(0, seaY, width, height - seaY, 'waves').setOrigin(0).setAlpha(0.7);
-    this.add.rectangle(0, seaY, width, 6, HEX.foam).setOrigin(0, 0.5);
-
-    // piratenschip
-    this.ship = this.add.image(width + 300, seaY + 120, 'pirateship').setOrigin(0.5, 0.75).setScale(0.75);
-    this.tweens.add({ targets: this.ship, x: -300, duration: 45000, repeat: -1, delay: 500 });
-    this.tweens.add({ targets: this.ship, angle: { from: -3, to: 3 }, y: '+=8', duration: 1800, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
-
-    // strand + palmen voorgrond
-    makeMenuBeach(this, width);
-    this.add.image(0, height - 160, 'menu_beach').setOrigin(0);
-    const palm = (x, y, s, flip) => {
-      this.add.image(x, y, 'palm_trunk').setOrigin(0.5, 1).setScale(s * 1.6).setFlipX(flip);
-      const cr = this.add.image(x + (flip ? 6 : -6) * s, y - 124 * s * 1.6, 'palm_crown').setScale(s * 1.6);
-      this.tweens.add({ targets: cr, angle: { from: -4, to: 4 }, duration: 2200 + Math.random() * 800, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
-    };
-    palm(110, height - 70, 1.1, false); palm(250, height - 50, 0.8, true);
-    palm(width - 120, height - 80, 1.15, true); palm(width - 270, height - 40, 0.85, false);
+    // campus: grasveld met de Toren van Paperassen en Buddy
+    const groundY = height * 0.58;
+    const gr = this.add.graphics();
+    gr.fillStyle(0x7cc95a).fillRect(0, groundY, width, height - groundY);
+    gr.fillStyle(0x6ab84c).fillEllipse(width * 0.25, groundY + 10, width * 0.7, 90).fillEllipse(width * 0.8, groundY + 20, width * 0.6, 80);
+    gr.fillStyle(0x868a93).fillRect(0, height - 120, width, 56);
+    gr.lineStyle(4, 0xffffff, 0.8);
+    for (let x = 20; x < width; x += 60) gr.lineBetween(x, height - 92, x + 30, height - 92);
+    gr.setDepth(-1);
+    this.tower = this.add.image(width - 190, height - 110, 'papertower').setOrigin(0.5, 1).setScale(0.85);
+    this.add.particles(width - 190, 120, 'paper_sheet', {
+      x: { min: -140, max: 140 }, speedY: { min: 30, max: 60 }, speedX: { min: -40, max: 20 }, rotate: { min: 0, max: 360 },
+      lifespan: 7000, frequency: 800, alpha: { start: 1, end: 0 },
+    });
+    for (const [x, s] of [[90, 1.1], [230, 0.85], [width - 420, 0.9]]) this.add.image(x, height - 112, 'tree_round').setOrigin(0.5, 1).setScale(s);
+    this.buddy = this.add.sprite(330, height - 60, 'npc_buddy', 'happy').setOrigin(0.5, 0.92).setScale(2);
+    this.tweens.add({ targets: this.buddy, y: '-=14', duration: 420, yoyo: true, repeat: -1, ease: 'Quad.Out' });
+    const croc = this.add.sprite(width + 60, height - 60, 'npc_guard', 'side_walk1').setOrigin(0.5, 0.92).setScale(1.6).setFlipX(true);
+    this.time.addEvent({ delay: 220, loop: true, callback: () => croc.setFrame(croc.frame.name === 'side_walk1' ? 'side_walk2' : 'side_walk1') });
+    this.tweens.add({ targets: croc, x: -80, duration: 26000, repeat: -1, delay: 1500 });
 
     // titel
     const tt = this.add.text(width / 2, 120, t('game.title'), titleStyle(92, P.gold)).setOrigin(0.5);
@@ -72,7 +71,7 @@ export class MenuScene extends Phaser.Scene {
     const gap = big ? 112 : 88;
     let y = big ? (hasSave ? 300 : 340) : 330;
     if (hasSave) {
-      btns.push(button(this, width / 2, y, t('menu.continue'), () => this.continueGame(), { ...bo, color: HEX.green, icon: 'ship' }));
+      btns.push(button(this, width / 2, y, t('menu.continue'), () => this.continueGame(), { ...bo, color: HEX.green, icon: 'key' }));
       y += gap;
     }
     btns.push(button(this, width / 2, y, t('menu.newGame'), () => this.newGame(hasSave), { ...bo, color: HEX.gold, icon: 'map' }));
