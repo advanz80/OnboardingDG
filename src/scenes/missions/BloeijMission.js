@@ -23,12 +23,10 @@ export class BloeijMission extends MissionBase {
     const { width, height } = DESIGN;
     if (!this.textures.exists('bl_bg')) makeBloeijBg(this);
     this.add.image(0, 0, 'bl_bg').setOrigin(0).setDepth(-100);
-    this.sea = this.add.tileSprite(0, 76, width, 84, 'water').setOrigin(0).setDepth(-99);
-    this.seaW = this.add.tileSprite(0, 76, width, 84, 'waves').setOrigin(0).setDepth(-98).setAlpha(0.7);
-    this.foam = this.add.rectangle(0, 160, width, 10, HEX.foam).setOrigin(0, 0.5).setDepth(-97);
-    this.tweens.add({ targets: this.foam, y: 166, scaleY: 1.6, duration: 1400, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
-    for (const [x, y, v] of [[60, 240, 0], [1230, 420, 2], [150, 420, 3], [1210, 230, 1]]) this.add.image(x, y, `umbrella${v}`).setOrigin(0.5, 1).setScale(0.8).setDepth(y);
-    for (const [x, y] of [[400, 380], [760, 380], [1000, 400], [200, 600]]) this.add.image(x, y, 'towel').setAngle(80).setScale(0.8).setDepth(-50);
+    // terras: parasols, bankjes en een paar bomen op het binnenterrein
+    for (const [x, y, v] of [[60, 260, 0], [1230, 420, 2], [150, 440, 3], [1210, 250, 1]]) this.add.image(x, y, `umbrella${v}`).setOrigin(0.5, 1).setScale(0.8).setDepth(y);
+    for (const [x, y] of [[420, 410], [860, 410]]) this.add.image(x, y, 'bench').setOrigin(0.5, 1).setDepth(y);
+    for (const [x, y] of [[40, 610], [1250, 600]]) this.add.image(x, y, 'tree_round2').setOrigin(0.5, 1).setScale(0.75).setDepth(y);
   }
 
   startGame() {

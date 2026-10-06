@@ -23,12 +23,12 @@ export class BhcMission extends MissionBase {
     this.sea = this.add.tileSprite(0, 300, width, height - 300, 'water').setOrigin(0).setDepth(-99);
     this.seaWaves = this.add.tileSprite(0, 300, width, height - 300, 'waves').setOrigin(0).setDepth(-98).setAlpha(0.6);
     this.add.rectangle(0, 300, width, 6, HEX.foam).setOrigin(0, 0.5).setDepth(-97);
-    const ship = this.add.image(1130, 330, 'pirateship').setScale(0.42).setOrigin(0.5, 0.86).setDepth(-96);
-    this.tweens.add({ targets: ship, angle: { from: -2, to: 2 }, y: 336, duration: 2000, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
-    // strand linksonder
+    // de Toren van Paperassen op zijn eilandje in de Loop
+    this.add.ellipse(1140, 352, 190, 40, HEX.grass).setStrokeStyle(4, 0x4e9a3a).setDepth(-96);
+    this.add.image(1140, 360, 'papertower').setScale(0.36).setOrigin(0.5, 1).setDepth(-96);
+    // grasoever linksonder
     this.add.image(0, 370, 'bhc_beach').setOrigin(0).setDepth(-95);
-    this.add.image(70, 430, 'palm_trunk').setOrigin(0.5, 1).setDepth(-94);
-    this.add.image(68, 312, 'palm_crown').setDepth(-93);
+    this.add.image(70, 440, 'tree_round').setOrigin(0.5, 1).setDepth(-94);
   }
 
   update(time, dt) {

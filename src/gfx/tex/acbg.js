@@ -135,44 +135,115 @@ function hedge(c, x, y, w, h, seed) {
   for (let i = 0; i < w / 40; i++) flower(c, x + 8 + r() * (w - 16), y + 6 + r() * (h - 12), FLOWER_COLS[Math.floor(r() * FLOWER_COLS.length)], 3.2);
 }
 
+// ── Human Campus-bouwstenen ─────────────────────────────────────────────────
+
+const CAMPUS_BANDS = { driessen: '#E2001A', ijk: '#66A48B', atelier: '#f6c33b', rovc: '#3D2152', bloeij: '#EDB23E', bhc: '#3D2152' };
+
+/** Gevel van een kantoorgebouw (vooraanzicht): wand, band in huisstijlkleur, rijen ramen. */
+function facade(c, x, y, w, h, { wall = '#f1ece2', band = null, rows = 2, door = false, seed = 1 } = {}) {
+  const r = rng(seed);
+  rrect(c, x, y, w, h, 6); c.fillStyle = wall; c.fill(); c.strokeStyle = P.line; c.lineWidth = 3; c.stroke();
+  rrect(c, x - 6, y - 10, w + 12, 14, 4); c.fillStyle = shade(wall, -0.18); c.fill(); c.stroke();
+  if (band) { c.fillStyle = band; c.fillRect(x + 3, y + 6, w - 6, 10); }
+  const rh = (h - 34) / rows;
+  for (let row = 0; row < rows; row++) {
+    for (let wx = x + 14; wx + 26 < x + w - 8; wx += 36) {
+      const wy = y + 24 + row * rh;
+      rrect(c, wx, wy, 26, rh - 12, 3);
+      const g = c.createLinearGradient(wx, wy, wx + 26, wy + rh); g.addColorStop(0, '#e4f6ff'); g.addColorStop(1, '#8cc6e2');
+      c.fillStyle = g; c.fill(); c.strokeStyle = shade(wall, -0.45); c.lineWidth = 1.6; c.stroke();
+      if (r() < 0.3) { c.fillStyle = 'rgba(255,255,255,0.6)'; c.fillRect(wx + 4, wy + 3, 5, rh - 20); }
+    }
+  }
+  if (door) {
+    const dx = x + w / 2 - 30, dy = y + h - 64;
+    rrect(c, dx, dy, 60, 62, 3); c.fillStyle = '#5d6b78'; c.fill(); c.strokeStyle = P.line; c.lineWidth = 2.4; c.stroke();
+    c.fillStyle = 'rgba(190,230,250,0.85)'; c.fillRect(dx + 5, dy + 5, 23, 54); c.fillRect(dx + 32, dy + 5, 23, 54);
+  }
+}
+
+/** Silhouet van de campus aan de horizon (Driessen, ROVC, IJk, Het Atelier). */
+function campusSkyline(c, baseY, w, seed) {
+  const r = rng(seed);
+  const blds = [[0.04, 150, 70, 'bloeij'], [0.17, 260, 95, 'driessen'], [0.4, 120, 60, 'rovc'], [0.52, 210, 80, 'ijk'], [0.72, 110, 100, 'atelier']];
+  for (const [fx, bw, bh, id] of blds) {
+    const x = fx * w;
+    c.fillStyle = '#c7d6dc'; rrect(c, x, baseY - bh, bw, bh, 4); c.fill();
+    c.fillStyle = CAMPUS_BANDS[id]; c.globalAlpha = 0.7; c.fillRect(x + 3, baseY - bh + 4, bw - 6, 7); c.globalAlpha = 1;
+    c.fillStyle = 'rgba(255,255,255,0.55)';
+    for (let wy = baseY - bh + 18; wy < baseY - 12; wy += 18) for (let wx = x + 8; wx < x + bw - 12; wx += 16) c.fillRect(wx, wy, 8, 10);
+  }
+  // bomen ervoor
+  for (let x = 0; x < w; x += 34 + r() * 30) {
+    c.fillStyle = r() < 0.5 ? '#7bb898' : '#8fc7a8';
+    circle(c, x, baseY - 8 - r() * 8, 14 + r() * 10); c.fill();
+  }
+}
+
+/** Tegelvloer (betontegels in twee tinten), van bovenaf. */
+function tiles(c, x, y, w, h, seed, { a = '#d9d4ca', b = '#cfc9bd', size = 64 } = {}) {
+  const r = rng(seed);
+  for (let ty = y; ty < y + h; ty += size) for (let tx = x; tx < x + w; tx += size) {
+    c.fillStyle = shade((tx / size + ty / size) % 2 ? a : b, r() * 0.04 - 0.02); c.fillRect(tx, ty, size, size);
+    c.strokeStyle = 'rgba(120,110,100,0.35)'; c.lineWidth = 1.5; c.strokeRect(tx + 0.5, ty + 0.5, size - 1, size - 1);
+  }
+}
+
+/** Grasveld met plukjes en madeliefjes. */
+function lawn(c, x, y, w, h, seed) {
+  const r = rng(seed);
+  c.fillStyle = P.grass; c.fillRect(x, y, w, h);
+  for (let i = 0; i < (w * h) / 9000; i++) { c.fillStyle = r() < 0.6 ? 'rgba(163,223,116,0.35)' : 'rgba(80,160,60,0.18)'; ellipse(c, x + r() * w, y + r() * h, 40 + r() * 70, 20 + r() * 30, r() * 3); c.fill(); }
+  for (let i = 0; i < (w * h) / 900; i++) tuft(c, x + r() * w, y + r() * h, 0.8);
+  for (let i = 0; i < (w * h) / 6000; i++) { const fx = x + r() * w, fy = y + r() * h; c.fillStyle = '#fff'; for (let k = 0; k < 5; k++) { const an = k * 1.26; circle(c, fx + Math.cos(an) * 2.4, fy + Math.sin(an) * 2.4, 1.6); c.fill(); } c.fillStyle = '#ffd23f'; circle(c, fx, fy, 1.5); c.fill(); }
+}
+
+function plant(c, x, y, s = 1) {
+  ellipse(c, x, y + 4, 26 * s, 7 * s); c.fillStyle = 'rgba(30,20,40,0.2)'; c.fill();
+  rrect(c, x - 18 * s, y - 34 * s, 36 * s, 36 * s, 6 * s); c.fillStyle = '#e8e2d6'; c.fill(); c.strokeStyle = P.line; c.lineWidth = 2.4; c.stroke();
+  c.fillStyle = '#5fb044';
+  for (const [dx, dy, rr] of [[0, -58, 18], [-16, -46, 14], [16, -46, 14], [-8, -70, 12], [10, -68, 12]]) { circle(c, x + dx * s, y + dy * s, rr * s); c.fill(); }
+  c.strokeStyle = '#3f8a34'; c.lineWidth = 2; for (const [dx, dy, rr] of [[0, -58, 18], [-16, -46, 14], [16, -46, 14]]) { c.beginPath(); c.arc(x + dx * s, y + dy * s, rr * s, Math.PI * 1.1, Math.PI * 1.6); c.stroke(); }
+}
+
 // ── Missies ─────────────────────────────────────────────────────────────────
 
-/** BHC: lucht met eilandjes op de horizon + strandje linksonder. */
+/** BHC: de Schootense Loop, met aan de overkant de campus. */
 export function makeBhcBg(scene) {
   makeTexture(scene, 'bhc_sky', W, 300, (c) => {
-    sky(c, W, 300, 11, { clouds: 5 });
-    // eilandjes in de verte
-    for (const [x, w, h] of [[180, 260, 34], [620, 180, 22], [930, 300, 40]]) {
-      c.fillStyle = '#8fc7a8'; c.beginPath(); c.ellipse(x, 300, w / 2, h, 0, Math.PI, 0); c.fill();
-      c.fillStyle = '#7bb898';
-      for (let i = 0; i < 5; i++) { circle(c, x - w / 3 + (i * w) / 7.5, 300 - h * 0.7, 9 + (i % 2) * 4); c.fill(); }
-    }
+    sky(c, W, 300, 11, { clouds: 4 });
+    // overkant: grasoever met de campus
+    campusSkyline(c, 286, W, 12);
+    c.fillStyle = '#86c46a'; c.fillRect(0, 282, W, 18);
+    c.fillStyle = '#6aae55'; c.fillRect(0, 294, W, 6);
   });
   makeTexture(scene, 'bhc_beach', 210, 350, (c) => {
+    // grasoever met riet aan deze kant
     c.save();
     c.beginPath(); c.moveTo(0, 10); c.lineTo(150, 50); c.quadraticCurveTo(185, 200, 200, 350); c.lineTo(0, 350); c.closePath();
-    c.clip(); sand(c, 0, 0, 210, 350, 12, { shells: 7 });
+    c.clip(); lawn(c, 0, 0, 210, 350, 12);
     c.restore();
-    c.strokeStyle = P.foam; c.lineWidth = 7;
+    c.strokeStyle = '#4e9a3a'; c.lineWidth = 7;
     c.beginPath(); c.moveTo(0, 10); c.lineTo(150, 50); c.quadraticCurveTo(185, 200, 200, 350); c.stroke();
-    c.strokeStyle = 'rgba(231,191,107,0.7)'; c.lineWidth = 3;
-    c.beginPath(); c.moveTo(0, 18); c.lineTo(144, 57); c.quadraticCurveTo(177, 200, 192, 350); c.stroke();
-    for (const [x, y] of [[30, 300], [60, 330], [120, 320]]) tuft(c, x, y, 1.1);
+    c.strokeStyle = '#4e8a3a'; c.lineWidth = 3;
+    const r = rng(13);
+    for (let i = 0; i < 26; i++) { const t = i / 26, x = 150 + 50 * t * t - 6, y = 50 + 300 * t; c.beginPath(); c.moveTo(x, y); c.lineTo(x + (r() - 0.3) * 10, y - 22 - r() * 12); c.stroke(); }
   });
 }
 
-/** Driessen: gezellig plein met kasseien, haag en bloembakken. */
+/** Driessen: voor de voordeur. Gevel met glazen deuren bovenin, tegelplein, haag onderin. */
 export function makeDriessenBg(scene) {
   makeTexture(scene, 'dr_bg', W, H, (c) => {
-    cobbles(c, 0, 0, W, H, 21);
+    tiles(c, 0, 0, W, H, 21, { a: '#e6e1d7', b: '#dcd6ca' });
+    facade(c, -10, -20, W + 20, 96, { band: CAMPUS_BANDS.driessen, rows: 1, seed: 22 });
     // zachte middenvlek zodat de kaarten goed leesbaar blijven
     const g = c.createRadialGradient(W / 2, H / 2, 100, W / 2, H / 2, 700);
     g.addColorStop(0, 'rgba(255,248,231,0.45)'); g.addColorStop(1, 'rgba(255,248,231,0)');
     c.fillStyle = g; c.fillRect(0, 0, W, H);
     hedge(c, -20, H - 46, W + 40, 60, 22);
-    // bloembakken in de hoeken
+    // betonnen plantenbakken in de hoeken
     for (const x of [24, W - 124]) {
-      rrect(c, x, H - 96, 100, 40, 8); c.fillStyle = '#c98d4f'; c.fill(); c.strokeStyle = '#7a4a22'; c.lineWidth = 2.6; c.stroke();
+      rrect(c, x, H - 96, 100, 40, 6); c.fillStyle = '#b9b3a8'; c.fill(); c.strokeStyle = '#7d776d'; c.lineWidth = 2.6; c.stroke();
       c.fillStyle = '#6bbd4b'; for (let i = 0; i < 6; i++) { circle(c, x + 12 + i * 15, H - 98, 10); c.fill(); }
       const r = rng(x);
       for (let i = 0; i < 7; i++) flower(c, x + 10 + i * 13, H - 104 + r() * 8, FLOWER_COLS[i % FLOWER_COLS.length], 4);
@@ -180,82 +251,65 @@ export function makeDriessenBg(scene) {
   });
 }
 
-/** Bloeij: strand met ribbels, schelpjes, zeesterren en voetstapjes. */
+/** Bloeij: het terras op het binnenterrein, met bovenin de gevel van Driessen. */
 export function makeBloeijBg(scene) {
   makeTexture(scene, 'bl_bg', W, H, (c) => {
-    sand(c, 0, 0, W, H, 5, { shells: 34 });
-    // natte rand langs het water
-    const g = c.createLinearGradient(0, 150, 0, 205); g.addColorStop(0, 'rgba(201,160,85,0.75)'); g.addColorStop(1, 'rgba(201,160,85,0)');
-    c.fillStyle = g; c.fillRect(0, 150, W, 55);
-    // voetstapjes
-    const r = rng(6);
-    c.fillStyle = 'rgba(190,145,70,0.35)';
-    for (let i = 0; i < 14; i++) { const x = 300 + i * 48, y = 560 - Math.sin(i * 0.5) * 40 + (i % 2) * 14; ellipse(c, x, y, 7, 4, 0.2); c.fill(); circle(c, x + 8, y - 1, 2.4); c.fill(); }
-    // duinrand met helmgras onderin
-    c.fillStyle = '#f2cf7c'; c.beginPath(); c.moveTo(0, H); c.lineTo(0, H - 28);
-    for (let x = 0; x <= W; x += 80) c.quadraticCurveTo(x + 40, H - 46 - r() * 10, x + 80, H - 28);
-    c.lineTo(W, H); c.closePath(); c.fill();
-    for (let x = 20; x < W; x += 34 + r() * 30) tuft(c, x, H - 18 - r() * 12, 1.2);
+    lawn(c, 0, 0, W, H, 5);
+    // houten terras in het midden
+    rrect(c, 230, 250, 820, 330, 18); c.fillStyle = '#c9ad7a'; c.fill();
+    c.save(); rrect(c, 238, 258, 804, 314, 14); c.clip(); planks(c, 238, 258, 804, 314, 7, { col: '#d8b07a', ph: 30, pl: 160 }); c.restore();
+    rrect(c, 238, 258, 804, 314, 14); c.strokeStyle = P.line; c.lineWidth = 3; c.stroke();
+    // tegelpad naar beneden
+    tiles(c, 580, 572, 120, H - 572, 6, { size: 40 });
+    // gevel bovenin
+    facade(c, -10, -10, W + 20, 170, { band: CAMPUS_BANDS.driessen, rows: 2, door: true, seed: 8 });
+    // bloemenrand langs de gevel
+    hedge(c, -20, 158, W + 40, 26, 9);
   });
 }
 
-/** IJk: knusse technische ruimte onder het zwembad: tegelwand, buizen, kranen en meters. */
-export function makeIjkBg(scene, brandCss = '#2b8fd6') {
+/** IJk: serverruimte. Kabelgoten in kleuren, serverkasten met lampjes, verhoogde vloer. */
+export function makeIjkBg(scene, brandCss = '#66A48B') {
   makeTexture(scene, 'ijk_bg', W, H, (c) => {
-    // tegelwand
-    c.fillStyle = '#d9eef4'; c.fillRect(0, 0, W, H);
+    c.fillStyle = '#e9eef0'; c.fillRect(0, 0, W, H);
     const r = rng(31);
-    for (let y = 0; y < H; y += 40) for (let x = 0; x < W; x += 40) {
-      rrect(c, x + 2, y + 2, 36, 36, 6); c.fillStyle = shade('#e8f6fa', r() * 0.06 - 0.04); c.fill();
-      c.fillStyle = 'rgba(255,255,255,0.6)'; rrect(c, x + 6, y + 5, 14, 4, 2); c.fill();
-    }
+    // wandpanelen
+    for (let x = 0; x < W; x += 160) { c.fillStyle = shade('#eef3f5', r() * 0.04 - 0.02); c.fillRect(x + 2, 0, 156, 640); c.strokeStyle = 'rgba(120,140,150,0.35)'; c.lineWidth = 2; c.strokeRect(x + 2, 0, 156, 640); }
     // band in bedrijfskleur
     c.fillStyle = brandCss; c.fillRect(0, 96, W, 14); c.fillStyle = 'rgba(255,255,255,0.3)'; c.fillRect(0, 98, W, 3);
-    // vloer
-    const fg = c.createLinearGradient(0, 640, 0, H); fg.addColorStop(0, '#9fb7c2'); fg.addColorStop(1, '#7f98a6');
+    // serverkasten links en rechts
+    const rack = (x, y, w, h) => {
+      rrect(c, x, y, w, h, 6); c.fillStyle = '#3b3f55'; c.fill(); c.strokeStyle = P.line; c.lineWidth = 3; c.stroke();
+      for (let yy = y + 12; yy < y + h - 14; yy += 22) {
+        rrect(c, x + 8, yy, w - 16, 16, 3); c.fillStyle = '#4c5168'; c.fill();
+        for (let k = 0; k < 3; k++) { circle(c, x + 18 + k * 9, yy + 8, 2.6); c.fillStyle = ['#4cc764', '#f6c33b', '#3d8fe0', '#4cc764'][Math.floor(r() * 4)]; c.fill(); }
+        c.fillStyle = 'rgba(255,255,255,0.15)'; c.fillRect(x + w - 40, yy + 5, 26, 6);
+      }
+    };
+    rack(10, 150, 90, 480); rack(W - 100, 150, 90, 480);
+    // verhoogde vloer
+    const fg = c.createLinearGradient(0, 640, 0, H); fg.addColorStop(0, '#c3ccd2'); fg.addColorStop(1, '#a9b4bb');
     c.fillStyle = fg; c.fillRect(0, 640, W, 80);
     c.strokeStyle = 'rgba(60,80,95,0.35)'; c.lineWidth = 2;
-    for (let x = 0; x < W; x += 80) { c.beginPath(); c.moveTo(x, 640); c.lineTo(x - 20, H); c.stroke(); }
-    // buizen
-    const pipe = (x1, y1, x2, y2, col) => {
-      const t = 22;
+    for (let x = 0; x < W; x += 80) { c.beginPath(); c.moveTo(x, 640); c.lineTo(x, H); c.stroke(); }
+    c.beginPath(); c.moveTo(0, 680); c.lineTo(W, 680); c.stroke();
+    // kabelgoten
+    const duct = (x1, y1, x2, y2, col) => {
       c.lineCap = 'butt';
-      c.strokeStyle = shade(col, -0.35); c.lineWidth = t + 5; c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke();
-      c.strokeStyle = col; c.lineWidth = t; c.stroke();
-      c.strokeStyle = 'rgba(255,255,255,0.45)'; c.lineWidth = 4;
-      const vert = x1 === x2;
-      c.beginPath(); c.moveTo(x1 + (vert ? -5 : 0), y1 + (vert ? 0 : -5)); c.lineTo(x2 + (vert ? -5 : 0), y2 + (vert ? 0 : -5)); c.stroke();
-      // flenzen
-      const len = Math.hypot(x2 - x1, y2 - y1);
-      for (let d = 60; d < len; d += 180) {
-        const fx = x1 + ((x2 - x1) * d) / len, fy = y1 + ((y2 - y1) * d) / len;
-        if (vert) rrect(c, fx - 17, fy - 5, 34, 10, 3); else rrect(c, fx - 5, fy - 17, 10, 34, 3);
-        c.fillStyle = shade(col, -0.15); c.fill(); c.strokeStyle = shade(col, -0.45); c.lineWidth = 1.6; c.stroke();
-      }
+      c.strokeStyle = shade(col, -0.35); c.lineWidth = 24; c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke();
+      c.strokeStyle = col; c.lineWidth = 19; c.stroke();
+      c.strokeStyle = 'rgba(255,255,255,0.4)'; c.lineWidth = 3; c.setLineDash([14, 10]); c.stroke(); c.setLineDash([]);
       c.lineCap = 'round';
     };
-    pipe(0, 132, W, 132, '#e8a33d');
-    pipe(0, 676, W, 676, '#4aa3d8');
-    pipe(34, 110, 34, 676, '#6cc08a');
-    pipe(W - 34, 110, W - 34, 676, '#6cc08a');
-    // kraanwielen
-    for (const [x, y] of [[34, 300], [W - 34, 470], [640, 132]]) {
-      circle(c, x, y, 18); c.strokeStyle = '#b8302c'; c.lineWidth = 5; c.stroke();
-      for (let i = 0; i < 4; i++) { const a = (i * Math.PI) / 2 + 0.4; c.beginPath(); c.moveTo(x, y); c.lineTo(x + Math.cos(a) * 17, y + Math.sin(a) * 17); c.lineWidth = 3; c.stroke(); }
-      circle(c, x, y, 5); c.fillStyle = '#e8504c'; c.fill();
-    }
-    // drukmeters
-    for (const [x, y] of [[300, 132], [980, 132], [W - 34, 220]]) {
-      circle(c, x, y - 2, 15); c.fillStyle = '#fffaf0'; c.fill(); c.strokeStyle = '#4a3646'; c.lineWidth = 3; c.stroke();
-      c.strokeStyle = '#e8504c'; c.lineWidth = 2; c.beginPath(); c.moveTo(x, y - 2); c.lineTo(x + 8, y - 9); c.stroke();
-    }
+    duct(0, 132, W, 132, '#e8a33d');
+    duct(0, 676, W, 676, '#4aa3d8');
   });
 }
 
-/** Haert: steiger van planken met bolders, touw en een reddingsboei. */
+/** Haert: werkplaats in Het Atelier. Lichte houten vloer, prikbord, plant en koffie. */
 export function makeHaertBg(scene) {
   makeTexture(scene, 'haert_bg', W, H, (c) => {
-    planks(c, 0, 0, W, H, 3, { col: '#c48a52', ph: 40, pl: 180 });
+    planks(c, 0, 0, W, H, 3, { col: '#dcb886', ph: 40, pl: 180 });
     // prikbord: houten lijst met kurk
     ellipse(c, 266, 706, 230, 14); c.fillStyle = 'rgba(30,20,40,0.22)'; c.fill();
     rrect(c, 40, 100, 440, 600, 14); c.fillStyle = '#8a5226'; c.fill(); c.strokeStyle = '#4a2a14'; c.lineWidth = 4; c.stroke();
@@ -264,46 +318,34 @@ export function makeHaertBg(scene) {
     const r = rng(4);
     for (let i = 0; i < 900; i++) { c.fillStyle = r() < 0.5 ? 'rgba(140,95,50,0.35)' : 'rgba(240,205,150,0.4)'; circle(c, 62 + r() * 396, 122 + r() * 556, 0.8 + r() * 1.6); c.fill(); }
     c.strokeStyle = 'rgba(90,55,25,0.4)'; c.lineWidth = 3; rrect(c, 58, 118, 404, 564, 8); c.stroke();
-    // bolders + touw (in de zichtbare strook rechts)
-    const bollard = (x, y) => {
-      ellipse(c, x, y + 8, 22, 8); c.fillStyle = 'rgba(30,20,40,0.25)'; c.fill();
-      rrect(c, x - 14, y - 22, 28, 30, 6); c.fillStyle = '#5a6470'; c.fill(); c.strokeStyle = '#2f353d'; c.lineWidth = 2.4; c.stroke();
-      ellipse(c, x, y - 22, 18, 7); c.fillStyle = '#717c89'; c.fill(); c.stroke();
-    };
-    bollard(1228, 560);
-    for (let i = 0; i < 4; i++) { ellipse(c, 1228, 680, 30 - i * 6, 12 - i * 2.4); c.strokeStyle = i % 2 ? '#d8b77a' : '#c49a58'; c.lineWidth = 5; c.stroke(); }
-    // reddingsboei
-    circle(c, 1228, 300, 26); c.strokeStyle = '#fffaf0'; c.lineWidth = 14; c.stroke();
-    c.strokeStyle = '#e8504c';
-    for (let i = 0; i < 4; i++) { c.beginPath(); c.arc(1228, 300, 26, (i * Math.PI) / 2, (i * Math.PI) / 2 + 0.6); c.stroke(); }
+    // rechts: plant, koffie en een vloerkleed in Atelier-geel
+    rrect(c, 1196, 330, 76, 220, 10); c.fillStyle = CAMPUS_BANDS.atelier; c.fill(); c.strokeStyle = shade(CAMPUS_BANDS.atelier, -0.4); c.lineWidth = 2; c.stroke();
+    plant(c, 1230, 640, 1);
+    rrect(c, 1212, 230, 36, 40, 6); c.fillStyle = '#ffffff'; c.fill(); c.strokeStyle = P.line; c.lineWidth = 2.4; c.stroke();
+    c.beginPath(); c.arc(1252, 250, 9, -Math.PI / 2, Math.PI / 2); c.stroke();
+    ellipse(c, 1230, 236, 14, 4); c.fillStyle = '#7a4a22'; c.fill();
   });
 }
 
-/** Scheepsdek (Reijn + finale): lucht, zee, reling met spijlen en dekplanken. */
+/** Reijn (en oude finale): vergaderzaal in Het Atelier, met door het raam zicht op de toren. */
 export function makeDeckBg(scene) {
   makeTexture(scene, 'deck_bg', W, H, (c) => {
-    sky(c, W, 180, 41, { clouds: 4 });
-    c.fillStyle = '#86bfa0'; c.beginPath(); c.ellipse(260, 180, 170, 22, 0, Math.PI, 0); c.fill();
-    sea(c, 0, 170, W, 64, 42);
-    planks(c, 0, 230, W, H - 230, 9, { col: '#b07444', ph: 36, pl: 210 });
-    // schaduw van de reling op het dek
-    const sg = c.createLinearGradient(0, 234, 0, 270); sg.addColorStop(0, 'rgba(40,20,10,0.35)'); sg.addColorStop(1, 'rgba(40,20,10,0)');
+    // raampartij met uitzicht
+    sky(c, W, 230, 41, { clouds: 3 });
+    campusSkyline(c, 230, W, 43);
+    // de toren in de verte
+    const tx = 1040;
+    for (let k = 0; k < 7; k++) { c.fillStyle = ['#e8504c', '#3d8fe0', '#f6c33b', '#f2ecdf', '#4cc764', '#f2ecdf', '#8e5bd8'][k]; c.fillRect(tx - 40 + (k % 2) * 4, 230 - (k + 1) * 26, 80 - k * 4, 26); }
+    // kozijnen
+    c.strokeStyle = '#5d6b78'; c.lineWidth = 10; c.strokeRect(5, 5, W - 10, 225);
+    c.lineWidth = 6; for (let x = 0; x < W; x += 213) { c.beginPath(); c.moveTo(x, 0); c.lineTo(x, 230); c.stroke(); }
+    c.fillStyle = 'rgba(255,255,255,0.18)'; for (let x = 20; x < W; x += 213) { c.beginPath(); c.moveTo(x, 10); c.lineTo(x + 60, 10); c.lineTo(x + 10, 220); c.lineTo(x - 30, 220); c.closePath(); c.fill(); }
+    // vloer
+    planks(c, 0, 230, W, H - 230, 9, { col: '#d2ab78', ph: 36, pl: 210 });
+    const sg = c.createLinearGradient(0, 234, 0, 270); sg.addColorStop(0, 'rgba(40,20,10,0.3)'); sg.addColorStop(1, 'rgba(40,20,10,0)');
     c.fillStyle = sg; c.fillRect(0, 234, W, 36);
-    // reling: spijlen, bovenregel en dikke onderrand
-    for (let x = 20; x < W; x += 70) {
-      rrect(c, x, 148, 18, 60, 5); c.fillStyle = '#9a5e30'; c.fill(); c.strokeStyle = '#5a3418'; c.lineWidth = 2.4; c.stroke();
-      c.fillStyle = 'rgba(255,255,255,0.18)'; c.fillRect(x + 3, 152, 4, 52);
-    }
-    const rail = (y, h, col) => {
-      c.fillStyle = col; c.fillRect(0, y, W, h);
-      c.fillStyle = 'rgba(255,255,255,0.2)'; c.fillRect(0, y + 2, W, 3);
-      c.strokeStyle = '#4a2a14'; c.lineWidth = 3; c.strokeRect(-4, y, W + 8, h);
-      c.strokeStyle = shade(col, -0.2); c.lineWidth = 1.2;
-      for (let x = 0; x < W; x += 140) { c.beginPath(); c.moveTo(x, y + h / 2); c.bezierCurveTo(x + 40, y + h / 2 - 2, x + 90, y + h / 2 + 2, x + 140, y + h / 2); c.stroke(); }
-    };
-    rail(138, 16, '#a96a38');
-    rail(200, 34, '#7a4524');
-    c.fillStyle = '#d9b35a'; for (let x = 50; x < W; x += 140) { circle(c, x, 217, 3.2); c.fill(); }
+    // vensterbank in Atelier-geel
+    c.fillStyle = CAMPUS_BANDS.atelier; c.fillRect(0, 222, W, 14); c.strokeStyle = P.line; c.lineWidth = 3; c.strokeRect(-4, 222, W + 8, 14);
   });
 }
 

@@ -24,7 +24,7 @@
     "shirt": "Shirt",
     "hat": "Hoofd",
     "random": "Verras me",
-    "start": "Aan boord!",
+    "start": "Aan de slag!",
     "defaultName": "Collega",
     "eyes": "Ogen",
     "accessory": "Extra",
@@ -730,7 +730,7 @@
       ]
     },
     "reijn": {
-      "title": "Quickscan aan dek",
+      "title": "Quickscan bij de crew",
       "zone": "Het Atelier",
       "npc": "Bootsvrouw Wendy",
       "intro": [

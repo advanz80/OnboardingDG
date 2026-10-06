@@ -28,11 +28,15 @@ export class ReijnMission extends MissionBase {
     const { width, height } = DESIGN;
     makeDeckTexture(this);
     this.add.image(0, 0, 'deck_bg').setOrigin(0).setDepth(-100);
-    // mast + touwen
-    this.add.rectangle(1000, 240, 30, 360, 0x6b3a1c).setStrokeStyle(4, HEX.ink).setOrigin(0.5, 1).setDepth(-60);
-    const flag = this.add.image(1000, 80, 'flagcloth').setTint(HEX.ink).setOrigin(0, 0.5).setScale(0.8).setDepth(-59);
-    this.tweens.add({ targets: flag, scaleX: 0.65, duration: 500, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
-    this.add.image(60, 330, 'barrel').setDepth(-50); this.add.image(1240, 300, 'crate').setDepth(-50);
+    // whiteboard met een (nog) lege organisatieplaat
+    const wb = this.add.graphics().setDepth(-60);
+    wb.fillStyle(0xffffff).lineStyle(5, HEX.ink).fillRoundedRect(330, 250, 360, 130, 8).strokeRoundedRect(330, 250, 360, 130, 8);
+    wb.lineStyle(3, 0x3d8fe0).strokeRect(480, 266, 60, 26).strokeRect(400, 326, 60, 26).strokeRect(560, 326, 60, 26);
+    wb.lineBetween(510, 292, 430, 326).lineBetween(510, 292, 590, 326);
+    wb.lineStyle(3, 0xe8504c).lineBetween(640, 270, 670, 300).lineBetween(670, 270, 640, 300);
+    this.add.text(510, 362, '???', textStyle(18, P.inkSoft)).setOrigin(0.5).setDepth(-59);
+    this.add.image(60, 340, 'flowerpot').setScale(1.6).setOrigin(0.5, 1).setDepth(-50);
+    for (const [x, y, a] of [[1230, 300, -10], [1244, 290, 8], [1236, 282, -4]]) this.add.image(x, y, 'paper_sheet').setAngle(a).setScale(1.4).setDepth(-50);
   }
 
   startGame() {
