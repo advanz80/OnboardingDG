@@ -92,7 +92,7 @@
     "errNoName": "Vul eerst je naam in.",
     "errNoOrg": "Kies bij welke organisatie je werkt (of gaat werken).",
     "errNoOrgText": "Vul de naam van de organisatie in.",
-    "errTaken": "'{naam}' staat al op het leaderboard. Kies een andere naam, bijv. met je achternaam.",
+    "errTaken": "'{naam}' van {org} staat al op het leaderboard. Kies een andere naam, bijv. met je achternaam.",
     "checking": "Even kijken of je naam nog vrij is…"
   },
   "hud": {

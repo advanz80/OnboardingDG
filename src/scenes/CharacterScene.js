@@ -171,11 +171,11 @@ export class CharacterScene extends Phaser.Scene {
     this.checking = true;
     this.startBtn.setEnabled?.(false);
     this.errText.setColor(P.inkSoft).setText(t('character.checking'));
-    const taken = await Leaderboard.nameTaken(name);
+    const taken = await Leaderboard.nameTaken(name, org);
     this.checking = false;
     this.startBtn.setEnabled?.(true);
     this.errText.setColor(P.red);
-    if (taken) return this.setError(t('character.errTaken', { naam: name }));
+    if (taken) return this.setError(t('character.errTaken', { naam: name, org }));
     this.errText.setText('');
     SaveManager.newGame({ name, org, look: { ...this.look } });
     makeCharacter(this, 'player', this.look);

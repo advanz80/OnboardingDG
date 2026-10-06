@@ -136,15 +136,15 @@ class LeaderboardService {
     try { return await this.local.top(limit); } catch { return []; }
   }
 
-  /** Is deze naam al bezet op het leaderboard? (hoofdletters en spaties tellen niet mee) */
-  async nameTaken(name) {
+  /** Staat deze combinatie van naam én organisatie al op het leaderboard? (hoofdletters en spaties tellen niet mee) */
+  async nameTaken(name, org = '') {
     const norm = (n) => String(n || '').trim().toLowerCase().replace(/\s+/g, ' ');
-    const want = norm(name);
+    const want = norm(name), wantOrg = norm(org);
     if (!want) return false;
     let list = [];
     if (this.remote) { try { list = await this.remote.top(1000); } catch { /* offline: alleen lokaal controleren */ } }
     try { list = list.concat(await this.local.top(1000)); } catch { /* geen lokale scores */ }
-    return list.some((e) => norm(e.name) === want);
+    return list.some((e) => norm(e.name) === want && norm(e.org) === wantOrg);
   }
 
   /** Verstuur scores die eerder (zonder internet) niet aankwamen. */

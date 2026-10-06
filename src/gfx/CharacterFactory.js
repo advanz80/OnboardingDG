@@ -36,11 +36,14 @@ export function randomLook(r = Math.random, extra = {}) {
   };
 }
 
+// Rovers zijn net zo divers als iedereen: vooral lichtere tinten, met een mix van donkere.
+const ROVER_SKINS = ['#ffe0c2', '#f8d5b5', '#f5c9a0', '#ffe0c2', '#f5c9a0', '#dca777', '#f8d5b5', '#b57b4c', '#ffe0c2', '#86553a'];
+
 /** Rover (tijdrovers van Rompslomp): gestreepte trui, maskertje, muts of pet. */
 export function roverLook(r = Math.random, extra = {}) {
   const mc = pick(r, ['#26202c', '#26202c', '#3b2f3f']);
   return {
-    skin: pick(r, SKINS), hair: pick(r, HAIRS.slice(0, 6)), hairStyle: pick(r, ['short', 'curly', 'crew', 'ponytail', 'bun', 'long']),
+    skin: pick(r, ROVER_SKINS), hair: pick(r, HAIRS.slice(0, 7)), hairStyle: pick(r, ['short', 'curly', 'crew', 'ponytail', 'bun', 'long']),
     shirt: '#f4efe4', top: 'tee', pattern: 'stripes', patternColor: pick(r, ['#26202c', '#3b3f55', '#5b4636']),
     pants: pick(r, ['#26202c', '#3b3f55', '#5b4636']), bottom: 'pants', shoes: '#26202c',
     hat: pick(r, ['beanie', 'beanie', 'cap', null]), capColor: pick(r, ['#26202c', '#3b3f55', '#8a2d3b', '#4a3b2c']),
