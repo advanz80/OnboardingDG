@@ -30,11 +30,11 @@ export class ReijnMission extends MissionBase {
     this.add.image(0, 0, 'deck_bg').setOrigin(0).setDepth(-100);
     // whiteboard met een (nog) lege organisatieplaat
     const wb = this.add.graphics().setDepth(-60);
-    wb.fillStyle(0xffffff).lineStyle(5, HEX.ink).fillRoundedRect(330, 250, 360, 130, 8).strokeRoundedRect(330, 250, 360, 130, 8);
-    wb.lineStyle(3, 0x3d8fe0).strokeRect(480, 266, 60, 26).strokeRect(400, 326, 60, 26).strokeRect(560, 326, 60, 26);
-    wb.lineBetween(510, 292, 430, 326).lineBetween(510, 292, 590, 326);
-    wb.lineStyle(3, 0xe8504c).lineBetween(640, 270, 670, 300).lineBetween(670, 270, 640, 300);
-    this.add.text(510, 362, '???', textStyle(18, P.inkSoft)).setOrigin(0.5).setDepth(-59);
+    wb.fillStyle(0xffffff).lineStyle(5, HEX.ink).fillRoundedRect(370, 238, 280, 96, 8).strokeRoundedRect(370, 238, 280, 96, 8);
+    wb.lineStyle(3, 0x3d8fe0).strokeRect(485, 250, 50, 20).strokeRect(420, 296, 50, 20).strokeRect(550, 296, 50, 20);
+    wb.lineBetween(510, 270, 445, 296).lineBetween(510, 270, 575, 296);
+    wb.lineStyle(3, 0xe8504c).lineBetween(615, 252, 637, 274).lineBetween(637, 252, 615, 274);
+    this.add.text(510, 324, '???', textStyle(14, P.inkSoft)).setOrigin(0.5).setDepth(-59);
     this.add.image(60, 340, 'flowerpot').setScale(1.6).setOrigin(0.5, 1).setDepth(-50);
     for (const [x, y, a] of [[1230, 300, -10], [1244, 290, 8], [1236, 282, -4]]) this.add.image(x, y, 'paper_sheet').setAngle(a).setScale(1.4).setDepth(-50);
   }
