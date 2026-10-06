@@ -11,9 +11,11 @@ import { card, button, panel } from '../../ui/widgets.js';
 import { makeHaertBg } from '../../gfx/tex/acbg.js';
 
 const JOB_Y = [215, 385, 555];
-const OFFER_Y = [220, 390, 560];
+const OFFER_Y = [240, 400, 560];
 const JOB_TIME = 30;
 const START_RANK = { now: 0, week: 1, later: 2 };
+const SLOT_LETTER = ['A', 'B', 'C'];
+const SLOT_COLOR = [0x3d8fe0, 0x8e5bd8, 0x2ec4b6];
 
 export class HaertMission extends MissionBase {
   constructor() { super('HaertMission', 'haert', { timeLimit: 120, thresholds: [400, 1000, 1500] }); }
@@ -89,8 +91,12 @@ export class HaertMission extends MissionBase {
     const st = this.add.text(-176, 40, this.T('start', { s: job.start === 'now' ? this.T('startNow') : this.T('startWeek') }), textStyle(17, P.inkSoft)).setOrigin(0, 0.5);
     const barBg = this.add.rectangle(-176, 62, 352, 8, 0xdddddd).setOrigin(0, 0.5);
     const bar = this.add.rectangle(-176, 62, 352, 8, HEX.green).setOrigin(0, 0.5);
-    const hl = this.add.nineslice(0, 0, 'ui_card', undefined, 410, 170, 18, 18, 18, 18).setTint(HEX.gold).setVisible(false);
-    c.add([hl, bg, pin, ttl, cl, b, r, st, barBg, bar]);
+    const hl = this.add.nineslice(0, 0, 'ui_card', undefined, 410, 170, 18, 18, 18, 18).setTint(SLOT_COLOR[i]).setVisible(false);
+    const badge = this.add.circle(166, -48, 22, SLOT_COLOR[i]).setStrokeStyle(3, HEX.ink);
+    const letter = this.add.text(166, -50, SLOT_LETTER[i], textStyle(24, P.cream)).setOrigin(0.5);
+    const tap = this.add.text(176, 40, this.T('tapJob'), textStyle(15, P.cream, { backgroundColor: '#5d6b78', padding: { x: 6, y: 3 } })).setOrigin(1, 0.5);
+    c.add([hl, bg, pin, ttl, cl, b, r, st, barBg, bar, badge, letter, tap]);
+    c.tapLabel = tap;
     c.setSize(390, 150).setInteractive({ useHandCursor: true });
     c.on('pointerup', () => this.selectJob(c));
     Object.assign(c, { job, bar, hl, slot: i, timeLeft: JOB_TIME });
@@ -103,11 +109,30 @@ export class HaertMission extends MissionBase {
 
   selectJob(c) {
     if (!this.running || c.done) return;
-    if (this.selected && this.selected.active) this.selected.hl.setVisible(false);
     this.selected = c;
-    c.hl.setVisible(true);
+    this.refreshJobLook();
     Audio.sfx('select');
     this.showOffers(c);
+  }
+
+  /** Gekozen opdracht valt op (gekleurde rand, iets naar rechts, pijl naar de aanbieders); de rest is gedimd. */
+  refreshJobLook() {
+    for (const j of this.jobs) {
+      if (!j || !j.active || j.done) continue;
+      const sel = j === this.selected;
+      j.hl.setVisible(sel);
+      j.tapLabel.setVisible(!sel);
+      this.tweens.add({ targets: j, alpha: sel ? 1 : 0.6, x: sel ? 290 : 260, duration: 180 });
+    }
+    if (this.linkArrow) this.linkArrow.destroy();
+    const c = this.selected;
+    if (!c || !c.active) return;
+    const g = this.add.graphics().setDepth(9);
+    const col = SLOT_COLOR[c.slot];
+    g.fillStyle(col, 1).lineStyle(4, HEX.ink, 1);
+    const y = c.y, x0 = 490, x1 = 540;
+    g.fillTriangle(x0, y - 26, x0, y + 26, x1, y); g.strokeTriangle(x0, y - 26, x0, y + 26, x1, y);
+    this.linkArrow = g;
   }
 
   clearOffers() {
@@ -119,12 +144,18 @@ export class HaertMission extends MissionBase {
     this.clearOffers();
     this.hint.setVisible(false);
     const job = c.job;
-    const head = this.add.text(860, 125, `${job.title} · ${this.T('budget', { b: job.budget })} · ${this.T('minRating', { r: job.minRating })} · ${this.T('start', { s: job.start === 'now' ? this.T('startNow') : this.T('startWeek') })}`, textStyle(18, P.ink, { backgroundColor: '#ffeec2', padding: { x: 10, y: 6 } })).setOrigin(0.5).setDepth(10);
+    const col = SLOT_COLOR[c.slot];
+    const head = this.add.container(860, 118).setDepth(10);
+    const hbg = this.add.rectangle(0, 0, 620, 74, col).setStrokeStyle(4, HEX.ink);
+    const h1 = this.add.text(0, -16, this.T('offersFor', { letter: SLOT_LETTER[c.slot], job: job.title }), textStyle(24, P.cream, { stroke: P.ink, strokeThickness: 4 })).setOrigin(0.5);
+    const h2 = this.add.text(0, 18, `${this.T('needs')}  ${this.T('budget', { b: job.budget })} · ${this.T('minRating', { r: job.minRating })} · ${this.T('start', { s: job.start === 'now' ? this.T('startNow') : this.T('startWeek') })}`, textStyle(18, P.cream)).setOrigin(0.5);
+    head.add([hbg, h1, h2]);
     this.offerObjs.push(head);
     job.offers.forEach((o, i) => {
       const y = OFFER_Y[i] + 20;
       const oc = this.add.container(860, y).setDepth(10);
       oc.add(card(this, 0, 0, 600, 146, 0xffffff));
+      oc.add(this.add.rectangle(-296, 0, 10, 130, col));
       oc.add(this.add.image(-250, -10, 'icons', o.type === 'zzp' ? 'briefcase' : 'people').setDisplaySize(64, 64));
       oc.add(this.add.text(-250, 42, o.type === 'zzp' ? this.T('zzp') : this.T('agency'), textStyle(15, P.inkSoft, { align: 'center', wordWrap: { width: 110 } })).setOrigin(0.5));
       oc.add(this.add.text(-200, -44, `${i + 1}. ${o.name}`, textStyle(22, P.ink)).setOrigin(0, 0.5));
@@ -184,7 +215,7 @@ export class HaertMission extends MissionBase {
   removeJob(c) {
     if (!c.active) return;
     this.jobs[c.slot] = null;
-    if (this.selected === c) { this.selected = null; this.clearOffers(); this.hint.setText(this.T('waiting')).setVisible(true); }
+    if (this.selected === c) { this.selected = null; this.clearOffers(); this.linkArrow?.destroy(); this.linkArrow = null; this.hint.setText(this.T('waiting')).setVisible(true); }
     this.tweens.add({ targets: c, x: -300, angle: -20, duration: 300, ease: 'Cubic.In', onComplete: () => c.destroy() });
     // kies automatisch de volgende open opdracht
     const next = this.jobs.find((j) => j && !j.done);

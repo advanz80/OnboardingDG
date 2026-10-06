@@ -641,11 +641,11 @@
       "howTo": [
         {
           "icon": "notebook",
-          "text": "Tik op een opdracht op het marktplaatsbord."
+          "text": "Links staan de opdrachten (A, B, C). Tik op een opdracht: rechts verschijnen de aanbieders vóór die opdracht."
         },
         {
           "icon": "handshake",
-          "text": "Kies de aanbieder die binnen budget blijft, goed genoeg scoort en op tijd kan starten."
+          "text": "Kies de aanbieder die binnen het budget blijft, genoeg sterren heeft en op tijd kan starten. De eisen staan bovenaan in de gekleurde balk."
         },
         {
           "icon": "warning",
@@ -731,7 +731,10 @@
         "Snelle Jelle Services",
         "100% Echt B.V.",
         "Kapitein Koopje"
-      ]
+      ],
+      "tapJob": "tik om te kiezen",
+      "offersFor": "Opdracht {letter}: {job}, kies een aanbieder",
+      "needs": "Eisen:"
     },
     "reijn": {
       "title": "Quickscan bij de crew",
