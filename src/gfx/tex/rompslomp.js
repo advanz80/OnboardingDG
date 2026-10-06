@@ -216,3 +216,30 @@ export function makePaperPlanes(scene) {
   });
   tex.add('f0', 0, 0, 0, 70, 70); tex.add('f1', 0, 70, 0, 70, 70);
 }
+
+/** Tijdkanon voor de finale: een grote wekker op wieltjes die gestolen tijd terugschiet. */
+export function makeTimeCannon(scene) {
+  makeTexture(scene, 'timecannon', 150, 130, (c) => {
+    softShadow(c, 75, 122, 60, 8);
+    // loop (schuin omhoog naar rechts)
+    c.save(); c.translate(80, 72); c.rotate(-0.45);
+    rrect(c, 0, -16, 66, 32, 10); style(c, { fill: '#f6c33b', lw: 3 });
+    rrect(c, 54, -20, 16, 40, 6); style(c, { fill: '#e8a33d', lw: 3 });
+    c.restore();
+    // wekker
+    circle(c, 60, 66, 40); style(c, { fill: '#e8504c', lw: 3.5 });
+    circle(c, 60, 66, 31); style(c, { fill: '#fffbea', lw: 2.5 });
+    c.strokeStyle = L; c.lineWidth = 2;
+    for (let k = 0; k < 12; k++) { const a = (k / 12) * Math.PI * 2; c.beginPath(); c.moveTo(60 + Math.cos(a) * 26, 66 + Math.sin(a) * 26); c.lineTo(60 + Math.cos(a) * 29, 66 + Math.sin(a) * 29); c.stroke(); }
+    c.lineWidth = 3.5; c.beginPath(); c.moveTo(60, 66); c.lineTo(60, 46); c.moveTo(60, 66); c.lineTo(74, 72); c.stroke();
+    circle(c, 60, 66, 3.5); c.fillStyle = L; c.fill();
+    // belletjes
+    for (const x of [34, 86]) { circle(c, x, 28, 11); style(c, { fill: '#f6c33b', lw: 3 }); }
+    // wieltjes
+    for (const x of [36, 92]) { circle(c, x, 112, 13); style(c, { fill: '#8a5226', lw: 3 }); circle(c, x, 112, 4); c.fillStyle = L; c.fill(); }
+  });
+  makeTexture(scene, 'clockball', 36, 36, (c) => {
+    circle(c, 18, 18, 15); style(c, { fill: '#fffbea', stroke: L, lw: 3 });
+    c.strokeStyle = L; c.lineWidth = 2.5; c.beginPath(); c.moveTo(18, 18); c.lineTo(18, 8); c.moveTo(18, 18); c.lineTo(25, 21); c.stroke();
+  });
+}

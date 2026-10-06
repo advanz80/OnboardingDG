@@ -13,7 +13,7 @@ import { dragTap } from '../ui/dragtap.js';
 import { makeCharacter, roverLook } from '../gfx/CharacterFactory.js';
 import { makeTexture, circle, style } from '../gfx/draw.js';
 import { showDialog } from './DialogScene.js';
-import { makeTowerTopBg } from '../gfx/tex/rompslomp.js';
+import { makeTowerTopBg, makeTimeCannon } from '../gfx/tex/rompslomp.js';
 import { PipePuzzle } from './missions/PipePuzzle.js';
 import { rng } from '../gfx/draw.js';
 import { BRANDS } from '../config/brands.js';
@@ -65,9 +65,10 @@ export class FinaleScene extends MissionBase {
     this.tweens.add({ targets: this.parrot, y: 560, duration: 400, yoyo: true, repeat: -1 });
     // speler + kanon
     this.playerSpr = this.add.sprite(170, 600, 'player', 'idle').setOrigin(0.5, 0.92).setScale(1.7).setDepth(20);
-    this.cannon = this.add.image(300, 620, 'cannon').setScale(1.1).setDepth(19).setFlipX(true);
+    if (!this.textures.exists('timecannon')) makeTimeCannon(this);
+    this.cannon = this.add.image(275, 615, 'timecannon').setDepth(19);
     // Buddy staat naast de speler
-    this.buddySpr = this.add.sprite(330, 560, 'npc_buddy', 'happy').setOrigin(0.5, 0.92).setScale(1.5).setDepth(18);
+    this.buddySpr = this.add.sprite(410, 575, 'npc_buddy', 'happy').setOrigin(0.5, 0.92).setScale(1.5).setDepth(18);
     this.tweens.add({ targets: this.buddySpr, scaleY: 1.56, duration: 500, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
     // overgelopen crew
     const n = SaveManager.state?.crewDefected || 0;
@@ -117,9 +118,10 @@ export class FinaleScene extends MissionBase {
   fireAtCaptain(dmg, onDone) {
     Audio.sfx('cannon');
     shake(this, 0.006, 150);
-    burst(this, this.cannon.x + 50, this.cannon.y - 20, 'smoke', 10);
+    burst(this, this.cannon.x + 60, this.cannon.y - 40, 'stars', 10);
     this.tweens.add({ targets: this.cannon, x: this.cannon.x - 14, duration: 60, yoyo: true });
-    const ball = this.add.circle(this.cannon.x + 50, this.cannon.y - 20, 12, HEX.ink).setDepth(40);
+    const ball = this.add.image(this.cannon.x + 60, this.cannon.y - 40, 'clockball').setDepth(40);
+    this.tweens.add({ targets: ball, angle: 720, duration: 450 });
     const tx = this.captain.x, ty = this.captain.y - 90;
     const sx = ball.x, sy = ball.y;
     const c = { t: 0 };
