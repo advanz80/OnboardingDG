@@ -149,13 +149,13 @@ export class WorldScene extends Phaser.Scene {
       });
     }
     // entree Driessen (noordkant): vlaggen in paars en geel, buxusbollen bij de deur
-    [[pt(1090, 483), 0x6b3fa0], [pt(1198, 483), HEX.gold]].forEach(([[x, y], col]) => {
+    [[pt(1078, 486), 0x6b3fa0], [pt(1212, 486), HEX.gold]].forEach(([[x, y], col]) => {
       this.addProp('flagpole', x, y, { r: 8 });
       // staande banier, zoals op de foto's
       const cl = this.add.image(x + 3, y - 158, 'flagcloth').setOrigin(0, 0).setScale(0.42, 1.6).setTint(col).setDepth(y + 1);
       this.tweens.add({ targets: cl, scaleX: { from: 0.42, to: 0.36 }, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
     });
-    for (const [x, y] of [pt(1117, 483), pt(1173, 483)]) this.addProp('bush', x, y, { r: 14 }, { scale: 0.55 });
+    for (const [x, y] of [pt(1118, 486), pt(1172, 486)]) this.addProp('bush', x, y, { r: 14 }, { scale: 0.55 });
     // IJk: drie vlaggen (oranje, geel, paars) en paarse beplanting langs de gevel
     [[pt(812, 674), HEX.orange], [pt(832, 674), HEX.gold], [pt(852, 674), 0x8e5bd8]].forEach(([[x, y], col]) => {
       this.addProp('flagpole', x, y, { r: 8 });

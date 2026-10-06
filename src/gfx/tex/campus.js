@@ -89,7 +89,7 @@ function whiteWindow(c, x, y, w, h) {
   c.strokeStyle = 'rgba(60,40,40,0.5)'; c.lineWidth = 1; c.strokeRect(x - 2, y - 2, w + 4, h + 4);
 }
 
-function drawDriessenPart(c, w, h, H, { front, entrance, kind }) {
+function drawDriessenPart(c, w, h, H, { front, entrance, kind, logoImg }) {
   const fy = h - H;
   if (kind === 'roof' || kind === 'atriumroof') {
     // van bovenaf alleen pannendak (de gevels van deze delen zie je in dit aanzicht niet)
@@ -106,9 +106,21 @@ function drawDriessenPart(c, w, h, H, { front, entrance, kind }) {
       c.strokeStyle = P.line; c.lineWidth = 2; c.strokeRect(gx - 2, gy - 2, gw + 4, gh + 4);
     }
     if (entrance) {
-      const lw = Math.min(170, w - 20), lx = w / 2 - lw / 2;
-      c.fillStyle = '#ffffff'; c.fillRect(lx, 0, lw, 22); c.strokeStyle = P.line; c.lineWidth = 2.4; c.strokeRect(lx, 0, lw, 22);
-      c.fillStyle = BRICK; c.font = '700 16px Fredoka, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('driessen', w / 2, 12);
+      // glazen entree met luifel, en het Driessen-logo erboven
+      const dw = 70, dx = w / 2 - dw / 2;
+      c.fillStyle = '#ffffff'; c.fillRect(dx - 10, 0, dw + 20, 30); c.strokeStyle = P.line; c.lineWidth = 2.4; c.strokeRect(dx - 10, 0, dw + 20, 30);
+      const g = c.createLinearGradient(dx, 4, dx + dw, 28); g.addColorStop(0, '#dff3ff'); g.addColorStop(1, '#7fb6d4');
+      c.fillStyle = g; c.fillRect(dx, 4, dw, 24);
+      c.strokeStyle = '#ffffff'; c.lineWidth = 2; c.beginPath(); c.moveTo(w / 2, 4); c.lineTo(w / 2, 28); c.stroke();
+      if (logoImg) {
+        const lh = 34, lw2 = lh * (logoImg.width / logoImg.height);
+        c.fillStyle = '#ffffff'; c.beginPath(); c.arc(w / 2, 52, 26, 0, Math.PI * 2); c.fill(); c.strokeStyle = P.line; c.lineWidth = 2.4; c.stroke();
+        c.save(); c.beginPath(); c.arc(w / 2, 52, 24, 0, Math.PI * 2); c.clip();
+        c.drawImage(logoImg, w / 2 - Math.min(lw2, 44) / 2, 52 - lh / 2 * Math.min(1, 44 / lw2), Math.min(lw2, 44), lh * Math.min(1, 44 / lw2));
+        c.restore();
+      } else {
+        c.fillStyle = BRICK; c.font = '700 16px Fredoka, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('driessen', w / 2, 46);
+      }
     }
     return;
   }
@@ -413,7 +425,7 @@ export function makeCampusBuildings(scene, buildings, neighbour = false) {
       const wall = neighbour ? '#d9d4ca' : '#f1ece2';
       const roof = neighbour ? '#b9b6b0' : '#cfcac2';
       makeTexture(scene, `bld_${b.id}_${i}`, p.w, p.h, (c, w, h) => (b.style === 'driessen'
-        ? drawDriessenPart(c, w, h, H, { front: i === front, entrance: i === b.entrance, kind: b.kinds?.[i] })
+        ? drawDriessenPart(c, w, h, H, { front: i === front, entrance: i === b.entrance, kind: b.kinds?.[i], logoImg: scene.textures.exists('logo_driessen') ? scene.textures.get('logo_driessen').getSourceImage() : null })
         : b.style === 'bhc' ? drawBhcPart(c, w, h, H, { label: b.name })
         : b.style === 'bloeij' ? drawBloeijPart(c, w, h, H, { label: b.name })
         : b.style === 'loods' ? drawLoodsPart(c, w, h, H, { label: b.name })

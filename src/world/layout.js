@@ -81,8 +81,9 @@ export const BIGPOND = rect(1218, 490, 1262, 648);
 const bld = (id, name, rects, opts = {}) => ({ id, name, parts: rects.map((r) => rect(...r)), H: 90, ...opts });
 export const BUILDINGS = [
   // Driessen (rechtgezet): entreevleugel noord, twee even brede dwarsvleugels, daartussen een iets smaller middenblok met glazen atrium
-  bld('driessen', 'Driessen', [[1127, 471, 1163, 487], [1085, 487, 1205, 530], [1091, 530, 1199, 605], [1085, 605, 1205, 650]],
-    { H: 110, brand: 'driessen', style: 'driessen', entrance: 0, kinds: ['roof', 'roof', 'atriumroof', 'wing'] }),
+  // noordkant: twee uitstulpingen aan weerszijden, met daartussen de entree (logo boven de deur)
+  bld('driessen', 'Driessen', [[1088, 473, 1112, 487], [1178, 473, 1202, 487], [1085, 487, 1205, 530], [1091, 530, 1199, 605], [1085, 605, 1205, 650]],
+    { H: 110, brand: 'driessen', style: 'driessen', entrance: 2, kinds: ['roof', 'roof', 'roof', 'atriumroof', 'wing'] }),
   bld('rovc', 'ROVC', [[875, 597, 970, 650]], { color: '#3D2152' }),
   // IJk: twee langgerekte blokken (noord hoog, zuid lager) met een glazen dakstrook ertussen; entree aan de westkant
   bld('ijk', 'IJk', [[795, 678, 932, 712], [795, 712, 960, 722], [818, 722, 975, 760]], { H: 120, brand: 'ijk', style: 'ijk', kinds: ['tall', 'glassroof', 'low'], Hs: [120, 0, 100], labelPart: 2 }),
