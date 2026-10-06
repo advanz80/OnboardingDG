@@ -4,13 +4,13 @@
 // Met `pt(px, py)` schrijf je punten in pixels van die plattegrond (gerenderd op
 // 80 dpi, 1323×935); ze worden hier omgerekend naar de spelwereld. Zo kun je een
 // gebouw of weg verschuiven door de plattegrond ernaast te leggen.
-const S = 4;            // 1 px plattegrond = 4 px in het spel
+const S = 4.6;          // 1 px plattegrond = 4,6 px in het spel (iets ruimer dan de werkelijkheid)
 const OX = 375, OY = 290;
 export const pt = (px, py) => [(px - OX) * S, (py - OY) * S];
 const rect = (x0, y0, x1, y1) => { const [ax, ay] = pt(x0, y0), [bx, by] = pt(x1, y1); return { x: ax, y: ay, w: bx - ax, h: by - ay }; };
 
-export const WORLD_W = 3712;
-export const WORLD_H = 2368;
+export const WORLD_W = 4288;
+export const WORLD_H = 2600;
 
 /** Catmull-Rom → dicht polygoon (voor tekenen én botsing). */
 export function sampleSmooth(pts, closed = true, seg = 10) {
@@ -45,7 +45,7 @@ export const ROADS = [
   road(72, [575, 422], [575, 650], [573, 790]),                                        // west: langs Bloeij
   road(72, [575, 652], [700, 655], [870, 658], [1000, 662], [1090, 664], [1240, 676], [1280, 690]), // Tunnelovenweg
 ];
-export const ROUNDABOUT = { x: pt(430, 415)[0], y: pt(430, 415)[1], r: 150 };
+export const ROUNDABOUT = { x: pt(430, 415)[0], y: pt(430, 415)[1], r: 37 * S };
 
 // Voetpaden (stenen tegels)
 export const PATHS = [
@@ -72,7 +72,7 @@ export const PARKINGS = [
 // Terras op het binnenterrein (tussen ROVC en Driessen)
 export const PLAZA = rect(1005, 585, 1082, 650);
 // Vijver bij Het Atelier
-export const POND = { x: pt(1005, 722)[0], y: pt(1005, 722)[1], rx: 34, ry: 96 };
+export const POND = { x: pt(1005, 722)[0], y: pt(1005, 722)[1], rx: 8.5 * S, ry: 24 * S };
 // Grote rechthoekige vijver ten oosten van Driessen (ongeveer even lang als het pand)
 export const BIGPOND = rect(1218, 490, 1262, 648);
 
@@ -104,8 +104,8 @@ export const STATIONS = {
   driessen: station(1145, 465, 110, 4),   // bij de voordeur aan de noordkant
   bloeij: { ...station(489, 542), flagLeft: true },   // vlag links, zodat de muurschildering zichtbaar blijft
   ijk: station(835, 780),
-  haert: station(996, 770),
-  reijn: station(1112, 735),
+  haert: station(1100, 698, 110, 0),   // oostkant van Het Atelier, zodat het pad naar IJk vrij blijft
+  reijn: station(1132, 756),
 };
 
 export const SPAWN = { x: pt(992, 490)[0], y: pt(992, 490)[1] };
@@ -133,6 +133,6 @@ export const TREES = [
 
 // Badges voor de BHC-zoektocht (verspreid over de campus)
 export const BADGE_SPOTS = [
-  pt(440, 620), pt(590, 700), pt(640, 480), pt(820, 470), pt(872, 560), pt(940, 480), pt(1140, 462),
-  pt(1285, 610), pt(1125, 690), pt(985, 760), pt(760, 730), pt(650, 790), pt(900, 425),
+  pt(440, 620), pt(590, 700), pt(640, 480), pt(820, 470), pt(872, 560), pt(940, 480), pt(1060, 478),
+  pt(1285, 610), pt(1178, 735), pt(985, 760), pt(760, 730), pt(650, 790), pt(900, 425),
 ];

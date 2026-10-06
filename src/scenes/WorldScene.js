@@ -120,7 +120,7 @@ export class WorldScene extends Phaser.Scene {
     if (!inPoly(x, y, LAND)) return false;
     if (y > WORLD_H - 30 || x < 30 || x > WORLD_W - 30) return false;
     if (onInfrastructure(x, y, margin)) return false;
-    for (const st of Object.values(STATIONS)) if (Math.hypot(x - st.x, y - st.y) < 200) return false;
+    for (const st of Object.values(STATIONS)) if (Math.hypot(x - st.x, y - st.y) < 200 || Math.hypot(x - st.npc.x, y - st.npc.y) < 170) return false;
     for (const [bx, by] of BADGE_SPOTS) if (Math.hypot(x - bx, y - by) < 70) return false;
     for (const c of this.colliders) if (Math.hypot(x - c.x, y - c.y) < 90) return false;
     if (Math.hypot(x - SPAWN.x, y - SPAWN.y) < 150 || Math.hypot(x - PETRA.x, y - PETRA.y) < 120) return false;
