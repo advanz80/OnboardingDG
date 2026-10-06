@@ -52,6 +52,78 @@ function drawPart(c, w, h, H, { wall, roof, bands, label, seed }) {
   }
 }
 
+// ── Driessen: rode baksteen, antraciet schilddak met witte dakrand, witte kozijnen ──
+const BRICK = '#9c4a3a', ROOF = '#4a4f5a', ROOF_D = '#363a43';
+
+function hipRoof(c, w, rh) {
+  // schilddak van bovenaf: buitenrand, nok in het midden, graten naar de hoeken
+  const inset = Math.min(rh * 0.42, w * 0.3);
+  c.beginPath(); c.rect(2, 2, w - 4, rh); c.fillStyle = ROOF; c.fill();
+  // dakvlakken iets verschillend van tint (licht van linksboven)
+  c.fillStyle = 'rgba(255,255,255,0.08)'; c.beginPath(); c.moveTo(2, 2); c.lineTo(w - 2, 2); c.lineTo(w - 2 - inset, rh / 2); c.lineTo(2 + inset, rh / 2); c.closePath(); c.fill();
+  c.fillStyle = 'rgba(0,0,0,0.12)'; c.beginPath(); c.moveTo(2, rh + 2); c.lineTo(w - 2, rh + 2); c.lineTo(w - 2 - inset, rh / 2); c.lineTo(2 + inset, rh / 2); c.closePath(); c.fill();
+  // pannenrijen
+  c.strokeStyle = ROOF_D; c.lineWidth = 1.2;
+  for (let y = 8; y < rh; y += 7) { c.beginPath(); c.moveTo(4, y); c.lineTo(w - 4, y); c.stroke(); }
+  // nok en graten
+  c.strokeStyle = '#2b2e35'; c.lineWidth = 3;
+  c.beginPath(); c.moveTo(2, 2); c.lineTo(2 + inset, rh / 2); c.lineTo(w - 2 - inset, rh / 2); c.lineTo(w - 2, 2);
+  c.moveTo(2, rh + 2); c.lineTo(2 + inset, rh / 2); c.moveTo(w - 2, rh + 2); c.lineTo(w - 2 - inset, rh / 2); c.stroke();
+  c.strokeStyle = P.line; c.lineWidth = 3; c.strokeRect(2, 2, w - 4, rh);
+}
+
+function brickWall(c, x, y, w, h) {
+  c.fillStyle = BRICK; c.fillRect(x, y, w, h);
+  c.strokeStyle = 'rgba(60,25,18,0.35)'; c.lineWidth = 1;
+  for (let yy = y + 5, row = 0; yy < y + h; yy += 5, row++) {
+    c.beginPath(); c.moveTo(x, yy); c.lineTo(x + w, yy); c.stroke();
+    for (let xx = x + (row % 2) * 6; xx < x + w; xx += 12) { c.beginPath(); c.moveTo(xx, yy - 5); c.lineTo(xx, yy); c.stroke(); }
+  }
+}
+
+function whiteWindow(c, x, y, w, h) {
+  c.fillStyle = '#ffffff'; c.fillRect(x - 2, y - 2, w + 4, h + 4);
+  const g = c.createLinearGradient(x, y, x + w, y + h); g.addColorStop(0, '#dff3ff'); g.addColorStop(1, '#7fb6d4');
+  c.fillStyle = g; c.fillRect(x, y, w, h);
+  c.strokeStyle = '#ffffff'; c.lineWidth = 2; c.beginPath(); c.moveTo(x + w / 2, y); c.lineTo(x + w / 2, y + h); c.moveTo(x, y + h * 0.35); c.lineTo(x + w, y + h * 0.35); c.stroke();
+  c.strokeStyle = 'rgba(60,40,40,0.5)'; c.lineWidth = 1; c.strokeRect(x - 2, y - 2, w + 4, h + 4);
+}
+
+function drawDriessenPart(c, w, h, H, { front, entrance }) {
+  const fy = h - H;
+  hipRoof(c, w, fy - 2);
+  // witte dakrand (goot) en lichtband onder het dak
+  c.fillStyle = '#ffffff'; c.fillRect(0, fy - 6, w, 8); c.strokeStyle = P.line; c.lineWidth = 2; c.strokeRect(0, fy - 6, w, 8);
+  brickWall(c, 2, fy + 2, w - 4, H - 4);
+  const band = 16;
+  c.fillStyle = '#ffffff'; c.fillRect(2, fy + 2, w - 4, band);
+  for (let x = 8; x + 14 < w - 6; x += 18) { c.fillStyle = '#9fd0ea'; c.fillRect(x, fy + 5, 14, band - 6); }
+  // ramen of deuren
+  const top = fy + band + 10, wh = H - band - 18;
+  if (front) {
+    // vijf witte glazen dubbele deuren met bovenlicht, plus de letters erboven
+    const n = 5, dw = 26, gap = 10, total = n * dw + (n - 1) * gap, x0 = w / 2 - total / 2;
+    for (let i = 0; i < n; i++) {
+      const x = x0 + i * (dw + gap);
+      whiteWindow(c, x, top + 22, dw, wh - 24);
+      c.fillStyle = 'rgba(246,195,59,0.6)'; c.beginPath(); c.arc(x + dw / 2, top + 34, 3, 0, Math.PI * 2); c.fill();
+    }
+    c.fillStyle = '#e9e6e0'; c.font = '600 22px Fredoka, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.strokeStyle = 'rgba(40,30,30,0.5)'; c.lineWidth = 3; c.strokeText('driessen', w / 2, top + 9); c.fillText('driessen', w / 2, top + 9);
+    for (let x = 14; x < x0 - 28; x += 34) whiteWindow(c, x, top + 6, 22, wh - 10);
+    for (let x = w - 36; x > x0 + total + 6; x -= 34) whiteWindow(c, x, top + 6, 22, wh - 10);
+  } else {
+    for (let x = 12; x + 22 < w - 8; x += 34) whiteWindow(c, x, top, 22, wh - 4);
+  }
+  c.strokeStyle = P.line; c.lineWidth = 3; c.strokeRect(2, fy + 2, w - 4, H - 4);
+  if (entrance) {
+    // voordeur aan de noordkant: witte luifel met de naam op de dakrand
+    const lw = Math.min(170, w - 40), lx = w / 2 - lw / 2;
+    c.fillStyle = '#ffffff'; c.fillRect(lx, 0, lw, 22); c.strokeStyle = P.line; c.lineWidth = 2.4; c.strokeRect(lx, 0, lw, 22);
+    c.fillStyle = BRICK; c.font = '700 16px Fredoka, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('driessen', w / 2, 12);
+  }
+}
+
 /** Maakt textures `bld_<id>_<i>` voor alle delen. Het voorste deel krijgt het naambord. */
 export function makeCampusBuildings(scene, buildings, neighbour = false) {
   buildings.forEach((b, bi) => {
@@ -62,8 +134,9 @@ export function makeCampusBuildings(scene, buildings, neighbour = false) {
       if (!bands.length && b.color) bands.push(b.color);
       const wall = neighbour ? '#d9d4ca' : '#f1ece2';
       const roof = neighbour ? '#b9b6b0' : '#cfcac2';
-      makeTexture(scene, `bld_${b.id}_${i}`, p.w, p.h, (c, w, h) =>
-        drawPart(c, w, h, H, { wall, roof, bands, label: !neighbour && i === front ? b.name : '', seed: 7 + bi * 31 + i }));
+      makeTexture(scene, `bld_${b.id}_${i}`, p.w, p.h, (c, w, h) => (b.style === 'driessen'
+        ? drawDriessenPart(c, w, h, H, { front: i === front, entrance: i === b.entrance })
+        : drawPart(c, w, h, H, { wall, roof, bands, label: !neighbour && i === front ? b.name : '', seed: 7 + bi * 31 + i })));
     });
   });
 }

@@ -134,6 +134,13 @@ export class WorldScene extends Phaser.Scene {
         this.colliders.push({ x: p.x + p.w / 2, y: p.y + p.h / 2, w: p.w, h: p.h, rect: true });
       });
     }
+    // entree Driessen (noordkant): vlaggen in paars en geel, buxusbollen bij de deur
+    [[pt(1072, 483), 0x6b3fa0], [pt(1182, 483), HEX.gold]].forEach(([[x, y], col]) => {
+      this.addProp('flagpole', x, y, { r: 8 });
+      const cl = this.add.image(x + 2, y - 150, 'flagcloth').setOrigin(0, 0.5).setTint(col).setDepth(y + 1);
+      this.tweens.add({ targets: cl, scaleX: { from: 1, to: 0.82 }, duration: 600, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
+    });
+    for (const [x, y] of [pt(1096, 483), pt(1160, 483)]) this.addProp('bush', x, y, { r: 14 }, { scale: 0.55 });
     // vijver
     for (let k = -2; k <= 2; k++) this.colliders.push({ x: POND.x, y: POND.y + k * POND.ry * 0.38, r: POND.rx * (1 - Math.abs(k) * 0.15) });
 

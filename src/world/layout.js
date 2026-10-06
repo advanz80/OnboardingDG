@@ -79,7 +79,7 @@ export const POND = { x: pt(1005, 722)[0], y: pt(1005, 722)[1], rx: 34, ry: 96 }
 // mission: welk station hoort erbij (alleen voor de huisstijlkleur van de gevel).
 const bld = (id, name, rects, opts = {}) => ({ id, name, parts: rects.map((r) => rect(...r)), H: 90, ...opts });
 export const BUILDINGS = [
-  bld('driessen', 'Driessen', [[1065, 485, 1185, 530], [1105, 530, 1170, 600], [1100, 600, 1210, 650]], { H: 110, brand: 'driessen' }),
+  bld('driessen', 'Driessen', [[1065, 485, 1185, 530], [1105, 530, 1170, 600], [1100, 600, 1210, 650]], { H: 110, brand: 'driessen', style: 'driessen', entrance: 0 }),
   bld('rovc', 'ROVC', [[875, 597, 970, 650]], { color: '#3D2152' }),
   bld('ijk', 'IJk', [[800, 688, 955, 760]], { H: 100, brand: 'ijk' }),
   bld('atelier', 'Het Atelier', [[1018, 676, 1082, 748]], { H: 110, brand: ['haert', 'reijn'] }),
