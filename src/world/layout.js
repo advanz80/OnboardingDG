@@ -81,7 +81,8 @@ const bld = (id, name, rects, opts = {}) => ({ id, name, parts: rects.map((r) =>
 export const BUILDINGS = [
   bld('driessen', 'Driessen', [[1065, 485, 1185, 530], [1105, 530, 1170, 600], [1100, 600, 1210, 650]], { H: 110, brand: 'driessen', style: 'driessen', entrance: 0 }),
   bld('rovc', 'ROVC', [[875, 597, 970, 650]], { color: '#3D2152' }),
-  bld('ijk', 'IJk', [[800, 688, 955, 760]], { H: 100, brand: 'ijk' }),
+  // IJk: hoog blok links, glazen entreehal, lagere vleugel rechts
+  bld('ijk', 'IJk', [[800, 684, 858, 760], [858, 692, 878, 760], [878, 698, 955, 760]], { H: 120, brand: 'ijk', style: 'ijk', kinds: ['tall', 'glass', 'low'], Hs: [140, 120, 90], labelPart: 2 }),
   bld('atelier', 'Het Atelier', [[1018, 676, 1082, 748]], { H: 110, brand: ['haert', 'reijn'] }),
   bld('bloeij', 'Bloeij', [[478, 462, 562, 518]], { brand: 'bloeij' }),
   bld('loods', 'Loods', [[478, 560, 562, 605]], { H: 80, color: '#8a8f99' }),

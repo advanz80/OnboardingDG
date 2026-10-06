@@ -137,10 +137,19 @@ export class WorldScene extends Phaser.Scene {
     // entree Driessen (noordkant): vlaggen in paars en geel, buxusbollen bij de deur
     [[pt(1072, 483), 0x6b3fa0], [pt(1182, 483), HEX.gold]].forEach(([[x, y], col]) => {
       this.addProp('flagpole', x, y, { r: 8 });
-      const cl = this.add.image(x + 2, y - 150, 'flagcloth').setOrigin(0, 0.5).setTint(col).setDepth(y + 1);
-      this.tweens.add({ targets: cl, scaleX: { from: 1, to: 0.82 }, duration: 600, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
+      // staande banier, zoals op de foto's
+      const cl = this.add.image(x + 3, y - 158, 'flagcloth').setOrigin(0, 0).setScale(0.42, 1.6).setTint(col).setDepth(y + 1);
+      this.tweens.add({ targets: cl, scaleX: { from: 0.42, to: 0.36 }, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
     });
     for (const [x, y] of [pt(1096, 483), pt(1160, 483)]) this.addProp('bush', x, y, { r: 14 }, { scale: 0.55 });
+    // IJk: drie vlaggen (oranje, geel, paars) en paarse beplanting langs de gevel
+    [[pt(806, 679), HEX.orange], [pt(826, 679), HEX.gold], [pt(846, 679), 0x8e5bd8]].forEach(([[x, y], col]) => {
+      this.addProp('flagpole', x, y, { r: 8 });
+      // staande banier, zoals op de foto's
+      const cl = this.add.image(x + 3, y - 158, 'flagcloth').setOrigin(0, 0).setScale(0.42, 1.6).setTint(col).setDepth(y + 1);
+      this.tweens.add({ targets: cl, scaleX: { from: 0.42, to: 0.36 }, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
+    });
+    for (const x of [868, 884, 900, 916, 932, 948]) { const [bx, by] = pt(x, 763); this.addProp('bush', bx, by, { r: 12 }, { scale: 0.5 }).setTint(0xc9a0ff); }
     // vijver
     for (let k = -2; k <= 2; k++) this.colliders.push({ x: POND.x, y: POND.y + k * POND.ry * 0.38, r: POND.rx * (1 - Math.abs(k) * 0.15) });
 
