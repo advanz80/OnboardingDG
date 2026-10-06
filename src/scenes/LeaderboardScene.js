@@ -52,7 +52,9 @@ export class LeaderboardScene extends Phaser.Scene {
       }
       const col = i < 3 ? [P.gold, '#9aa3b5', '#c47a3f'][i] : P.ink;
       this.add.text(cols[0], y, `${i + 1}`, textStyle(24, col, { stroke: i < 3 ? P.ink : undefined, strokeThickness: i < 3 ? 4 : 0 })).setOrigin(0, 0.5);
-      this.add.text(cols[1], y, String(e.name).slice(0, 20) + (me ? `  ← ${t('leaderboard.you')}` : ''), textStyle(24, P.ink)).setOrigin(0, 0.5);
+      const nm = this.add.text(cols[1], y, String(e.name).slice(0, 20), textStyle(24, P.ink)).setOrigin(0, 0.5);
+      const extra = [e.org, me ? `← ${t('leaderboard.you')}` : ''].filter(Boolean).join('  ');
+      if (extra) this.add.text(nm.x + nm.width + 12, y + 2, extra, textStyle(17, me ? P.ink : P.inkSoft)).setOrigin(0, 0.5);
       this.add.text(cols[2], y, `${e.score}`, textStyle(24, P.ink)).setOrigin(1, 0.5);
       this.add.text(cols[3], y, formatTime(e.timeMs), textStyle(22, P.inkSoft)).setOrigin(1, 0.5);
     });

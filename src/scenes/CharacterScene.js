@@ -9,7 +9,9 @@ import {
 } from '../gfx/CharacterFactory.js';
 import { SaveManager } from '../core/SaveManager.js';
 import { Audio } from '../core/AudioEngine.js';
-import { burst } from '../core/Juice.js';
+import { burst, shake } from '../core/Juice.js';
+import { Leaderboard } from '../core/Leaderboard.js';
+import { acTitle } from '../gfx/tex/logo.js';
 
 const SHOES = ['#5b4636', '#3b3f55', '#ffffff', '#e8504c', '#3d8fe0', '#f6c33b'];
 // [labelsleutel, eigenschap, lijst, type]
@@ -37,9 +39,11 @@ export class CharacterScene extends Phaser.Scene {
   create() {
     const { width, height } = DESIGN;
     this.cameras.main.fadeIn(400, 15, 61, 92);
-    this.add.tileSprite(0, 0, width, height, 'water').setOrigin(0).setDepth(-100);
-    this.waves = this.add.tileSprite(0, 0, width, height, 'waves').setOrigin(0).setAlpha(0.5).setDepth(-99);
-    this.add.text(width / 2, 60, t('character.title'), titleStyle(60, P.gold)).setOrigin(0.5);
+    // lucht en gras, zoals op het startscherm
+    const bg = this.add.graphics().setDepth(-100);
+    bg.fillGradientStyle(0x6fd3ff, 0x6fd3ff, 0xcfefff, 0xcfefff, 1).fillRect(0, 0, width, height * 0.62);
+    bg.fillStyle(0x7cc95a).fillRect(0, height * 0.62, width, height * 0.38);
+    acTitle(this, width / 2, 62, t('character.title'), 54);
 
     // startwaarden: willekeurig maar vriendelijk
     this.idx = {};
@@ -58,13 +62,32 @@ export class CharacterScene extends Phaser.Scene {
 
     // naam + opties
     panel(this, 800, 400, 760, 520);
-    this.add.text(445, 172, t('character.namePrompt'), textStyle(24, P.ink)).setOrigin(0, 0.5);
+    this.add.text(445, 168, t('character.namePrompt'), textStyle(22, P.ink)).setOrigin(0, 0.5);
     const prevName = SaveManager.state?.player?.name || '';
+    const prevOrg = SaveManager.state?.player?.org || '';
     const font = FONT.ui.replace(/"/g, "'");
-    this.nameEl = this.add.dom(870, 172).createFromHTML(
-      `<input type="text" maxlength="16" placeholder="${t('character.namePlaceholder')}" value="${prevName.replace(/"/g, '')}"
-        style="width:440px;height:48px;border:4px solid ${P.ink};border-radius:14px;padding:0 14px;font:600 24px ${font};color:${P.ink};background:#fff;outline:none;box-sizing:border-box" />`,
+    const field = `height:44px;border:4px solid ${P.ink};border-radius:12px;padding:0 12px;font:600 21px ${font};color:${P.ink};background:#fff;outline:none;box-sizing:border-box`;
+    this.nameEl = this.add.dom(880, 168).createFromHTML(
+      `<input type="text" maxlength="16" placeholder="${t('character.namePlaceholder')}" value="${prevName.replace(/"/g, '')}" style="width:440px;${field}" />`,
     );
+    // organisatie: keuzelijst + vrij veld voor klant/andere organisatie
+    this.add.text(445, 222, t('character.orgPrompt'), textStyle(22, P.ink)).setOrigin(0, 0.5);
+    const orgs = t('character.orgs');
+    const known = orgs.find((o) => o === prevOrg);
+    const opts = [`<option value="" disabled ${prevOrg ? '' : 'selected'}>${t('character.orgChoose')}</option>`]
+      .concat(orgs.map((o) => `<option ${o === known ? 'selected' : ''}>${o}</option>`)).join('');
+    this.orgEl = this.add.dom(700, 222).createFromHTML(`<select style="width:220px;${field};padding:0 6px">${opts}</select>`);
+    this.orgOtherEl = this.add.dom(1000, 222).createFromHTML(
+      `<input type="text" maxlength="40" placeholder="${t('character.orgOther')}" value="${known ? '' : prevOrg.replace(/"/g, '')}" style="width:300px;${field}" />`,
+    );
+    const sel = this.orgEl.node.querySelector('select');
+    const needsText = () => t('character.orgNeedsText').includes(sel.value);
+    const syncOther = () => this.orgOtherEl.setVisible(needsText());
+    sel.addEventListener('change', () => { syncOther(); this.setError(''); });
+    if (!known && prevOrg) sel.value = t('character.orgNeedsText')[0];
+    syncOther();
+    this.needsOrgText = needsText;
+    this.errText = this.add.text(800, 258, '', textStyle(18, P.red)).setOrigin(0.5);
     this.swatchMap = {};
     const row = (opt, x0, y) => {
       const [label, prop, list, type] = opt;
@@ -76,11 +99,11 @@ export class CharacterScene extends Phaser.Scene {
       this.drawSwatch(opt);
       void list; void type;
     };
-    COL_A.forEach((o, i) => row(o, 445, 240 + i * 56));
-    COL_B.forEach((o, i) => row(o, 805, 240 + i * 56));
+    COL_A.forEach((o, i) => row(o, 445, 300 + i * 50));
+    COL_B.forEach((o, i) => row(o, 805, 300 + i * 50));
 
-    button(this, 620, 610, t('character.random'), () => this.randomize(), { width: 230, color: HEX.teal, icon: 'bulb', size: 22 });
-    button(this, 940, 610, t('character.start'), () => this.start(), { width: 260, color: HEX.gold, icon: 'ship' });
+    button(this, 620, 618, t('character.random'), () => this.randomize(), { width: 230, color: HEX.teal, icon: 'bulb', size: 22 });
+    this.startBtn = button(this, 940, 618, t('character.start'), () => this.start(), { width: 260, color: HEX.gold, icon: 'key' });
     this.refreshPreview();
     centerDesign(this, '#1a6fa3');
   }
@@ -129,10 +152,32 @@ export class CharacterScene extends Phaser.Scene {
     Audio.sfx('select');
   }
 
-  start() {
+  setError(msg) {
+    this.errText.setText(msg);
+    if (msg) { Audio.sfx('error'); shake(this, 0.004, 150); }
+  }
+
+  async start() {
+    if (this.checking) return;
     const input = this.nameEl.node.querySelector('input');
-    const name = (input.value || '').trim().slice(0, 16) || t('character.defaultName');
-    SaveManager.newGame({ name, look: { ...this.look } });
+    const name = (input.value || '').trim().replace(/\s+/g, ' ').slice(0, 16);
+    const sel = this.orgEl.node.querySelector('select');
+    const other = (this.orgOtherEl.node.querySelector('input').value || '').trim().slice(0, 40);
+    if (!name) return this.setError(t('character.errNoName'));
+    if (!sel.value) return this.setError(t('character.errNoOrg'));
+    if (this.needsOrgText() && !other) return this.setError(t('character.errNoOrgText'));
+    const org = this.needsOrgText() ? `${other}` : sel.value;
+    // naam mag nog niet op het leaderboard staan
+    this.checking = true;
+    this.startBtn.setEnabled?.(false);
+    this.errText.setColor(P.inkSoft).setText(t('character.checking'));
+    const taken = await Leaderboard.nameTaken(name);
+    this.checking = false;
+    this.startBtn.setEnabled?.(true);
+    this.errText.setColor(P.red);
+    if (taken) return this.setError(t('character.errTaken', { naam: name }));
+    this.errText.setText('');
+    SaveManager.newGame({ name, org, look: { ...this.look } });
     makeCharacter(this, 'player', this.look);
     setTextVars({ naam: name });
     this.preview.setFrame('cheer');
@@ -141,5 +186,4 @@ export class CharacterScene extends Phaser.Scene {
     this.time.delayedCall(350, () => transitionTo(this, 'World'));
   }
 
-  update(_t, dt) { this.waves.tilePositionX += dt * 0.02; }
 }

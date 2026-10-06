@@ -74,7 +74,7 @@ function sanitize(v) {
   if (!v || typeof v !== 'object') return null;
   const score = Number(v.score), timeMs = Number(v.timeMs);
   if (!Number.isFinite(score) || !Number.isFinite(timeMs) || score < 0 || score > 20000 || timeMs < 0) return null;
-  return { name: String(v.name || 'Anoniem').slice(0, 20), score: Math.round(score), timeMs: Math.round(timeMs), date: String(v.date || '') };
+  return { name: String(v.name || 'Anoniem').slice(0, 20), org: String(v.org || '').slice(0, 40), score: Math.round(score), timeMs: Math.round(timeMs), date: String(v.date || '') };
 }
 
 function compare(a, b) { return b.score - a.score || a.timeMs - b.timeMs; }
@@ -101,6 +101,7 @@ class LeaderboardService {
   async submit(entry) {
     const clean = {
       name: String(entry.name || '').trim().slice(0, 20) || 'Anoniem',
+      org: String(entry.org || '').trim().slice(0, 40),
       score: Math.min(20000, Math.max(0, Math.round(entry.score) || 0)),
       timeMs: Math.min(36000000, Math.max(0, Math.round(entry.timeMs) || 0)),
       date: new Date().toISOString(),
@@ -133,6 +134,17 @@ class LeaderboardService {
       }
     }
     try { return await this.local.top(limit); } catch { return []; }
+  }
+
+  /** Is deze naam al bezet op het leaderboard? (hoofdletters en spaties tellen niet mee) */
+  async nameTaken(name) {
+    const norm = (n) => String(n || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    const want = norm(name);
+    if (!want) return false;
+    let list = [];
+    if (this.remote) { try { list = await this.remote.top(1000); } catch { /* offline: alleen lokaal controleren */ } }
+    try { list = list.concat(await this.local.top(1000)); } catch { /* geen lokale scores */ }
+    return list.some((e) => norm(e.name) === want);
   }
 
   /** Verstuur scores die eerder (zonder internet) niet aankwamen. */

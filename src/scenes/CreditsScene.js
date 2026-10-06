@@ -90,7 +90,7 @@ export class CreditsScene extends Phaser.Scene {
     const go = async () => {
       let entry = s?.submittedEntry;
       if (!entry) {
-        entry = await Leaderboard.submit({ name, score, timeMs: time });
+        entry = await Leaderboard.submit({ name, org: s?.player?.org || '', score, timeMs: time });
         if (s) { s.submittedEntry = entry; SaveManager.save(); }
       }
       const top = await Leaderboard.top(100);
