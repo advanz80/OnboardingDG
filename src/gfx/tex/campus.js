@@ -136,6 +136,18 @@ function flatRoof(c, w, rh, col = '#5a5e66') {
 
 function drawIjkPart(c, w, h, H, { kind, label }) {
   const fy = h - H;
+  if (kind === 'glassroof') {
+    // glazen dakstrook tussen het noord- en zuidblok, met de entree aan de westkant
+    const g = c.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#d9f1fb'); g.addColorStop(1, '#8cc3dc');
+    c.fillStyle = g; c.fillRect(0, 0, w, h);
+    c.strokeStyle = '#6d7782'; c.lineWidth = 2;
+    for (let x = 18; x < w; x += 18) { c.beginPath(); c.moveTo(x, 0); c.lineTo(x, h); c.stroke(); }
+    c.beginPath(); c.moveTo(0, h / 2); c.lineTo(w, h / 2); c.stroke();
+    c.fillStyle = 'rgba(255,255,255,0.5)'; for (let x = 6; x < w; x += 54) c.fillRect(x, 4, 8, h - 8);
+    rrect(c, 0, 2, 26, h - 4, 3); c.fillStyle = '#5d6b78'; c.fill(); c.strokeStyle = P.line; c.lineWidth = 2; c.stroke();
+    c.strokeStyle = P.line; c.lineWidth = 3; c.strokeRect(0, 0, w, h);
+    return;
+  }
   if (kind === 'glass') {
     // glazen entreehal: glazen dak en volledig glazen gevel met stalen stijlen
     rrect(c, 2, 2, w - 4, fy, 3); c.fillStyle = '#a9d6ea'; c.fill(); c.strokeStyle = P.line; c.lineWidth = 3; c.stroke();
