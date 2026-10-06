@@ -45,14 +45,13 @@ export const ROADS = [
   road(84, [340, 770], [560, 790], [800, 808], [1000, 806], [1120, 772], [1270, 692], [1330, 662]), // Vlamovenweg
   road(72, [575, 422], [575, 650], [573, 790]),                                        // west: langs Bloeij
   road(72, [575, 652], [700, 655], [870, 658], [1000, 662], [1090, 664], [1240, 676], [1280, 690]), // Tunnelovenweg
-  road(72, [990, 430], [992, 540], [995, 660]),                                        // ingang campus vanaf de Dreef
-  road(60, [700, 655], [700, 800]),                                                    // naar parkeerplaats IJk
 ];
 export const ROUNDABOUT = { x: pt(430, 415)[0], y: pt(430, 415)[1], r: 150 };
 
 // Voetpaden (stenen tegels)
 export const PATHS = [
   { pts: [pt(422, 450), pt(432, 600), pt(440, 775)], w: 48 },     // Schootensepad
+  { pts: [pt(990, 428), pt(992, 540), pt(995, 662)], w: 64 },     // ingang campus vanaf de Dreef
   { pts: [pt(1000, 560), pt(1030, 585)], w: 52 },                 // binnenterrein → terras
   { pts: [pt(985, 672), pt(988, 790)], w: 48 },                   // langs de vijver
   { pts: [pt(790, 700), pt(785, 664)], w: 44 },                   // fietsenstalling IJk
@@ -96,10 +95,10 @@ export const NEIGHBOURS = [
 ];
 
 // Missiepunten: kraam + NPC, voor de ingang van het eigen gebouw
-const station = (px, py) => { const [x, y] = pt(px, py); return { x, y, npc: { x: x + 70, y: y + 56 } }; };
+const station = (px, py, dx = 70, dy = 56) => { const [x, y] = pt(px, py); return { x, y, npc: { x: x + dx, y: y + dy } }; };
 export const STATIONS = {
   bhc: station(498, 722),
-  driessen: station(1035, 556),
+  driessen: station(1118, 474, 110, 4),   // bij de voordeur aan de noordkant
   bloeij: station(493, 542),
   ijk: station(835, 780),
   haert: station(1020, 764),
