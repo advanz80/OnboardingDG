@@ -79,6 +79,7 @@ export class WorldScene extends Phaser.Scene {
     this.scene.launch('HUD');
     this.hud = this.scene.get('HUD');
 
+    if (s.seenIntro && isTouch(this) && !SaveManager.settings.seenTouchHelp) this.time.delayedCall(900, () => this.showTouchCoach());
     this.events.on('wake', () => this.onWake());
     this.events.on('shutdown', () => { this.scene.stop('HUD'); });
 
@@ -91,12 +92,23 @@ export class WorldScene extends Phaser.Scene {
           lines: t('story.intro'),
           onDone: () => {
             s.seenIntro = true; SaveManager.save();
-            this.hud.toast(t(isTouch(this) ? 'hud.moveHintTouch' : 'hud.moveHintKeys'), HEX.cream, 'shoe', 4000);
-            this.time.delayedCall(4600, () => this.hud.toast('→ ' + BRANDS.bhc.name, BRANDS.bhc.color, 'map'));
+            if (isTouch(this) && !SaveManager.settings.seenTouchHelp) this.showTouchCoach(() => this.hud.toast('→ ' + BRANDS.bhc.name, BRANDS.bhc.color, 'map'));
+            else {
+              this.hud.toast(t(isTouch(this) ? 'hud.moveHintTouch' : 'hud.moveHintKeys'), HEX.cream, 'shoe', 4000);
+              this.time.delayedCall(4600, () => this.hud.toast('→ ' + BRANDS.bhc.name, BRANDS.bhc.color, 'map'));
+            }
           },
         });
       });
     }
+  }
+
+  /** Uitleg over de stuurcirkel (alleen op touch, één keer). */
+  showTouchCoach(onDone) {
+    this.hud.controls.showCoach(() => {
+      SaveManager.settings.seenTouchHelp = true; SaveManager.saveSettings();
+      onDone?.();
+    });
   }
 
   // ── Decor ───────────────────────────────────────────────────────────────

@@ -85,8 +85,12 @@
     "fragmentGot": "Sleutelfragment van {bedrijf}!",
     "allFragments": "Alle 6 fragmenten! Op naar de Toren van Rompslomp!",
     "moveHintKeys": "Lopen: WASD of pijltjes · Praten: spatie",
-    "moveHintTouch": "Sleep op de linkerhelft om te lopen · tik ! om te praten",
-    "closer": "Loop eerst dichterbij!"
+    "moveHintTouch": "Duim op de cirkel linksonder en schuif om te lopen · tik ! om te praten",
+    "closer": "Loop eerst dichterbij!",
+    "dragToWalk": "Sleep om te lopen",
+    "coachMove": "Zet je duim op de cirkel linksonder en schuif in de richting waarin je wilt lopen. Loslaten = stoppen.",
+    "coachAction": "Tik hier om te praten of iets te doen",
+    "coachOk": "Begrepen!"
   },
   "common": {
     "start": "Start!",
