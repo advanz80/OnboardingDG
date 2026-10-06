@@ -48,18 +48,23 @@ export class DriessenMission extends MissionBase {
     for (let i = 0; i < 8; i++) { const k = `cand_${i}`; makeCharacter(this, k, randomLook()); this.looks.push(k); }
     for (let i = 0; i < 3; i++) { const k = `candp_${i}`; makeCharacter(this, k, pirateLook(Math.random, { hat: null, bandana: null, eyepatch: true, shirt: '#ffffff' })); this.looks.push(k); }
 
-    this.dt = dragTap(this, { onDrop: (item, target) => this.onDrop(item, target) });
+    this.dt = dragTap(this, { onDrop: (item, target) => { this.binBg?.setTint(0xf3d6d6); return this.onDrop(item, target); }, onSelect: () => this.binBg?.setTint(0xffb3a8) });
 
     // prullenbak
-    const bin = this.add.container(600, 620).setDepth(10);
-    const binBg = this.add.image(0, 0, 'ui_round').setDisplaySize(120, 120).setTint(0xdddddd);
-    const binIc = this.add.image(0, -10, 'icons', 'trash').setDisplaySize(64, 64);
-    const binTx = this.add.text(0, 40, this.T('reject'), textStyle(16, P.ink)).setOrigin(0.5);
-    bin.add([binBg, binIc, binTx]).setSize(120, 120);
-    this.bin = bin;
+    const bin = this.add.container(600, 545).setDepth(10);
+    const binBg = this.add.image(0, 0, 'ui_round').setDisplaySize(160, 160).setTint(0xf3d6d6);
+    const binIc = this.add.image(0, -16, 'icons', 'trash').setDisplaySize(76, 76);
+    const binTx = this.add.text(0, 48, this.T('reject'), textStyle(20, P.cream, { backgroundColor: '#b8302c', padding: { x: 8, y: 3 } })).setOrigin(0.5);
+    bin.add([binBg, binIc, binTx]).setSize(180, 180);
+    this.bin = bin; this.binBg = binBg;
+    this.tweens.add({ targets: bin, scale: 1.05, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
+    // oplichten zodra je een kandidaat sleept of hebt geselecteerd
+    this.input.on('dragstart', () => binBg.setTint(0xffb3a8));
+    this.input.on('dragend', () => binBg.setTint(0xf3d6d6));
     this.dt.addTarget(bin, { type: 'bin' });
 
     for (let i = 0; i < 3; i++) this.time.delayedCall(i * 150, () => this.spawnVacancy(i));
+    this.time.addEvent({ delay: 1200, loop: true, callback: () => this.ensureMatches() });
     for (let i = 0; i < 4; i++) this.time.delayedCall(400 + i * 150, () => this.spawnCandidate(i));
   }
 
@@ -83,17 +88,39 @@ export class DriessenMission extends MissionBase {
     this.dt.addTarget(c, { type: 'vac', vac: c });
     c.x = 1400;
     this.tweens.add({ targets: c, x: 960, duration: 400, ease: 'Back.Out' });
+    this.time.delayedCall(600, () => this.ensureMatches());
   }
 
-  makeCandidateData() {
+  isPerfect(q, v) { return q && !q.pirate && !q.locked && q.skills.includes(v.role) && q.shifts.includes(v.shift); }
+
+  /** Zorg dat elke open vacature minstens één perfecte kandidaat in de rij heeft. */
+  ensureMatches() {
+    if (!this.running) return;
+    const open = this.vacancies.filter((v) => v && !v.filled);
+    for (const v of open) {
+      if (this.queue.some((q) => this.isPerfect(q, v))) continue;
+      // vervang een kandidaat die voor geen enkele vacature perfect is (liefst geen piraat)
+      // een kandidaat is 'nodig' als hij de enige perfecte match voor een vacature is
+      const needed = (q) => open.some((o) => this.isPerfect(q, o) && this.queue.filter((x) => this.isPerfect(x, o)).length === 1);
+      const spare = this.queue.filter((q) => q && !q.locked && this.dt.selected !== q && !needed(q));
+      const victim = spare.find((q) => !q.pirate) || spare[0];
+      if (!victim) continue;
+      this.queue[victim.slot] = null;
+      victim.locked = true; victim.disableInteractive();
+      this.tweens.add({ targets: victim, x: -300, alpha: 0, duration: 300, ease: 'Cubic.In', onComplete: () => victim.destroy() });
+      this.time.delayedCall(320, () => this.spawnCandidate(victim.slot, v));
+    }
+  }
+
+  makeCandidateData(forVac = null) {
     const openVac = this.vacancies.filter(Boolean);
     const inQueuePirate = this.queue.some((q) => q && q.pirate);
-    if (!inQueuePirate && Math.random() < 0.22) {
+    if (!forVac && !inQueuePirate && Math.random() < 0.22) {
       return { pirate: true, name: Phaser.Utils.Array.GetRandom(this.T('pirateNames')), skills: Phaser.Utils.Array.Shuffle(ROLE_KEYS.slice()).slice(0, 2), shifts: SHIFT_KEYS.slice() };
     }
     const name = this.names.length ? this.names.pop() : Phaser.Utils.Array.GetRandom(this.T('names'));
     // zorg dat er een perfecte match in de rij zit
-    const perfectNeeded = openVac.filter((v) => !this.queue.some((q) => q && !q.pirate && q.skills.includes(v.role) && q.shifts.includes(v.shift)));
+    const perfectNeeded = forVac ? [forVac] : openVac.filter((v) => !v.filled && !this.queue.some((q) => this.isPerfect(q, v)));
     if (openVac.length && (perfectNeeded.length || Math.random() < 0.6)) {
       const v = Phaser.Utils.Array.GetRandom(perfectNeeded.length ? perfectNeeded : openVac);
       const skills = [v.role];
@@ -105,9 +132,9 @@ export class DriessenMission extends MissionBase {
     return { pirate: false, name, skills: Phaser.Utils.Array.Shuffle(ROLE_KEYS.slice()).slice(0, Phaser.Math.Between(1, 2)), shifts: [Phaser.Utils.Array.GetRandom(SHIFT_KEYS)] };
   }
 
-  spawnCandidate(i) {
-    if (!this.running) return;
-    const d = this.makeCandidateData();
+  spawnCandidate(i, forVac = null) {
+    if (!this.running || this.queue[i]) return;
+    const d = this.makeCandidateData(forVac);
     const c = this.add.container(250, QUEUE_Y[i]).setDepth(20);
     const hl = this.add.nineslice(0, 0, 'ui_card', undefined, 404, 128, 18, 18, 18, 18).setTint(HEX.gold).setVisible(false);
     const bg = card(this, 0, 0, 380, 112, d.pirate ? 0xfff1e6 : 0xffffff);
@@ -135,22 +162,22 @@ export class DriessenMission extends MissionBase {
     c.disableInteractive();
     const slot = c.slot;
     anim(c);
-    this.time.delayedCall(700, () => this.spawnCandidate(slot));
+    this.time.delayedCall(700, () => { this.spawnCandidate(slot); this.time.delayedCall(450, () => this.ensureMatches()); });
   }
 
   onDrop(c, target) {
     if (!this.running || c.locked) return false;
     if (target.data.type === 'bin') {
       if (c.pirate) {
-        this.addScore(60, 600, 520, `${this.T('pirateRejected')} +60`);
+        this.addScore(60, 600, 450, `${this.T('pirateRejected')} +60`);
         Audio.sfx('good');
-        burst(this, 600, 600, 'stars', 16);
+        burst(this, 600, 545, 'stars', 16);
       } else {
-        this.addScore(-15, 600, 520);
-        floatText(this, 600, 480, this.T('goodRejected'), P.red, 20);
+        this.addScore(-15, 600, 450);
+        floatText(this, 600, 410, this.T('goodRejected'), P.red, 22);
         Audio.sfx('bad');
       }
-      this.removeCandidate(c, (o) => this.tweens.add({ targets: o, x: 600, y: 620, scale: 0, angle: 200, duration: 350, ease: 'Back.In', onComplete: () => o.destroy() }));
+      this.removeCandidate(c, (o) => this.tweens.add({ targets: o, x: 600, y: 545, scale: 0, angle: 200, duration: 350, ease: 'Back.In', onComplete: () => o.destroy() }));
       wobble(this, this.bin);
       return true;
     }
