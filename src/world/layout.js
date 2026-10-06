@@ -79,9 +79,9 @@ export const POND = { x: pt(1005, 722)[0], y: pt(1005, 722)[1], rx: 34, ry: 96 }
 // mission: welk station hoort erbij (alleen voor de huisstijlkleur van de gevel).
 const bld = (id, name, rects, opts = {}) => ({ id, name, parts: rects.map((r) => rect(...r)), H: 90, ...opts });
 export const BUILDINGS = [
-  // Driessen (rechtgezet): entreevleugel noord, dwarsvleugel boven, twee zijvleugels rond het glazen atrium, dwarsvleugel onder
-  bld('driessen', 'Driessen', [[1110, 471, 1145, 487], [1065, 487, 1190, 530], [1100, 530, 1118, 605], [1118, 530, 1152, 605], [1152, 530, 1170, 605], [1095, 605, 1208, 650]],
-    { H: 110, brand: 'driessen', style: 'driessen', entrance: 0, kinds: ['wing', 'wing', 'wing', 'atrium', 'wing', 'wing'] }),
+  // Driessen (rechtgezet): entreevleugel noord, twee even brede dwarsvleugels, daartussen een iets smaller middenblok met glazen atrium
+  bld('driessen', 'Driessen', [[1127, 471, 1163, 487], [1085, 487, 1205, 530], [1091, 530, 1199, 605], [1085, 605, 1205, 650]],
+    { H: 110, brand: 'driessen', style: 'driessen', entrance: 0, kinds: ['roof', 'roof', 'atriumroof', 'wing'] }),
   bld('rovc', 'ROVC', [[875, 597, 970, 650]], { color: '#3D2152' }),
   // IJk: twee langgerekte blokken (noord hoog, zuid lager) met een glazen dakstrook ertussen; entree aan de westkant
   bld('ijk', 'IJk', [[795, 678, 932, 712], [795, 712, 960, 722], [818, 722, 975, 760]], { H: 120, brand: 'ijk', style: 'ijk', kinds: ['tall', 'glassroof', 'low'], Hs: [120, 0, 100], labelPart: 2 }),
@@ -101,7 +101,7 @@ export const NEIGHBOURS = [
 const station = (px, py, dx = 70, dy = 56) => { const [x, y] = pt(px, py); return { x, y, npc: { x: x + dx, y: y + dy } }; };
 export const STATIONS = {
   bhc: station(498, 722),
-  driessen: station(1127, 465, 110, 4),   // bij de voordeur aan de noordkant
+  driessen: station(1145, 465, 110, 4),   // bij de voordeur aan de noordkant
   bloeij: station(493, 542),
   ijk: station(835, 780),
   haert: station(1020, 764),

@@ -91,6 +91,27 @@ function whiteWindow(c, x, y, w, h) {
 
 function drawDriessenPart(c, w, h, H, { front, entrance, kind }) {
   const fy = h - H;
+  if (kind === 'roof' || kind === 'atriumroof') {
+    // van bovenaf alleen pannendak (de gevels van deze delen zie je in dit aanzicht niet)
+    hipRoof(c, w, h - 4);
+    if (kind === 'atriumroof') {
+      const gw = w * 0.36, gx = w / 2 - gw / 2, gy = h * 0.1, gh = h * 0.8;
+      const g = c.createLinearGradient(gx, gy, gx + gw, gy + gh); g.addColorStop(0, '#d9f1fb'); g.addColorStop(1, '#86bfdb');
+      c.fillStyle = g; c.fillRect(gx, gy, gw, gh);
+      c.strokeStyle = '#8a8f99'; c.lineWidth = 2;
+      for (let y = gy + 16; y < gy + gh; y += 16) { c.beginPath(); c.moveTo(gx, y); c.lineTo(gx + gw, y); c.stroke(); }
+      c.beginPath(); c.moveTo(w / 2, gy); c.lineTo(w / 2, gy + gh); c.stroke();
+      c.fillStyle = 'rgba(255,255,255,0.45)'; for (let y = gy + 6; y < gy + gh; y += 64) c.fillRect(gx + 6, y, gw / 2 - 12, 8);
+      c.strokeStyle = '#ffffff'; c.lineWidth = 4; c.strokeRect(gx, gy, gw, gh);
+      c.strokeStyle = P.line; c.lineWidth = 2; c.strokeRect(gx - 2, gy - 2, gw + 4, gh + 4);
+    }
+    if (entrance) {
+      const lw = Math.min(170, w - 20), lx = w / 2 - lw / 2;
+      c.fillStyle = '#ffffff'; c.fillRect(lx, 0, lw, 22); c.strokeStyle = P.line; c.lineWidth = 2.4; c.strokeRect(lx, 0, lw, 22);
+      c.fillStyle = BRICK; c.font = '700 16px Fredoka, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('driessen', w / 2, 12);
+    }
+    return;
+  }
   if (kind === 'atrium') {
     // glazen dak over het atrium
     const g = c.createLinearGradient(0, 0, w, h); g.addColorStop(0, '#d9f1fb'); g.addColorStop(1, '#86bfdb');
