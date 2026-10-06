@@ -83,8 +83,8 @@ function buddyFrame(c, frame) {
   if (pose === 'angry') { c.strokeStyle = FUR_D; c.lineWidth = 2; for (const s of [-1, 1]) { c.beginPath(); c.moveTo(fx + s * 12, fy - 11); c.lineTo(fx + s * 4, fy - 8); c.stroke(); } }
 }
 
-export function makeBuddy(scene, key = 'npc_buddy') {
-  const SS = 2;
+export function makeBuddy(scene, key = 'npc_buddy', res = 1) {
+  const SS = 2 * res;
   const big = document.createElement('canvas');
   big.width = FW * SS * FRAMES.length; big.height = FH * SS;
   const b = big.getContext('2d');
@@ -94,11 +94,11 @@ export function makeBuddy(scene, key = 'npc_buddy') {
     buddyFrame(b, f);
     b.restore();
   });
-  const tex = makeTexture(scene, key, FW * FRAMES.length, FH, (ctx) => {
+  const tex = makeTexture(scene, key, FW * res * FRAMES.length, FH * res, (ctx) => {
     ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(big, 0, 0, FW * FRAMES.length, FH);
+    ctx.drawImage(big, 0, 0, FW * res * FRAMES.length, FH * res);
   });
-  FRAMES.forEach((f, i) => tex.add(f, 0, i * FW, 0, FW, FH));
+  FRAMES.forEach((f, i) => tex.add(f, 0, i * FW * res, 0, FW * res, FH * res));
   return key;
 }
 

@@ -83,8 +83,8 @@ function crocFrame(c, frame) {
 }
 
 /** Kroko Paragraaf als personage-spritesheet met dezelfde frames als makeCharacter. */
-export function makeCroc(scene, key) {
-  const SS = 2;
+export function makeCroc(scene, key, res = 1) {
+  const SS = 2 * res;
   const big = document.createElement('canvas');
   big.width = FW * SS * FRAMES.length; big.height = FH * SS;
   const b = big.getContext('2d');
@@ -94,11 +94,11 @@ export function makeCroc(scene, key) {
     crocFrame(b, f);
     b.restore();
   });
-  const tex = makeTexture(scene, key, FW * FRAMES.length, FH, (ctx) => {
+  const tex = makeTexture(scene, key, FW * res * FRAMES.length, FH * res, (ctx) => {
     ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(big, 0, 0, FW * FRAMES.length, FH);
+    ctx.drawImage(big, 0, 0, FW * res * FRAMES.length, FH * res);
   });
-  FRAMES.forEach((f, i) => tex.add(f, 0, i * FW, 0, FW, FH));
+  FRAMES.forEach((f, i) => tex.add(f, 0, i * FW * res, 0, FW * res, FH * res));
   return key;
 }
 
