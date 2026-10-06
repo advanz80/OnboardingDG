@@ -368,6 +368,40 @@ function drawLoodsPart(c, w, h, H, { label }) {
   }
 }
 
+// ── BHC: roodbruine baksteen, doorlopende raamstrook boven, glazen entree in het midden ──
+function drawBhcPart(c, w, h, H, { label }) {
+  const fy = h - H;
+  flatRoof(c, w, fy, '#4f535b');
+  // dunne donkere dakrand die iets uitsteekt
+  c.fillStyle = '#2f3238'; c.fillRect(-2, fy - 6, w + 4, 9); c.strokeStyle = P.line; c.lineWidth = 2; c.strokeRect(-2, fy - 6, w + 4, 9);
+  brickWall(c, 2, fy + 3, w - 4, H - 5, '#8e4a38');
+  const ex = w / 2 - 22, ew = 44;
+  // verdieping: doorlopende raamstrook met donkere stijlen
+  const uy = fy + 10, uh = H * 0.32;
+  c.fillStyle = '#2f3238'; c.fillRect(8, uy - 2, w - 16, uh + 4);
+  const g = c.createLinearGradient(0, uy, 0, uy + uh); g.addColorStop(0, '#cfe8f4'); g.addColorStop(1, '#6f9fb8');
+  c.fillStyle = g; c.fillRect(10, uy, w - 20, uh);
+  c.strokeStyle = '#2f3238'; c.lineWidth = 2.4; for (let x = 10 + 22; x < w - 10; x += 22) { c.beginPath(); c.moveTo(x, uy); c.lineTo(x, uy + uh); c.stroke(); }
+  // begane grond: donkere ramen in paren
+  const ly = fy + H * 0.52, lh = H * 0.36;
+  for (let x = 12; x + 16 < w - 10; x += 26) {
+    if (x + 16 > ex - 4 && x < ex + ew + 4) continue;
+    c.fillStyle = '#2f3238'; c.fillRect(x - 2, ly - 2, 18, lh + 4); c.fillStyle = '#4f6e82'; c.fillRect(x, ly, 14, lh);
+  }
+  // glazen entree over twee verdiepingen
+  c.fillStyle = '#2f3238'; c.fillRect(ex - 3, fy + 4, ew + 6, H - 6);
+  const eg = c.createLinearGradient(ex, fy, ex + ew, h); eg.addColorStop(0, '#d9f1fb'); eg.addColorStop(1, '#7fa9c0');
+  c.fillStyle = eg; c.fillRect(ex, fy + 7, ew, H - 10);
+  c.strokeStyle = '#2f3238'; c.lineWidth = 2; c.beginPath(); c.moveTo(ex + ew / 2, fy + 7); c.lineTo(ex + ew / 2, h - 3); c.moveTo(ex, fy + H * 0.48); c.lineTo(ex + ew, fy + H * 0.48); c.stroke();
+  c.strokeStyle = P.line; c.lineWidth = 3; c.strokeRect(2, fy, w - 4, H - 2);
+  if (label) {
+    c.font = '700 16px Fredoka, sans-serif';
+    const tw = c.measureText(label).width + 18, lx = w * 0.8 - tw / 2;
+    rrect(c, lx, fy - 30, tw, 22, 5); style(c, { fill: '#3D2152', stroke: P.line, lw: 2 });
+    c.fillStyle = '#ffffff'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(label, lx + tw / 2, fy - 19);
+  }
+}
+
 /** Maakt textures `bld_<id>_<i>` voor alle delen. Het voorste deel krijgt het naambord. */
 export function makeCampusBuildings(scene, buildings, neighbour = false) {
   buildings.forEach((b, bi) => {
@@ -380,6 +414,7 @@ export function makeCampusBuildings(scene, buildings, neighbour = false) {
       const roof = neighbour ? '#b9b6b0' : '#cfcac2';
       makeTexture(scene, `bld_${b.id}_${i}`, p.w, p.h, (c, w, h) => (b.style === 'driessen'
         ? drawDriessenPart(c, w, h, H, { front: i === front, entrance: i === b.entrance, kind: b.kinds?.[i] })
+        : b.style === 'bhc' ? drawBhcPart(c, w, h, H, { label: b.name })
         : b.style === 'bloeij' ? drawBloeijPart(c, w, h, H, { label: b.name })
         : b.style === 'loods' ? drawLoodsPart(c, w, h, H, { label: b.name })
         : b.style === 'atelier' ? drawAtelierPart(c, w, h, H, { label: b.name })

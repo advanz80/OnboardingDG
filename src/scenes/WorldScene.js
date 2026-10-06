@@ -152,6 +152,16 @@ export class WorldScene extends Phaser.Scene {
       this.tweens.add({ targets: cl, scaleX: { from: 0.42, to: 0.36 }, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
     });
     for (const x of [868, 884, 900, 916, 932, 948]) { const [bx, by] = pt(x, 763); this.addProp('bush', bx, by, { r: 12 }, { scale: 0.5 }).setTint(0xc9a0ff); }
+    // BHC: cortenstalen plantenbakken bij de entree (zoals op de foto)
+    if (!this.textures.exists('corten')) {
+      const g = this.add.graphics();
+      g.fillStyle(0x1e1426, 0.2).fillEllipse(28, 50, 50, 10);
+      g.fillStyle(0xa8582c).lineStyle(3, HEX.ink).fillRect(6, 14, 44, 34).strokeRect(6, 14, 44, 34);
+      g.fillStyle(0xc4703c).fillRect(6, 14, 44, 6);
+      g.fillStyle(0x5fb044).fillCircle(18, 12, 9).fillCircle(32, 8, 11).fillCircle(42, 13, 8);
+      g.generateTexture('corten', 56, 56); g.destroy();
+    }
+    for (const [x, y] of [pt(540, 708), pt(553, 712)]) this.addProp('corten', x, y, { r: 14 });
     // grote vijver oost van Driessen en het eiland van de toren
     this.colliders.push({ x: BIGPOND.x + BIGPOND.w / 2, y: BIGPOND.y + BIGPOND.h / 2, w: BIGPOND.w, h: BIGPOND.h, rect: true });
     { const mi = MOAT.inner; this.colliders.push({ x: mi.x + mi.w / 2, y: mi.y + (mi.h - 40) / 2, w: mi.w, h: mi.h - 40, rect: true }); }
