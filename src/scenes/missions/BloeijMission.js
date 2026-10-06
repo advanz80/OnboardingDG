@@ -14,7 +14,8 @@ import { makeBloeijBg } from '../../gfx/tex/acbg.js';
 const SPOTS = [[250, 300], [520, 260], [830, 300], [1090, 270], [330, 500], [660, 470], [960, 520], [560, 640]];
 const COMPLAINT_ICON = { tired: 'zzz', back: 'bolt', stress: 'storm', low: 'sadcloud' };
 const INTERVENTIONS = [['rest', 'bed'], ['talk', 'chat'], ['adjust', 'adjust'], ['move', 'shoe']];
-const STANDS = [{ x: 120, y: 690 }, { x: 1170, y: 690 }];
+// niet in de hoeken: daar zitten op telefoon de stuurcirkel en de actieknop
+const STANDS = [{ x: 330, y: 680 }, { x: 950, y: 680 }];
 
 export class BloeijMission extends MissionBase {
   constructor() { super('BloeijMission', 'bloeij', { timeLimit: 150, thresholds: [300, 750, 1100] }); }
