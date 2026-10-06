@@ -89,8 +89,19 @@ function whiteWindow(c, x, y, w, h) {
   c.strokeStyle = 'rgba(60,40,40,0.5)'; c.lineWidth = 1; c.strokeRect(x - 2, y - 2, w + 4, h + 4);
 }
 
-function drawDriessenPart(c, w, h, H, { front, entrance }) {
+function drawDriessenPart(c, w, h, H, { front, entrance, kind }) {
   const fy = h - H;
+  if (kind === 'atrium') {
+    // glazen dak over het atrium
+    const g = c.createLinearGradient(0, 0, w, h); g.addColorStop(0, '#d9f1fb'); g.addColorStop(1, '#86bfdb');
+    c.fillStyle = g; c.fillRect(0, 0, w, h);
+    c.strokeStyle = '#8a8f99'; c.lineWidth = 2;
+    for (let y = 16; y < h; y += 16) { c.beginPath(); c.moveTo(0, y); c.lineTo(w, y); c.stroke(); }
+    c.beginPath(); c.moveTo(w / 2, 0); c.lineTo(w / 2, h); c.stroke();
+    c.fillStyle = 'rgba(255,255,255,0.45)'; for (let y = 6; y < h; y += 64) c.fillRect(6, y, w / 2 - 12, 8);
+    c.strokeStyle = P.line; c.lineWidth = 3; c.strokeRect(0, 0, w, h);
+    return;
+  }
   hipRoof(c, w, fy - 2);
   // witte dakrand (goot) en lichtband onder het dak
   c.fillStyle = '#ffffff'; c.fillRect(0, fy - 6, w, 8); c.strokeStyle = P.line; c.lineWidth = 2; c.strokeRect(0, fy - 6, w, 8);
@@ -212,7 +223,7 @@ export function makeCampusBuildings(scene, buildings, neighbour = false) {
       const wall = neighbour ? '#d9d4ca' : '#f1ece2';
       const roof = neighbour ? '#b9b6b0' : '#cfcac2';
       makeTexture(scene, `bld_${b.id}_${i}`, p.w, p.h, (c, w, h) => (b.style === 'driessen'
-        ? drawDriessenPart(c, w, h, H, { front: i === front, entrance: i === b.entrance })
+        ? drawDriessenPart(c, w, h, H, { front: i === front, entrance: i === b.entrance, kind: b.kinds?.[i] })
         : b.style === 'ijk' ? drawIjkPart(c, w, h, H, { kind: b.kinds[i], label: i === b.labelPart ? b.name : '' })
         : drawPart(c, w, h, H, { wall, roof, bands, label: !neighbour && i === front ? b.name : '', seed: 7 + bi * 31 + i })));
     });

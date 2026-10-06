@@ -159,7 +159,7 @@ export class WorldScene extends Phaser.Scene {
 
     // terras: parasols en bankjes
     [[0.25, 0.4, 0], [0.7, 0.35, 1], [0.5, 0.8, 3]].forEach(([fx, fy, v]) => this.addProp(`umbrella${v}`, PLAZA.x + PLAZA.w * fx, PLAZA.y + PLAZA.h * fy, { r: 10 }));
-    for (const [x, y] of [pt(1010, 600), pt(1088, 640), pt(600, 640)]) this.addProp('bench', x, y, { w: 96, h: 22, rect: true, oy: 10 });
+    for (const [x, y] of [pt(1010, 600), pt(1072, 644), pt(600, 640)]) this.addProp('bench', x, y, { w: 96, h: 22, rect: true, oy: 10 });
 
     // lantaarns langs de wegen
     for (const [x, y] of [pt(600, 640), pt(720, 641), pt(840, 642), pt(978, 500), pt(978, 600), pt(1050, 676), pt(586, 470), pt(586, 560)]) {
