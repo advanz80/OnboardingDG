@@ -4,6 +4,7 @@ import { P, HEX, textStyle, titleStyle } from '../gfx/palette.js';
 import { isTouch } from '../core/Controls.js';
 import { button, roundButton, panel, logo, transitionTo, dim, bake } from '../ui/widgets.js';
 import { makeMenuClouds } from '../gfx/tex/acbg.js';
+import { makeLogoTexture } from '../gfx/tex/logo.js';
 import { BRANDS, MISSION_IDS } from '../config/brands.js';
 import { SaveManager } from '../core/SaveManager.js';
 import { Audio } from '../core/AudioEngine.js';
@@ -58,9 +59,10 @@ export class MenuScene extends Phaser.Scene {
     this.tweens.add({ targets: croc, x: -80, duration: 26000, repeat: -1, delay: 1500 });
 
     // titel
-    const tt = this.add.text(width / 2, 120, t('game.title'), titleStyle(92, P.gold)).setOrigin(0.5);
+    if (!this.textures.exists('game_logo')) makeLogoTexture(this, 96);
+    const tt = this.add.image(width / 2, 112, 'game_logo').setScale(0.78);
     this.tweens.add({ targets: tt, angle: { from: -1.5, to: 1.5 }, scale: { from: 1, to: 1.03 }, duration: 1600, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
-    this.add.text(width / 2, 196, t('game.subtitle'), textStyle(28, P.cream, { stroke: P.ink, strokeThickness: 6 })).setOrigin(0.5);
+    this.add.text(width / 2, 214, t('game.subtitle'), textStyle(28, P.cream, { stroke: P.ink, strokeThickness: 6 })).setOrigin(0.5);
 
     // knoppen
     const hasSave = SaveManager.hasSave();

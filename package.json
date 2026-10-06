@@ -2,7 +2,7 @@
   "name": "onboardingdg",
   "private": true,
   "version": "1.0.0",
-  "description": "Driessen's Den — onboarding-browsergame voor Driessen Groep",
+  "description": "Driessen Groep Campus Crossing — onboarding-browsergame voor Driessen Groep",
   "type": "module",
   "scripts": {
     "dev": "vite",

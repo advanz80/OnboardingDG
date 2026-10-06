@@ -8,7 +8,7 @@ import { makeCharacter } from '../gfx/CharacterFactory.js';
 import { makeTexture, circle, style } from '../gfx/draw.js';
 import { makeCroc, makePaperTower, makePaperPlanes } from '../gfx/tex/rompslomp.js';
 import { makeBuddy } from '../gfx/tex/buddy.js';
-import { P, FONT, titleStyle } from '../gfx/palette.js';
+import { P, FONT, titleStyle, textStyle } from '../gfx/palette.js';
 import { SaveManager } from '../core/SaveManager.js';
 
 export class BootScene extends Phaser.Scene {
@@ -16,7 +16,7 @@ export class BootScene extends Phaser.Scene {
 
   preload() {
     const { width, height } = this.scale;
-    const t = this.add.text(width / 2, height / 2 - 30, "Driessen's Den", titleStyle(56, P.gold)).setOrigin(0.5);
+    const t = this.add.text(width / 2, height / 2 - 30, 'Driessen Groep Campus Crossing', textStyle(44, P.cream, { stroke: '#6b3f1d', strokeThickness: 10 })).setOrigin(0.5);
     const bar = this.add.rectangle(width / 2 - 200, height / 2 + 40, 4, 16, 0xf6c33b).setOrigin(0, 0.5);
     this.add.rectangle(width / 2, height / 2 + 40, 408, 24).setStrokeStyle(4, 0xfff8e7);
     this.load.on('progress', (v) => { bar.width = 400 * v; });
