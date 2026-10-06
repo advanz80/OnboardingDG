@@ -85,7 +85,7 @@ export const BUILDINGS = [
   bld('rovc', 'ROVC', [[875, 597, 970, 650]], { color: '#3D2152' }),
   // IJk: twee langgerekte blokken (noord hoog, zuid lager) met een glazen dakstrook ertussen; entree aan de westkant
   bld('ijk', 'IJk', [[795, 678, 932, 712], [795, 712, 960, 722], [818, 722, 975, 760]], { H: 120, brand: 'ijk', style: 'ijk', kinds: ['tall', 'glassroof', 'low'], Hs: [120, 0, 100], labelPart: 2 }),
-  bld('atelier', 'Het Atelier', [[1018, 676, 1082, 748]], { H: 110, brand: ['haert', 'reijn'] }),
+  bld('atelier', 'Het Atelier', [[1018, 676, 1082, 748]], { H: 120, brand: ['haert', 'reijn'], style: 'atelier' }),
   bld('bloeij', 'Bloeij', [[478, 462, 562, 518]], { brand: 'bloeij' }),
   bld('loods', 'Loods', [[478, 560, 562, 605]], { H: 80, color: '#8a8f99' }),
   bld('bhc', 'BHC', [[484, 640, 556, 700]], { brand: 'bhc' }),
@@ -104,7 +104,7 @@ export const STATIONS = {
   driessen: station(1145, 465, 110, 4),   // bij de voordeur aan de noordkant
   bloeij: station(493, 542),
   ijk: station(835, 780),
-  haert: station(1020, 764),
+  haert: station(996, 770),
   reijn: station(1112, 735),
 };
 

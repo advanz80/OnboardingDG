@@ -233,6 +233,68 @@ function darkWindow(c, x, y, w, h) {
   c.fillStyle = g; c.fillRect(x, y, w, h);
 }
 
+// ── Het Atelier: schoon beton, zonnepanelen, eikenhouten glasdoos en uitkragend afdak ──
+const CONCRETE = '#cdcac4', OAK = '#c8964f';
+
+function concreteWall(c, x, y, w, h) {
+  c.fillStyle = CONCRETE; c.fillRect(x, y, w, h);
+  const pw = 46, ph = 30;
+  c.strokeStyle = 'rgba(110,105,98,0.45)'; c.lineWidth = 1.2;
+  for (let yy = y + ph; yy < y + h; yy += ph) { c.beginPath(); c.moveTo(x, yy); c.lineTo(x + w, yy); c.stroke(); }
+  for (let xx = x + pw; xx < x + w; xx += pw) { c.beginPath(); c.moveTo(xx, y); c.lineTo(xx, y + h); c.stroke(); }
+  c.fillStyle = 'rgba(90,85,80,0.45)';
+  for (let yy = y + ph / 2; yy < y + h; yy += ph) for (let xx = x + pw / 4; xx < x + w; xx += pw / 2) { c.beginPath(); c.arc(xx, yy, 1.3, 0, Math.PI * 2); c.fill(); }
+}
+
+function solarPanels(c, x, y, w, h) {
+  for (let yy = y; yy + 22 <= y + h; yy += 28) for (let xx = x; xx + 34 <= x + w; xx += 38) {
+    c.fillStyle = '#2b3a5c'; c.fillRect(xx, yy, 34, 22);
+    c.strokeStyle = '#7d8db0'; c.lineWidth = 0.8;
+    for (let k = 1; k < 4; k++) { c.beginPath(); c.moveTo(xx + k * 8.5, yy); c.lineTo(xx + k * 8.5, yy + 22); c.stroke(); }
+    c.beginPath(); c.moveTo(xx, yy + 11); c.lineTo(xx + 34, yy + 11); c.stroke();
+    c.fillStyle = 'rgba(255,255,255,0.18)'; c.fillRect(xx + 2, yy + 2, 10, 4);
+  }
+}
+
+function drawAtelierPart(c, w, h, H, { label }) {
+  const fy = h - H;
+  // plat dak met zonnepanelen en een opbouw
+  rrect(c, 2, 2, w - 4, fy, 3); c.fillStyle = '#b7b3ad'; c.fill(); c.strokeStyle = P.line; c.lineWidth = 3; c.stroke();
+  c.strokeStyle = '#9a958e'; c.lineWidth = 4; c.strokeRect(6, 6, w - 12, fy - 8);
+  solarPanels(c, 14, 14, w * 0.58 - 14, fy - 24);
+  rrect(c, w * 0.62, 12, w * 0.3, fy * 0.42, 3); c.fillStyle = '#9b9893'; c.fill(); c.strokeStyle = P.line; c.lineWidth = 2; c.stroke();
+  // glazen doos met eiken kozijnen (rechts), steekt boven het dak uit
+  const gx = w * 0.6, gw = w * 0.34, gTop = fy - 46;
+  c.fillStyle = OAK; c.fillRect(gx - 6, gTop - 8, gw + 12, 12);                         // houten dakrand met lamellen
+  c.strokeStyle = shade(OAK, -0.35); c.lineWidth = 1; for (let x = gx - 4; x < gx + gw + 6; x += 6) { c.beginPath(); c.moveTo(x, gTop - 8); c.lineTo(x, gTop + 4); c.stroke(); }
+  c.strokeStyle = P.line; c.lineWidth = 2; c.strokeRect(gx - 6, gTop - 8, gw + 12, 12);
+  // beton
+  concreteWall(c, 2, fy, w - 4, H - 2);
+  // glasdoos over de volle hoogte
+  const g = c.createLinearGradient(gx, gTop, gx + gw, h); g.addColorStop(0, '#e2f5ff'); g.addColorStop(1, '#7fb6d4');
+  c.fillStyle = g; c.fillRect(gx, gTop + 4, gw, h - gTop - 6);
+  c.strokeStyle = OAK; c.lineWidth = 4;
+  for (let x = gx; x <= gx + gw + 1; x += gw / 5) { c.beginPath(); c.moveTo(x, gTop + 4); c.lineTo(x, h - 2); c.stroke(); }
+  c.beginPath(); c.moveTo(gx, fy + H * 0.45); c.lineTo(gx + gw, fy + H * 0.45); c.stroke();
+  c.fillStyle = 'rgba(246,195,59,0.5)'; for (let k = 0; k < 3; k++) { c.beginPath(); c.arc(gx + gw * (0.2 + k * 0.3), fy + H * 0.6, 3, 0, Math.PI * 2); c.fill(); }
+  c.strokeStyle = P.line; c.lineWidth = 2.4; c.strokeRect(gx, gTop + 4, gw, h - gTop - 6);
+  // uitkragend afdak links met slanke kolommen en een groot raam eronder
+  const ax = 2, aw = w * 0.34;
+  c.fillStyle = 'rgba(40,40,50,0.18)'; c.fillRect(ax, fy + 12, aw, H - 14);
+  const wg = c.createLinearGradient(ax, fy, ax + aw, h); wg.addColorStop(0, '#d9f1fb'); wg.addColorStop(1, '#86bfdb');
+  c.fillStyle = wg; c.fillRect(ax + 10, fy + 20, aw - 20, H - 26);
+  c.strokeStyle = '#6d7782'; c.lineWidth = 2; c.strokeRect(ax + 10, fy + 20, aw - 20, H - 26);
+  c.fillStyle = '#f4f2ee'; c.fillRect(ax - 2, fy + 2, aw + 8, 10); c.strokeStyle = P.line; c.lineWidth = 2; c.strokeRect(ax - 2, fy + 2, aw + 8, 10);
+  c.fillStyle = '#f4f2ee'; for (const x of [ax + 3, ax + aw - 4]) { c.fillRect(x, fy + 12, 5, H - 14); c.strokeRect(x, fy + 12, 5, H - 14); }
+  c.strokeStyle = P.line; c.lineWidth = 3; c.strokeRect(2, fy, w - 4, H - 2);
+  if (label) {
+    c.font = '700 18px Fredoka, sans-serif';
+    const tw = c.measureText(label).width + 20, lx = w * 0.47 - tw / 2;
+    rrect(c, lx, fy + 16, tw, 26, 6); style(c, { fill: '#f6c33b', stroke: P.line, lw: 2.2 });
+    c.fillStyle = P.ink; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(label, lx + tw / 2, fy + 30);
+  }
+}
+
 /** Maakt textures `bld_<id>_<i>` voor alle delen. Het voorste deel krijgt het naambord. */
 export function makeCampusBuildings(scene, buildings, neighbour = false) {
   buildings.forEach((b, bi) => {
@@ -245,6 +307,7 @@ export function makeCampusBuildings(scene, buildings, neighbour = false) {
       const roof = neighbour ? '#b9b6b0' : '#cfcac2';
       makeTexture(scene, `bld_${b.id}_${i}`, p.w, p.h, (c, w, h) => (b.style === 'driessen'
         ? drawDriessenPart(c, w, h, H, { front: i === front, entrance: i === b.entrance, kind: b.kinds?.[i] })
+        : b.style === 'atelier' ? drawAtelierPart(c, w, h, H, { label: b.name })
         : b.style === 'ijk' ? drawIjkPart(c, w, h, H, { kind: b.kinds[i], label: i === b.labelPart ? b.name : '' })
         : drawPart(c, w, h, H, { wall, roof, bands, label: !neighbour && i === front ? b.name : '', seed: 7 + bi * 31 + i })));
     });
