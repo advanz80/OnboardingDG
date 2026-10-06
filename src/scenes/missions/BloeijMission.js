@@ -77,8 +77,23 @@ export class BloeijMission extends MissionBase {
     this.add.text(212, 112, this.T('vitality'), textStyle(16, P.cream, { stroke: P.ink, strokeThickness: 4 })).setOrigin(0.5).setDepth(901);
     this.helpedText = this.add.text(width - 40, 112, '', textStyle(24, P.ink, { backgroundColor: '#fff8e7', padding: { x: 12, y: 6 } })).setOrigin(1, 0.5).setDepth(900);
     this.updateHelped();
-    this.prompt = this.add.text(width / 2, height - 30, '', textStyle(22, P.ink, { backgroundColor: '#f6c33b', padding: { x: 14, y: 6 } })).setOrigin(0.5).setDepth(900).setVisible(false);
-    this.prompt.setInteractive({ useHandCursor: true }).on('pointerdown', () => this.controls.trigger());
+    // grote, duidelijke praatknop (niet tegen de onderrand: op iPhone is dat het veeggebaar)
+    const pr = this.add.container(width / 2, height - 105).setDepth(900).setVisible(false);
+    const prBg = this.add.nineslice(0, 0, 'ui_btn', undefined, 420, 84, 20, 20, 20, 24).setTint(HEX.gold);
+    const prIc = this.add.image(-170, -2, 'icons', 'chat').setDisplaySize(44, 44);
+    const prTx = this.add.text(18, -4, '', textStyle(28, P.ink)).setOrigin(0.5);
+    pr.add([prBg, prIc, prTx]);
+    pr.setText = (txt) => {
+      prTx.setText(txt);
+      const w = Math.max(360, prTx.width + 130);
+      prBg.setSize(w, 84); prIc.setX(-w / 2 + 42); prTx.setX(22);
+      pr.setSize(w, 84);
+      return pr;
+    };
+    pr.setSize(420, 84).setInteractive({ useHandCursor: true }).on('pointerdown', () => { this.controls.trigger(); pr.setScale(0.94); });
+    pr.on('pointerup', () => pr.setScale(1)); pr.on('pointerout', () => pr.setScale(1));
+    this.tweens.add({ targets: prBg, alpha: 0.85, duration: 600, yoyo: true, repeat: -1 });
+    this.prompt = pr;
     this.touch = isTouch(this);
     ['ONE', 'TWO', 'THREE', 'FOUR'].forEach((k, i) => this.input.keyboard.on(`keydown-${k}`, () => { if (this.choosing) this.choose(INTERVENTIONS[i][0]); }));
   }
@@ -153,7 +168,7 @@ export class BloeijMission extends MissionBase {
     this.near = near;
     this.controls.setActionVisible(!!near);
     if (near) {
-      this.prompt.setText((this.touch ? '! ' : `${t('hud.talkHintKeys')}: `) + this.T('helpPrompt', { persoon: near.name })).setVisible(true);
+      this.prompt.setText((this.touch ? '' : `${t('hud.talkHintKeys')}: `) + this.T('helpPrompt', { persoon: near.name })).setVisible(true);
       if (this.controls.action()) this.openChoice(near);
     } else { this.prompt.setVisible(false); this.controls.action(); }
   }
