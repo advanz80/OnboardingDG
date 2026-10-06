@@ -52,9 +52,6 @@ export class WorldScene extends Phaser.Scene {
 
     // water (schermvullend, scrolt mee)
     const { width, height } = this.scale;
-    this.water = this.add.tileSprite(0, 0, width, height, 'water').setOrigin(0).setScrollFactor(0).setDepth(-2000);
-    this.waves = this.add.tileSprite(0, 0, width, height, 'waves').setOrigin(0).setScrollFactor(0).setDepth(-1999).setAlpha(0.6);
-    this.water.setVisible(false); this.waves.setVisible(false);   // geen open water rond de campus
 
     buildTerrainChunks(this);
     makeCampusBuildings(this, BUILDINGS);
@@ -121,12 +118,6 @@ export class WorldScene extends Phaser.Scene {
     return img;
   }
 
-  addPalm(x, y, scale = 1) {
-    const trunk = this.addProp('palm_trunk', x, y, { r: 14 * scale }, { scale });
-    const crown = this.add.image(x - 2 * scale, y - 118 * scale, 'palm_crown').setScale(scale).setDepth(y + 1);
-    this.tweens.add({ targets: crown, angle: { from: -4, to: 4 }, duration: 2000 + Math.random() * 1200, yoyo: true, repeat: -1, ease: 'Sine.InOut', delay: Math.random() * 1000 });
-    return trunk;
-  }
 
   isOpenGround(x, y, margin = 60) {
     if (!inPoly(x, y, LAND)) return false;
@@ -747,10 +738,6 @@ export class WorldScene extends Phaser.Scene {
     dt = Math.min(dt, 50);
     // water mee laten scrollen
     const cam = this.cameras.main;
-    this.water.tilePositionX = cam.scrollX + _time * 0.004;
-    this.water.tilePositionY = cam.scrollY;
-    this.waves.tilePositionX = cam.scrollX + _time * 0.012;
-    this.waves.tilePositionY = cam.scrollY - _time * 0.006;
 
     this.updateWanderers(dt);
     this.updateBuddy(dt);

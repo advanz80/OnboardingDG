@@ -1,41 +1,10 @@
-// Objecten in het park: palmen, bungalows, gebouwen, boten, piratenschip…
+// Objecten op de campus: struiken, kraampjes, tonnen, kooi, beestjes, deeltjes en UI-vormen.
 // Conventie: origin (0.5, 1) = onderkant midden (voor diepte-sortering op y).
 import { P, shade } from '../palette.js';
 import { style, rrect, circle, ellipse, poly, star, softShadow, makeTexture, rng } from '../draw.js';
 import { makeACProps } from './acprops.js';
 import { makeACProps2 } from './acprops2.js';
-import { makeACBoats } from './acboats.js';
 
-function palm(scene) {
-  makeTexture(scene, 'palm_trunk', 50, 130, (c) => {
-    softShadow(c, 25, 122, 22, 7);
-    const pts = [];
-    for (let i = 0; i <= 7; i++) pts.push([25 + Math.sin(i * 0.5) * 4 - i * 0.6, 120 - i * 15]);
-    for (let i = 0; i < pts.length - 1; i++) {
-      const [x, y] = pts[i];
-      const w = 13 - i * 0.6;
-      c.beginPath();
-      c.moveTo(x - w, y); c.lineTo(x - w + 2, y - 17); c.lineTo(x + w - 2, y - 17); c.lineTo(x + w, y); c.closePath();
-      style(c, { fill: i % 2 ? P.wood : P.woodLight, lw: 3 });
-    }
-  });
-  makeTexture(scene, 'palm_crown', 170, 110, (c) => {
-    const cx = 85, cy = 55;
-    const leaves = [-2.9, -2.3, -1.6, -0.9, -0.25, 0.4, 2.6];
-    for (const [i, a] of leaves.entries()) {
-      const len = 70 - (i % 2) * 8;
-      c.save(); c.translate(cx, cy); c.rotate(a);
-      c.beginPath(); c.moveTo(0, 0);
-      c.quadraticCurveTo(len * 0.5, -22, len, 6);
-      c.quadraticCurveTo(len * 0.5, 4, 0, 0);
-      style(c, { fill: i % 2 ? P.grassDark : P.green, lw: 3.5 });
-      c.strokeStyle = 'rgba(0,0,0,0.25)'; c.lineWidth = 2;
-      c.beginPath(); c.moveTo(4, 0); c.quadraticCurveTo(len * 0.5, -8, len - 6, 4); c.stroke();
-      c.restore();
-    }
-    for (const [x, y] of [[-8, 4], [6, 6], [-1, 12]]) { circle(c, cx + x, cy + y, 7); style(c, { fill: '#7a4a2a', lw: 3 }); }
-  });
-}
 
 function bush(scene) {
   makeTexture(scene, 'bush', 90, 60, (c) => {
@@ -62,71 +31,7 @@ function bush(scene) {
   });
 }
 
-function bungalow(scene, key, roof) {
-  makeTexture(scene, key, 200, 190, (c) => {
-    softShadow(c, 100, 178, 92, 12);
-    rrect(c, 22, 82, 156, 94, 6); style(c, { fill: '#fbeed3' });
-    c.fillStyle = 'rgba(0,0,0,0.06)'; for (let y = 92; y < 176; y += 14) c.fillRect(24, y, 152, 2);
-    // dak
-    c.beginPath(); c.moveTo(8, 90); c.lineTo(100, 18); c.lineTo(192, 90); c.closePath(); style(c, { fill: roof, lw: 4.5 });
-    c.strokeStyle = shade(roof, -0.2); c.lineWidth = 3;
-    for (let i = 1; i < 5; i++) { c.beginPath(); c.moveTo(100 - i * 18.4, 18 + i * 14.4); c.lineTo(100 + i * 18.4, 18 + i * 14.4); c.stroke(); }
-    c.beginPath(); c.moveTo(8, 90); c.lineTo(100, 18); c.lineTo(192, 90); c.closePath(); style(c, { lw: 4.5 });
-    // deur + ramen
-    rrect(c, 86, 120, 30, 56, 4); style(c, { fill: P.wood });
-    circle(c, 109, 150, 2.5); c.fillStyle = P.gold; c.fill();
-    for (const x of [38, 140]) {
-      rrect(c, x, 108, 30, 30, 4); style(c, { fill: P.waterLight });
-      c.strokeStyle = P.line; c.lineWidth = 3; c.beginPath(); c.moveTo(x + 15, 108); c.lineTo(x + 15, 138); c.moveTo(x, 123); c.lineTo(x + 30, 123); c.stroke();
-      rrect(c, x - 4, 138, 38, 8, 3); style(c, { fill: P.woodLight, lw: 3 });
-      c.fillStyle = P.pink; for (let i = 0; i < 4; i++) { circle(c, x + 2 + i * 9, 136, 3); c.fill(); }
-    }
-    // schoorsteen
-    rrect(c, 140, 32, 16, 30, 2); style(c, { fill: P.red });
-  });
-}
 
-function bigBuildings(scene) {
-  // Receptie / centrum
-  makeTexture(scene, 'reception', 340, 250, (c) => {
-    softShadow(c, 170, 238, 160, 14);
-    rrect(c, 20, 96, 300, 140, 10); style(c, { fill: '#fdf3df' });
-    // groot glazen front
-    rrect(c, 40, 130, 260, 80, 6); style(c, { fill: P.waterLight });
-    c.strokeStyle = P.line; c.lineWidth = 3; for (let x = 92; x < 300; x += 52) { c.beginPath(); c.moveTo(x, 130); c.lineTo(x, 210); c.stroke(); }
-    c.fillStyle = 'rgba(255,255,255,0.45)'; for (let x = 48; x < 300; x += 52) poly(c, [[x, 136], [x + 16, 136], [x + 4, 204], [x - 2, 204]]), c.fill();
-    rrect(c, 140, 160, 60, 76, 4); style(c, { fill: P.wood });
-    // dak
-    c.beginPath(); c.moveTo(4, 104); c.quadraticCurveTo(170, 10, 336, 104); c.closePath(); style(c, { fill: '#5ab0d6', lw: 5 });
-    c.strokeStyle = 'rgba(255,255,255,0.5)'; c.lineWidth = 4; c.beginPath(); c.moveTo(40, 90); c.quadraticCurveTo(170, 30, 300, 90); c.stroke();
-    // luifel
-    for (let i = 0; i < 10; i++) { c.beginPath(); c.moveTo(30 + i * 28, 112); c.lineTo(58 + i * 28, 112); c.lineTo(58 + i * 28, 124); c.quadraticCurveTo(44 + i * 28, 132, 30 + i * 28, 124); c.closePath(); style(c, { fill: i % 2 ? '#fff' : P.red, lw: 3 }); }
-  });
-  // Subtropisch zwembad (koepel)
-  makeTexture(scene, 'dome', 400, 290, (c) => {
-    softShadow(c, 200, 276, 190, 16);
-    rrect(c, 20, 200, 360, 70, 8); style(c, { fill: '#fdf3df' });
-    c.beginPath(); c.moveTo(30, 206); c.bezierCurveTo(40, 20, 360, 20, 370, 206); c.closePath();
-    const g = c.createLinearGradient(0, 40, 0, 206); g.addColorStop(0, '#bff0ff'); g.addColorStop(1, '#5cc8ef');
-    style(c, { fill: g, lw: 5 });
-    c.save(); c.beginPath(); c.moveTo(30, 206); c.bezierCurveTo(40, 20, 360, 20, 370, 206); c.closePath(); c.clip();
-    c.strokeStyle = 'rgba(45,30,47,0.5)'; c.lineWidth = 3;
-    for (let i = 1; i < 8; i++) { c.beginPath(); c.moveTo(30 + i * 42, 206); c.quadraticCurveTo(200, -40 + i * 2, 200, 40); c.stroke(); }
-    for (let y = 70; y < 206; y += 34) { c.beginPath(); c.moveTo(0, y); c.lineTo(400, y); c.stroke(); }
-    c.fillStyle = 'rgba(255,255,255,0.5)'; poly(c, [[90, 70], [130, 60], [80, 180], [60, 180]]); c.fill();
-    // palmen binnen
-    c.fillStyle = 'rgba(76,199,100,0.55)'; for (const x of [120, 250, 310]) { circle(c, x, 170, 26); c.fill(); }
-    c.restore();
-    // glijbaan
-    c.strokeStyle = P.line; c.lineWidth = 18; c.beginPath(); c.moveTo(352, 120); c.bezierCurveTo(420, 140, 330, 200, 392, 250); c.stroke();
-    c.strokeStyle = P.orange; c.lineWidth = 12; c.stroke();
-    c.strokeStyle = 'rgba(255,255,255,0.6)'; c.lineWidth = 3; c.stroke();
-    rrect(c, 160, 214, 80, 56, 4); style(c, { fill: P.waterLight });
-    c.strokeStyle = P.line; c.lineWidth = 3; c.beginPath(); c.moveTo(200, 214); c.lineTo(200, 270); c.stroke();
-    for (const x of [44, 96, 268, 320]) { rrect(c, x, 222, 36, 26, 4); style(c, { fill: P.waterLight, lw: 3 }); }
-  });
-  // Kraampje (per bedrijf ingekleurd)
-}
 
 export function makeStall(scene, key, color) {
   makeTexture(scene, key, 190, 170, (c) => {
@@ -188,82 +93,8 @@ function beachStuff(scene) {
   });
 }
 
-function boats(scene) {
-  const smallCols = ['#fff', P.yellow, P.teal];
-  smallCols.forEach((col, i) => {
-    makeTexture(scene, `boat${i}`, 150, 120, (c) => {
-      c.beginPath(); c.moveTo(10, 78); c.lineTo(140, 78); c.quadraticCurveTo(130, 108, 100, 108); c.lineTo(36, 108); c.quadraticCurveTo(16, 104, 10, 78); c.closePath();
-      style(c, { fill: col });
-      c.fillStyle = P.blue; c.fillRect(14, 86, 122, 5);
-      c.strokeStyle = P.line; c.lineWidth = 4; c.beginPath(); c.moveTo(70, 78); c.lineTo(70, 8); c.stroke();
-      poly(c, [[74, 10], [126, 72], [74, 72]]); style(c, { fill: '#fff' });
-      poly(c, [[66, 18], [26, 72], [66, 72]]); style(c, { fill: i === 1 ? P.red : '#eef7ff' });
-    });
-  });
-  makeTexture(scene, 'yacht', 240, 120, (c) => {
-    c.beginPath(); c.moveTo(6, 64); c.lineTo(234, 60); c.quadraticCurveTo(214, 110, 170, 110); c.lineTo(40, 110); c.quadraticCurveTo(14, 100, 6, 64); c.closePath();
-    style(c, { fill: '#fff' });
-    c.fillStyle = P.blue; c.fillRect(14, 74, 210, 6);
-    rrect(c, 54, 30, 120, 36, 10); style(c, { fill: '#fff' });
-    rrect(c, 66, 38, 96, 16, 6); style(c, { fill: P.waterDeep, lw: 3 });
-    rrect(c, 88, 12, 50, 22, 8); style(c, { fill: '#fff' });
-  });
-  // Piratenschip (groot)
-  makeTexture(scene, 'pirateship', 560, 440, (c) => {
-    // romp
-    c.beginPath();
-    c.moveTo(20, 270); c.lineTo(540, 250); c.quadraticCurveTo(520, 360, 430, 380); c.lineTo(120, 380); c.quadraticCurveTo(50, 360, 20, 270); c.closePath();
-    style(c, { fill: '#7a4524', lw: 5 });
-    c.save(); c.clip();
-    c.fillStyle = 'rgba(0,0,0,0.15)'; for (let y = 286; y < 380; y += 18) c.fillRect(0, y, 560, 4);
-    c.fillStyle = P.gold; c.fillRect(0, 300, 560, 6);
-    c.restore();
-    for (const x of [140, 220, 300, 380]) { circle(c, x, 330, 13); style(c, { fill: P.line, lw: 3 }); circle(c, x, 330, 8); c.fillStyle = '#000'; c.fill(); }
-    // achterkasteel
-    rrect(c, 420, 190, 120, 72, 6); style(c, { fill: '#8a5226' });
-    for (const x of [436, 476, 512]) { rrect(c, x, 206, 20, 22, 3); style(c, { fill: P.yellow, lw: 3 }); }
-    rrect(c, 410, 182, 140, 14, 4); style(c, { fill: P.woodDark });
-    // reling
-    c.strokeStyle = P.line; c.lineWidth = 4; c.beginPath(); c.moveTo(30, 268); c.lineTo(420, 254); c.stroke();
-    // masten
-    for (const [x, h] of [[170, 30], [320, 10]]) {
-      c.strokeStyle = P.line; c.lineWidth = 12; c.beginPath(); c.moveTo(x, 264); c.lineTo(x, h); c.stroke();
-      c.strokeStyle = P.woodDark; c.lineWidth = 7; c.stroke();
-      // zeilen
-      for (const [y0, w] of [[h + 30, 90], [h + 120, 110]]) {
-        c.beginPath(); c.moveTo(x - w, y0); c.quadraticCurveTo(x, y0 - 14, x + w, y0); c.quadraticCurveTo(x + w + 12, y0 + 50, x + w - 6, y0 + 80);
-        c.quadraticCurveTo(x, y0 + 96, x - w + 6, y0 + 80); c.quadraticCurveTo(x - w - 12, y0 + 50, x - w, y0); c.closePath();
-        style(c, { fill: '#efe6d2', lw: 4 });
-        c.fillStyle = 'rgba(0,0,0,0.08)'; c.fillRect(x - w + 10, y0 + 40, w * 2 - 20, 6);
-      }
-    }
-    // doodshoofd op grootzeil
-    circle(c, 170, 180, 22); style(c, { fill: P.line, lw: 2 });
-    circle(c, 170, 176, 12); c.fillStyle = '#fff'; c.fill();
-    c.fillStyle = P.line; circle(c, 165, 175, 3.5); c.fill(); circle(c, 175, 175, 3.5); c.fill();
-    c.strokeStyle = '#fff'; c.lineWidth = 4; c.beginPath(); c.moveTo(156, 186); c.lineTo(184, 198); c.moveTo(184, 186); c.lineTo(156, 198); c.stroke();
-    // vlag
-    c.strokeStyle = P.line; c.lineWidth = 3; c.beginPath(); c.moveTo(320, 10); c.lineTo(320, 0); c.stroke();
-    poly(c, [[322, 2], [370, 10], [360, 20], [372, 30], [322, 30]]); style(c, { fill: P.line, lw: 3 });
-    // boegspriet
-    c.strokeStyle = P.line; c.lineWidth = 8; c.beginPath(); c.moveTo(40, 262); c.lineTo(-10, 220); c.stroke();
-    c.strokeStyle = P.woodDark; c.lineWidth = 4; c.stroke();
-  });
-  makeTexture(scene, 'sloop', 280, 210, (c) => {
-    c.beginPath(); c.moveTo(12, 140); c.lineTo(268, 132); c.quadraticCurveTo(254, 196, 200, 200); c.lineTo(70, 200); c.quadraticCurveTo(24, 192, 12, 140); c.closePath();
-    style(c, { fill: '#7a4524', lw: 5 });
-    c.fillStyle = P.gold; c.fillRect(20, 156, 240, 5);
-    c.strokeStyle = P.line; c.lineWidth = 9; c.beginPath(); c.moveTo(140, 136); c.lineTo(140, 8); c.stroke();
-    c.strokeStyle = P.woodDark; c.lineWidth = 5; c.stroke();
-    c.beginPath(); c.moveTo(70, 26); c.quadraticCurveTo(140, 14, 210, 26); c.quadraticCurveTo(220, 70, 206, 112); c.quadraticCurveTo(140, 124, 74, 112); c.quadraticCurveTo(60, 70, 70, 26); c.closePath();
-    style(c, { fill: '#efe6d2', lw: 4 });
-    // gelapt
-    rrect(c, 160, 50, 26, 22, 3); style(c, { fill: P.pirateRed, lw: 2 });
-    rrect(c, 90, 80, 22, 18, 3); style(c, { fill: P.blue, lw: 2 });
-  });
-}
 
-function pirateProps(scene) {
+function campProps(scene) {
   makeTexture(scene, 'barrel', 50, 60, (c) => {
     softShadow(c, 25, 54, 20, 5);
     c.beginPath(); c.moveTo(8, 10); c.quadraticCurveTo(2, 32, 8, 54); c.lineTo(42, 54); c.quadraticCurveTo(48, 32, 42, 10); c.closePath(); style(c, { fill: P.wood });
@@ -275,31 +106,6 @@ function pirateProps(scene) {
     rrect(c, 4, 6, 48, 48, 4); style(c, { fill: P.woodLight });
     c.strokeStyle = P.woodDark; c.lineWidth = 4; c.beginPath(); c.moveTo(8, 10); c.lineTo(48, 50); c.moveTo(48, 10); c.lineTo(8, 50); c.stroke();
     rrect(c, 4, 6, 48, 48, 4); style(c, {});
-  });
-  makeTexture(scene, 'chest', 74, 62, (c) => {
-    softShadow(c, 37, 56, 32, 5);
-    rrect(c, 6, 26, 62, 30, 4); style(c, { fill: P.wood });
-    c.beginPath(); c.moveTo(6, 30); c.quadraticCurveTo(37, 0, 68, 30); c.closePath(); style(c, { fill: P.woodLight });
-    c.fillStyle = P.gold; c.fillRect(30, 18, 14, 38); c.strokeStyle = P.line; c.lineWidth = 3; c.strokeRect(30, 18, 14, 38);
-    rrect(c, 32, 30, 10, 10, 2); style(c, { fill: P.line, lw: 0 });
-  });
-  makeTexture(scene, 'cannon', 100, 70, (c) => {
-    softShadow(c, 50, 62, 40, 6);
-    c.save(); c.translate(50, 34); c.rotate(-0.18);
-    rrect(c, -40, -12, 80, 24, 10); style(c, { fill: '#4a4458' });
-    ellipse(c, 40, 0, 5, 12); style(c, { fill: P.line, lw: 2 });
-    c.restore();
-    for (const x of [30, 64]) { circle(c, x, 50, 12); style(c, { fill: P.wood }); circle(c, x, 50, 4); c.fillStyle = P.line; c.fill(); }
-  });
-  makeTexture(scene, 'tent', 150, 130, (c) => {
-    softShadow(c, 75, 122, 68, 9);
-    poly(c, [[75, 8], [140, 120], [10, 120]]); style(c, { fill: '#efe6d2' });
-    c.save(); poly(c, [[75, 8], [140, 120], [10, 120]]); c.clip();
-    c.fillStyle = P.pirateRed; for (let x = -40; x < 160; x += 30) poly(c, [[75, 8], [x, 130], [x + 15, 130]]), c.fill();
-    c.restore();
-    poly(c, [[75, 8], [140, 120], [10, 120]]); style(c, { lw: 4 });
-    poly(c, [[75, 60], [98, 120], [52, 120]]); style(c, { fill: P.line, lw: 3 });
-    c.strokeStyle = P.line; c.lineWidth = 3; c.beginPath(); c.moveTo(75, 8); c.lineTo(75, -2); c.stroke();
   });
   makeTexture(scene, 'cage', 140, 170, (c) => {
     softShadow(c, 70, 162, 60, 8);
@@ -485,22 +291,14 @@ function water(scene) {
 }
 
 export function makeProps(scene) {
-  palm(scene);
   bush(scene);
-  bungalow(scene, 'bungalow0', P.red);
-  bungalow(scene, 'bungalow1', '#4a9fd0');
-  bungalow(scene, 'bungalow2', '#58b45a');
-  bungalow(scene, 'bungalow3', P.orange);
-  bigBuildings(scene);
   beachStuff(scene);
-  boats(scene);
-  pirateProps(scene);
+  campProps(scene);
   campusStuff(scene);
   critters(scene);
   collectibles(scene);
   particlesAndUi(scene);
   water(scene);
-  makeACProps(scene); // AC-stijl: overschrijft palmen, struiken en bungalows met meer detail
-  makeACBoats(scene); // AC-stijl: zeilbootjes, jacht en piratensloep
-  makeACProps2(scene); // AC-stijl: gebouwen, strandspullen, piratenkamp, lantaarns en bordjes
+  makeACProps(scene); // AC-stijl: bomen, struiken en meubels
+  makeACProps2(scene); // AC-stijl: parasols, tonnen, kisten, lantaarns en bordjes
 }

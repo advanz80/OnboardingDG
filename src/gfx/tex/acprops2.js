@@ -74,93 +74,7 @@ export function makeACStall(scene, key, color) {
   });
 }
 
-function reception(scene) {
-  makeTexture(scene, 'reception', 340, 250, (c) => {
-    softShadow(c, 170, 238, 160, 14);
-    // gevel met planken
-    woodPanel(c, 20, 96, 300, 140, { col: '#f3e6cf', plank: 12, seed: 11 });
-    // ramen
-    for (const x of [36, 236]) {
-      rrect(c, x, 128, 68, 62, 6);
-      const wg = c.createLinearGradient(x, 128, x + 68, 190); wg.addColorStop(0, '#dff6ff'); wg.addColorStop(1, '#79c4e8');
-      c.fillStyle = wg; c.fill(); c.strokeStyle = '#7a5a3a'; c.lineWidth = 4; c.stroke();
-      c.strokeStyle = '#ffffff'; c.lineWidth = 3; c.beginPath(); c.moveTo(x + 34, 130); c.lineTo(x + 34, 188); c.moveTo(x + 2, 159); c.lineTo(x + 66, 159); c.stroke();
-      c.fillStyle = 'rgba(255,255,255,0.65)'; poly(c, [[x + 6, 134], [x + 18, 134], [x + 6, 148]]); c.fill();
-      rrect(c, x - 4, 190, 76, 10, 3); style(c, { fill: '#a8673a', stroke: WOOD_D, lw: 2 });
-      for (let i = 0; i < 7; i++) { c.fillStyle = '#4f9a3a'; circle(c, x + 2 + i * 11, 189, 4.5); c.fill(); c.fillStyle = ['#ff6b6b', '#ffd23f', '#ff9ecf', '#ffffff'][i % 4]; circle(c, x + 2 + i * 11, 185, 3.2); c.fill(); }
-    }
-    // dubbele glazen deur
-    rrect(c, 132, 140, 76, 96, 6); style(c, { fill: '#8a5a32', stroke: WOOD_D, lw: 3 });
-    for (const x of [138, 172]) {
-      rrect(c, x, 148, 30, 82, 4);
-      const dg = c.createLinearGradient(x, 148, x + 30, 230); dg.addColorStop(0, '#e6f8ff'); dg.addColorStop(1, '#8fd0ee');
-      c.fillStyle = dg; c.fill(); c.strokeStyle = WOOD_D; c.lineWidth = 2; c.stroke();
-    }
-    c.fillStyle = P.gold; circle(c, 166, 192, 2.6); c.fill(); circle(c, 174, 192, 2.6); c.fill();
-    // welkomstmat
-    rrect(c, 138, 230, 64, 10, 3); style(c, { fill: '#c9554a', stroke: '#7a2e28', lw: 1.8 });
-    // dak met golvende pannen
-    const roof = () => { c.beginPath(); c.moveTo(4, 106); c.quadraticCurveTo(170, 6, 336, 106); c.closePath(); };
-    roof(); c.fillStyle = '#4fa3d1'; c.fill();
-    c.save(); roof(); c.clip();
-    for (let row = 0; row < 9; row++) {
-      const y = 30 + row * 10;
-      for (let x = (row % 2) * 10; x < 340; x += 20) { c.beginPath(); c.arc(x, y, 10, 0, Math.PI); c.fillStyle = row % 2 ? '#469acb' : '#5bb0dc'; c.fill(); c.strokeStyle = '#2f6f96'; c.lineWidth = 1.2; c.stroke(); }
-    }
-    c.fillStyle = 'rgba(255,255,255,0.2)'; c.beginPath(); c.ellipse(120, 50, 80, 16, -0.2, 0, Math.PI * 2); c.fill();
-    c.restore();
-    roof(); c.strokeStyle = '#2f6f96'; c.lineWidth = 3.4; c.stroke();
-    // naambord
-    rrect(c, 120, 64, 100, 30, 8); style(c, { fill: WOOD_L, stroke: WOOD_D, lw: 2.6 });
-    rrect(c, 126, 69, 88, 20, 5); style(c, { fill: '#fff7e3', stroke: '#c9a46a', lw: 1.4 });
-    c.fillStyle = '#7a4a22'; c.font = '700 13px Fredoka, sans-serif'; c.textAlign = 'center'; c.fillText('RECEPTIE', 170, 84);
-    // luifel boven de deur
-    scallopAwning(c, 112, 116, 116, 6, '#e8504c', 14);
-  });
-}
 
-function dome(scene) {
-  makeTexture(scene, 'dome', 400, 290, (c) => {
-    softShadow(c, 200, 276, 190, 16);
-    // sokkel met tegels
-    rrect(c, 20, 196, 360, 76, 8); style(c, { fill: '#f6efe2', stroke: L, lw: 3 });
-    c.save(); rrect(c, 20, 196, 360, 76, 8); c.clip();
-    c.strokeStyle = 'rgba(150,130,110,0.25)'; c.lineWidth = 1.2;
-    for (let y = 208; y < 272; y += 12) { c.beginPath(); c.moveTo(20, y); c.lineTo(380, y); c.stroke(); }
-    for (let y = 196, row = 0; y < 272; y += 12, row++) for (let x = 20 + (row % 2) * 12; x < 380; x += 24) { c.beginPath(); c.moveTo(x, y); c.lineTo(x, y + 12); c.stroke(); }
-    c.restore();
-    // koepel
-    const domeP = () => { c.beginPath(); c.moveTo(30, 204); c.bezierCurveTo(36, 16, 364, 16, 370, 204); c.closePath(); };
-    const g = c.createLinearGradient(0, 30, 0, 204); g.addColorStop(0, '#d8f6ff'); g.addColorStop(0.6, '#8fd6f2'); g.addColorStop(1, '#5ec0e8');
-    domeP(); c.fillStyle = g; c.fill();
-    c.save(); domeP(); c.clip();
-    // planten binnen
-    for (const [x, rad, col] of [[90, 34, 'rgba(76,170,90,0.55)'], [150, 24, 'rgba(90,190,100,0.5)'], [250, 30, 'rgba(76,170,90,0.55)'], [310, 22, 'rgba(255,150,150,0.45)']]) { circle(c, x, 192 - rad * 0.4, rad); c.fillStyle = col; c.fill(); }
-    // glijbaan binnen (silhouet)
-    c.strokeStyle = 'rgba(255,170,80,0.55)'; c.lineWidth = 10; c.beginPath(); c.moveTo(120, 90); c.bezierCurveTo(220, 100, 160, 170, 260, 190); c.stroke();
-    // panelen
-    c.strokeStyle = 'rgba(255,255,255,0.85)'; c.lineWidth = 3;
-    for (let i = 1; i < 9; i++) { c.beginPath(); c.moveTo(30 + i * 37.8, 204); c.quadraticCurveTo(200, -30 + i * 2, 200, 44); c.stroke(); }
-    for (const y of [70, 104, 140, 174]) { c.beginPath(); c.ellipse(200, 210, 175, 210 - y, 0, Math.PI, Math.PI * 2); c.stroke(); }
-    c.fillStyle = 'rgba(255,255,255,0.55)'; poly(c, [[80, 80], [118, 62], [74, 180], [56, 180]]); c.fill();
-    c.restore();
-    domeP(); c.strokeStyle = '#3d7fa3'; c.lineWidth = 4; c.stroke();
-    // top
-    circle(c, 200, 44, 9); style(c, { fill: '#f6c33b', stroke: '#9a7a1a', lw: 2.4 });
-    // buitenglijbaan
-    for (const x of [356, 388]) { rrect(c, x - 3, 150, 6, 120, 2); style(c, { fill: '#d9d4cf', stroke: L, lw: 2 }); }
-    c.strokeStyle = L; c.lineWidth = 20; c.lineCap = 'round'; c.beginPath(); c.moveTo(346, 118); c.bezierCurveTo(424, 136, 330, 196, 392, 252); c.stroke();
-    c.strokeStyle = '#ff8a3c'; c.lineWidth = 14; c.stroke();
-    c.strokeStyle = '#ffc06e'; c.lineWidth = 5; c.stroke();
-    // deuren + ramen
-    rrect(c, 160, 214, 80, 58, 6); style(c, { fill: '#8fd0ee', stroke: L, lw: 3 });
-    c.strokeStyle = L; c.lineWidth = 2.5; c.beginPath(); c.moveTo(200, 214); c.lineTo(200, 272); c.stroke();
-    c.fillStyle = 'rgba(255,255,255,0.6)'; poly(c, [[166, 220], [178, 220], [166, 240]]); c.fill();
-    for (const x of [40, 96, 268, 324]) { rrect(c, x, 222, 36, 26, 5); style(c, { fill: '#b5e6f7', stroke: L, lw: 2.4 }); c.fillStyle = 'rgba(255,255,255,0.6)'; c.fillRect(x + 4, 226, 6, 3); }
-    // reddingsboei-bordje
-    circle(c, 200, 202, 10); style(c, { fill: '#ffffff', stroke: '#e8504c', lw: 4 });
-  });
-}
 
 function beach(scene) {
   const cols = [['#e8504c', '#fffaf0'], ['#3d8fe0', '#ffe066'], ['#2ec4b6', '#fffaf0'], ['#f59a3c', '#ff9ecf']];
@@ -233,23 +147,6 @@ function camp(scene) {
     c.strokeStyle = shade(WOOD_L, -0.05); c.lineWidth = 3; c.stroke();
     c.fillStyle = '#5e5a6b'; for (const [x, y] of [[9, 11], [47, 11], [9, 49], [47, 49]]) { circle(c, x, y, 1.8); c.fill(); }
   });
-  makeTexture(scene, 'tent', 150, 130, (c) => {
-    softShadow(c, 75, 122, 68, 9);
-    const T = () => poly(c, [[75, 8], [142, 120], [8, 120]]);
-    T(); c.fillStyle = '#f4ecdc'; c.fill();
-    c.save(); T(); c.clip();
-    c.fillStyle = '#c8433d'; for (let x = -40; x < 170; x += 30) poly(c, [[75, 8], [x, 130], [x + 15, 130]]), c.fill();
-    const g = c.createLinearGradient(8, 0, 142, 0); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(60,20,30,0.25)'); c.fillStyle = g; c.fillRect(0, 0, 150, 130);
-    c.restore();
-    T(); c.strokeStyle = '#7a2e28'; c.lineWidth = 3; c.stroke();
-    // ingang met flap
-    poly(c, [[75, 58], [98, 120], [52, 120]]); style(c, { fill: '#3b2f3f', stroke: '#2b2230', lw: 2.4 });
-    poly(c, [[75, 58], [52, 120], [64, 120], [72, 80]]); style(c, { fill: '#f4ecdc', stroke: '#7a2e28', lw: 2 });
-    // touwen en haringen
-    c.strokeStyle = '#9a7046'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(75, 8); c.lineTo(2, 116); c.moveTo(75, 8); c.lineTo(148, 116); c.stroke();
-    c.strokeStyle = L; c.lineWidth = 2.5; c.beginPath(); c.moveTo(75, 8); c.lineTo(75, -2); c.stroke();
-    poly(c, [[76, -1], [92, 3], [76, 8]]); style(c, { fill: '#2b2230', stroke: '#2b2230', lw: 1 });
-  });
 }
 
 function streetStuff(scene) {
@@ -275,8 +172,6 @@ function streetStuff(scene) {
 }
 
 export function makeACProps2(scene) {
-  reception(scene);
-  dome(scene);
   beach(scene);
   camp(scene);
   streetStuff(scene);

@@ -54,46 +54,6 @@ function roundTree(scene, key, leaf, fruit) {
 }
 
 /** Palm met geringde stam, bladeren met inkepingen en kokosnoten. */
-function palm(scene) {
-  makeTexture(scene, 'palm_trunk', 50, 130, (c) => {
-    softShadow(c, 25, 122, 22, 7);
-    for (let i = 0; i < 8; i++) {
-      const y = 120 - i * 14.5, x = 25 + Math.sin(i * 0.5) * 4 - i * 0.6, w = 12.5 - i * 0.55;
-      c.beginPath(); c.moveTo(x - w, y); c.quadraticCurveTo(x - w - 1, y - 9, x - w + 2, y - 16);
-      c.lineTo(x + w - 2, y - 16); c.quadraticCurveTo(x + w + 1, y - 9, x + w, y); c.closePath();
-      const g = c.createLinearGradient(x - w, 0, x + w, 0); g.addColorStop(0, '#d9a066'); g.addColorStop(0.6, '#c07c41'); g.addColorStop(1, '#8a5226');
-      c.fillStyle = g; c.fill(); c.strokeStyle = '#6b3f1d'; c.lineWidth = 2.5; c.stroke();
-      c.strokeStyle = 'rgba(80,40,15,0.45)'; c.lineWidth = 1.5;
-      c.beginPath(); c.moveTo(x - w + 3, y - 4); c.quadraticCurveTo(x, y - 1, x + w - 3, y - 4); c.stroke();
-    }
-  });
-  makeTexture(scene, 'palm_crown', 180, 120, (c) => {
-    const cx = 90, cy = 58;
-    const leaves = [-3.0, -2.45, -1.85, -1.25, -0.65, -0.1, 0.45, 2.7];
-    leaves.forEach((a, i) => {
-      const len = 74 - (i % 2) * 10;
-      const col = i % 2 ? '#3f9a4a' : '#55b85a';
-      c.save(); c.translate(cx, cy); c.rotate(a);
-      c.beginPath(); c.moveTo(0, 0);
-      // zaagtand-blad
-      const n = 7;
-      c.quadraticCurveTo(len * 0.5, -24, len, 8);
-      for (let k = n; k >= 0; k--) {
-        const t = k / n, bx = len * t, by = 8 * t + 2;
-        c.lineTo(bx - 3, by + 5); c.lineTo(bx - 6, by);
-      }
-      c.closePath();
-      style(c, { fill: col, stroke: '#2d6b33', lw: 2.5 });
-      c.strokeStyle = 'rgba(255,255,255,0.35)'; c.lineWidth = 2;
-      c.beginPath(); c.moveTo(6, -2); c.quadraticCurveTo(len * 0.5, -12, len - 8, 4); c.stroke();
-      c.restore();
-    });
-    for (const [x, y] of [[-8, 5], [6, 7], [-1, 13]]) {
-      circle(c, cx + x, cy + y, 7.5); style(c, { fill: '#7a4a2a', stroke: '#4a2a14', lw: 2.5 });
-      c.fillStyle = 'rgba(255,255,255,0.35)'; circle(c, cx + x - 2, cy + y - 2.5, 2); c.fill();
-    }
-  });
-}
 
 /** Bloeiende struik (azalea) in drie kleuren. */
 function bushes(scene) {
@@ -175,69 +135,12 @@ function furniture(scene) {
 }
 
 /** Bungalow met dakpannen, luiken, bloembakken, veranda en lampje. */
-function bungalow(scene, key, roof, wall) {
-  makeTexture(scene, key, 210, 200, (c) => {
-    softShadow(c, 105, 188, 96, 13);
-    // muur met planken
-    rrect(c, 24, 86, 162, 98, 6);
-    const g = c.createLinearGradient(0, 86, 0, 184); g.addColorStop(0, shade(wall, 0.08)); g.addColorStop(1, shade(wall, -0.08));
-    c.fillStyle = g; c.fill(); c.strokeStyle = L; c.lineWidth = 3; c.stroke();
-    c.strokeStyle = 'rgba(120,90,60,0.18)'; c.lineWidth = 1.5;
-    for (let y = 98; y < 182; y += 12) { c.beginPath(); c.moveTo(27, y); c.lineTo(183, y); c.stroke(); }
-    // fundering
-    rrect(c, 20, 176, 170, 10, 3); style(c, { fill: '#b7aea2', stroke: L, lw: 2.5 });
-    // dak met pannen
-    const roofPath = () => { c.beginPath(); c.moveTo(8, 94); c.lineTo(105, 16); c.lineTo(202, 94); c.closePath(); };
-    roofPath(); c.fillStyle = roof; c.fill();
-    c.save(); roofPath(); c.clip();
-    for (let row = 0; row < 7; row++) {
-      const y = 26 + row * 11.5;
-      for (let x = -10 + (row % 2) * 9; x < 220; x += 18) {
-        c.beginPath(); c.arc(x, y, 9, 0, Math.PI); c.fillStyle = row % 2 ? shade(roof, -0.08) : shade(roof, 0.04); c.fill();
-        c.strokeStyle = shade(roof, -0.3); c.lineWidth = 1.3; c.stroke();
-      }
-    }
-    c.fillStyle = 'rgba(255,255,255,0.18)'; poly(c, [[105, 16], [60, 52], [80, 52]]); c.fill();
-    c.restore();
-    roofPath(); c.strokeStyle = shade(roof, -0.45); c.lineWidth = 3.2; c.stroke();
-    rrect(c, 4, 90, 202, 8, 3); style(c, { fill: shade(roof, -0.2), stroke: shade(roof, -0.45), lw: 2.4 });
-    // schoorsteen + rookgat
-    rrect(c, 146, 30, 18, 30, 2); style(c, { fill: '#c9735a', stroke: L, lw: 2.5 });
-    rrect(c, 143, 27, 24, 7, 2); style(c, { fill: '#a9584a', stroke: L, lw: 2.2 });
-    // veranda-afdakje + deur
-    rrect(c, 84, 116, 40, 66, 5); style(c, { fill: '#a8673a', stroke: '#5e3d22', lw: 2.6 });
-    rrect(c, 89, 122, 13, 22, 3); style(c, { fill: '#c98d4f', stroke: '#5e3d22', lw: 1.6 });
-    rrect(c, 106, 122, 13, 22, 3); style(c, { fill: '#c98d4f', stroke: '#5e3d22', lw: 1.6 });
-    circle(c, 116, 152, 2.6); style(c, { fill: P.gold, stroke: '#9a7a1a', lw: 1 });
-    rrect(c, 78, 108, 52, 8, 3); style(c, { fill: shade(roof, -0.15), stroke: shade(roof, -0.45), lw: 2 });
-    circle(c, 134, 118, 4.5); style(c, { fill: '#fff3b0', stroke: '#9a7a1a', lw: 1.5 });
-    // ramen met luiken en bloembakken
-    for (const x of [38, 140]) {
-      rrect(c, x, 108, 32, 30, 4);
-      const wg = c.createLinearGradient(x, 108, x + 32, 138); wg.addColorStop(0, '#d8f4ff'); wg.addColorStop(1, '#7ec8ea');
-      c.fillStyle = wg; c.fill(); c.strokeStyle = L; c.lineWidth = 2.6; c.stroke();
-      c.strokeStyle = '#ffffff'; c.lineWidth = 2.5; c.beginPath(); c.moveTo(x + 16, 109); c.lineTo(x + 16, 137); c.moveTo(x + 1, 123); c.lineTo(x + 31, 123); c.stroke();
-      c.fillStyle = 'rgba(255,255,255,0.6)'; poly(c, [[x + 4, 112], [x + 10, 112], [x + 4, 120]]); c.fill();
-      for (const sx of [x - 9, x + 33]) { rrect(c, sx, 106, 8, 34, 2); style(c, { fill: shade(roof, -0.05), stroke: shade(roof, -0.45), lw: 1.8 }); c.strokeStyle = shade(roof, -0.3); c.lineWidth = 1; for (let y = 111; y < 138; y += 5) { c.beginPath(); c.moveTo(sx + 1.5, y); c.lineTo(sx + 6.5, y); c.stroke(); } }
-      rrect(c, x - 4, 138, 40, 9, 3); style(c, { fill: '#a8673a', stroke: '#5e3d22', lw: 2 });
-      for (let i = 0; i < 5; i++) {
-        c.fillStyle = '#4f9a3a'; circle(c, x + 1 + i * 7.5, 137, 3.4); c.fill();
-        c.fillStyle = ['#ff6b6b', '#ffd23f', '#ff9ecf', '#ffffff', '#b48cff'][(i + x) % 5]; circle(c, x + 1 + i * 7.5, 134, 2.6); c.fill();
-      }
-    }
-  });
-}
 
 export function makeACProps(scene) {
-  palm(scene);
   bushes(scene);
   roundTree(scene, 'tree_round', '#5cb85a');
   roundTree(scene, 'tree_round2', '#4aa34f');
   roundTree(scene, 'tree_orange', '#5cb85a', '#ff9f2e');
   roundTree(scene, 'tree_apple', '#55b04f', '#e8504c');
   furniture(scene);
-  bungalow(scene, 'bungalow0', '#e0645a', '#fbeed3');
-  bungalow(scene, 'bungalow1', '#4f9fd0', '#f4f0e6');
-  bungalow(scene, 'bungalow2', '#5bb15e', '#fff4dc');
-  bungalow(scene, 'bungalow3', '#f08d4a', '#f6eadb');
 }
