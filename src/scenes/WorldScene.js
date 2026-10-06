@@ -195,11 +195,19 @@ export class WorldScene extends Phaser.Scene {
 
     // entreebord
     const gate = this.add.container(GATE.x, GATE.y).setDepth(GATE.y);
-    const gbg = this.add.nineslice(0, -150, 'ui_btn', undefined, 420, 80, 20, 20, 20, 24).setTint(0x3D2152);
+    // lichte banner met het echte Brainport Human Campus-logo (paars met gouden 'BRAINPORT')
     gate.add(this.add.rectangle(-190, -60, 16, 150, HEX.stoneDark).setStrokeStyle(4, HEX.ink));
     gate.add(this.add.rectangle(190, -60, 16, 150, HEX.stoneDark).setStrokeStyle(4, HEX.ink));
-    gate.add(gbg);
-    gate.add(this.add.text(0, -154, 'HUMAN CAMPUS', titleStyle(40, P.cream, { strokeThickness: 6 })).setOrigin(0.5));
+    gate.add(this.add.rectangle(0, -150, 420, 104, 0xfffdf7).setStrokeStyle(6, 0x3D2152));
+    gate.add(this.add.rectangle(0, -150, 404, 88).setStrokeStyle(2, 0xb08d3c));
+    if (this.textures.exists('logo_bhc')) {
+      const lg = this.add.image(0, -150, 'logo_bhc');
+      lg.setScale(Math.min(380 / lg.width, 84 / lg.height));
+      gate.add(lg);
+    } else {
+      gate.add(this.add.text(0, -168, 'BRAINPORT', textStyle(16, '#b08d3c')).setOrigin(0.5));
+      gate.add(this.add.text(0, -138, 'human campus', { fontFamily: 'Georgia, serif', fontSize: '40px', color: '#3D2152' }).setOrigin(0.5));
+    }
 
     // willekeurig groen: bomen, struiken, stenen
     const r = rng(1234);
