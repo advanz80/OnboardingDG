@@ -295,6 +295,79 @@ function drawAtelierPart(c, w, h, H, { label }) {
   }
 }
 
+// ── Bloeij: lichtgroene gevel met muurschildering van bloemen; Loods: grijze golfplaat ──
+function tulip(c, x, y, s, col) {
+  c.strokeStyle = '#3f7a34'; c.lineWidth = 3 * s; c.beginPath(); c.moveTo(x, y); c.quadraticCurveTo(x - 4 * s, y + 18 * s, x + 2 * s, y + 34 * s); c.stroke();
+  c.fillStyle = '#4f9a3a'; c.beginPath(); c.ellipse(x + 8 * s, y + 22 * s, 4 * s, 11 * s, 0.6, 0, Math.PI * 2); c.fill();
+  c.fillStyle = col;
+  c.beginPath(); c.moveTo(x - 10 * s, y - 4 * s); c.quadraticCurveTo(x - 12 * s, y - 22 * s, x - 4 * s, y - 24 * s); c.lineTo(x, y - 14 * s); c.lineTo(x + 4 * s, y - 24 * s);
+  c.quadraticCurveTo(x + 12 * s, y - 22 * s, x + 10 * s, y - 4 * s); c.quadraticCurveTo(x, y + 4 * s, x - 10 * s, y - 4 * s); c.fill();
+  c.strokeStyle = shade(col, -0.35); c.lineWidth = 1.2; c.stroke();
+}
+function daffodil(c, x, y, s) {
+  c.fillStyle = '#ffd23f';
+  for (let k = 0; k < 6; k++) { const an = k * Math.PI / 3; c.beginPath(); c.ellipse(x + Math.cos(an) * 7 * s, y + Math.sin(an) * 7 * s, 6 * s, 3.5 * s, an, 0, Math.PI * 2); c.fill(); }
+  c.fillStyle = '#f59a3c'; c.beginPath(); c.arc(x, y, 4.5 * s, 0, Math.PI * 2); c.fill();
+}
+
+function drawBloeijPart(c, w, h, H, { label }) {
+  const fy = h - H;
+  flatRoof(c, w, fy, '#8f949c');
+  c.fillStyle = '#f4f2ee'; c.fillRect(0, fy - 5, w, 7); c.strokeStyle = P.line; c.lineWidth = 2; c.strokeRect(0, fy - 5, w, 7);
+  // lichtgroene tegelgevel
+  c.fillStyle = '#a9d58a'; c.fillRect(2, fy + 2, w - 4, H - 4);
+  c.strokeStyle = 'rgba(70,120,60,0.25)'; c.lineWidth = 1;
+  for (let y = fy + 10; y < h; y += 8) { c.beginPath(); c.moveTo(2, y); c.lineTo(w - 2, y); c.stroke(); }
+  for (let x = 10; x < w; x += 16) for (let y = fy + 2, r = 0; y < h; y += 8, r++) { c.beginPath(); c.moveTo(x + (r % 2) * 8, y); c.lineTo(x + (r % 2) * 8, y + 8); c.stroke(); }
+  // muurschildering: vrouw met bloemen in het midden-links, tulpen en narcissen eromheen
+  const mx = w * 0.62, my = fy + H * 0.52;
+  c.fillStyle = '#c8552d'; c.beginPath(); c.ellipse(mx - 6, my - 6, 20, 24, 0.2, 0, Math.PI * 2); c.fill();             // haar
+  c.fillStyle = '#f5c9a0'; c.beginPath(); c.ellipse(mx, my - 4, 12, 15, 0, 0, Math.PI * 2); c.fill();                  // gezicht
+  c.fillStyle = '#2d1e14'; c.beginPath(); c.arc(mx - 4, my - 7, 1.4, 0, Math.PI * 2); c.arc(mx + 5, my - 7, 1.4, 0, Math.PI * 2); c.fill();
+  c.strokeStyle = '#8a2d3b'; c.lineWidth = 1.6; c.beginPath(); c.arc(mx + 1, my + 2, 5, 0.2, Math.PI - 0.2); c.stroke();
+  c.fillStyle = '#e9e6e0'; c.beginPath(); c.ellipse(mx + 2, my + 26, 22, 14, 0, Math.PI, 0); c.fill();                 // blouse
+  tulip(c, mx + 34, my - 10, 1.3, '#e8504c'); tulip(c, mx - 40, my + 6, 1.1, '#f59a3c'); tulip(c, w * 0.36, fy + H * 0.45, 1, '#e8504c');
+  tulip(c, w * 0.9, fy + H * 0.4, 1.2, '#ff7aa8'); daffodil(c, mx - 22, my + 24, 1.4); daffodil(c, mx + 22, my + 30, 1.2);
+  daffodil(c, w * 0.42, fy + H * 0.3, 1.1); daffodil(c, w * 0.84, fy + H * 0.72, 1.3);
+  // zwarte ramen en deur
+  for (const fx of [0.08, 0.2, 0.32, 0.5, 0.78]) {
+    const x = w * fx - 9;
+    c.fillStyle = '#23262d'; c.fillRect(x, fy + 16, 18, 24); c.fillStyle = '#4f6e82'; c.fillRect(x + 3, fy + 19, 12, 18);
+    if (fx < 0.4) { c.fillStyle = '#23262d'; c.fillRect(x, fy + H - 40, 18, 26); c.fillStyle = '#4f6e82'; c.fillRect(x + 3, fy + H - 37, 12, 20); }
+  }
+  c.fillStyle = '#23262d'; c.fillRect(w * 0.44, h - 42, 22, 40);
+  c.strokeStyle = P.line; c.lineWidth = 3; c.strokeRect(2, fy, w - 4, H - 2);
+  if (label) {
+    c.font = '700 18px Fredoka, sans-serif';
+    const tw = c.measureText(label).width + 20, lx = w * 0.84 - tw / 2;
+    rrect(c, lx, fy - 30, tw, 24, 6); style(c, { fill: '#EDB23E', stroke: P.line, lw: 2.2 });
+    c.fillStyle = '#ffffff'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(label, lx + tw / 2, fy - 18);
+  }
+}
+
+function drawLoodsPart(c, w, h, H, { label }) {
+  const fy = h - H;
+  // licht gebogen dak van golfplaat
+  c.fillStyle = '#c3c7cc'; rrect(c, 2, 2, w - 4, fy, 3); c.fill();
+  c.strokeStyle = '#a3a8ae'; c.lineWidth = 2; for (let y = 8; y < fy; y += 8) { c.beginPath(); c.moveTo(4, y); c.lineTo(w - 4, y); c.stroke(); }
+  c.strokeStyle = P.line; c.lineWidth = 3; c.strokeRect(2, 2, w - 4, fy);
+  // golfplaat-gevel met verticale ribbels en een grote roldeur
+  c.fillStyle = '#d3d6da'; c.fillRect(2, fy, w - 4, H - 2);
+  for (let x = 4; x < w - 2; x += 6) { c.fillStyle = (x / 6) % 2 ? '#bfc3c8' : '#e2e4e7'; c.fillRect(x, fy, 3, H - 2); }
+  const dw = w * 0.32, dx = w * 0.55;
+  c.fillStyle = '#9aa0a8'; c.fillRect(dx, h - H * 0.78, dw, H * 0.78 - 2);
+  c.strokeStyle = '#7a8088'; c.lineWidth = 1.4; for (let y = h - H * 0.78 + 6; y < h; y += 6) { c.beginPath(); c.moveTo(dx, y); c.lineTo(dx + dw, y); c.stroke(); }
+  c.strokeStyle = P.line; c.lineWidth = 2.2; c.strokeRect(dx, h - H * 0.78, dw, H * 0.78 - 2);
+  c.fillStyle = '#5d6b78'; c.fillRect(w * 0.2, h - 40, 22, 38);
+  c.strokeStyle = P.line; c.lineWidth = 3; c.strokeRect(2, fy, w - 4, H - 2);
+  if (label) {
+    c.font = '700 16px Fredoka, sans-serif';
+    const tw = c.measureText(label).width + 18, lx = w * 0.2 - tw / 2 + 11;
+    rrect(c, lx, fy + 10, tw, 22, 5); style(c, { fill: P.cream, stroke: P.line, lw: 2 });
+    c.fillStyle = P.ink; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(label, lx + tw / 2, fy + 21);
+  }
+}
+
 /** Maakt textures `bld_<id>_<i>` voor alle delen. Het voorste deel krijgt het naambord. */
 export function makeCampusBuildings(scene, buildings, neighbour = false) {
   buildings.forEach((b, bi) => {
@@ -307,6 +380,8 @@ export function makeCampusBuildings(scene, buildings, neighbour = false) {
       const roof = neighbour ? '#b9b6b0' : '#cfcac2';
       makeTexture(scene, `bld_${b.id}_${i}`, p.w, p.h, (c, w, h) => (b.style === 'driessen'
         ? drawDriessenPart(c, w, h, H, { front: i === front, entrance: i === b.entrance, kind: b.kinds?.[i] })
+        : b.style === 'bloeij' ? drawBloeijPart(c, w, h, H, { label: b.name })
+        : b.style === 'loods' ? drawLoodsPart(c, w, h, H, { label: b.name })
         : b.style === 'atelier' ? drawAtelierPart(c, w, h, H, { label: b.name })
         : b.style === 'ijk' ? drawIjkPart(c, w, h, H, { kind: b.kinds[i], label: i === b.labelPart ? b.name : '' })
         : drawPart(c, w, h, H, { wall, roof, bands, label: !neighbour && i === front ? b.name : '', seed: 7 + bi * 31 + i })));

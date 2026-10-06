@@ -86,8 +86,8 @@ export const BUILDINGS = [
   // IJk: twee langgerekte blokken (noord hoog, zuid lager) met een glazen dakstrook ertussen; entree aan de westkant
   bld('ijk', 'IJk', [[795, 678, 932, 712], [795, 712, 960, 722], [818, 722, 975, 760]], { H: 120, brand: 'ijk', style: 'ijk', kinds: ['tall', 'glassroof', 'low'], Hs: [120, 0, 100], labelPart: 2 }),
   bld('atelier', 'Het Atelier', [[1018, 676, 1082, 748]], { H: 120, brand: ['haert', 'reijn'], style: 'atelier' }),
-  bld('bloeij', 'Bloeij', [[478, 462, 562, 518]], { brand: 'bloeij' }),
-  bld('loods', 'Loods', [[478, 560, 562, 605]], { H: 80, color: '#8a8f99' }),
+  bld('bloeij', 'Bloeij', [[478, 462, 562, 518]], { H: 110, brand: 'bloeij', style: 'bloeij' }),
+  bld('loods', 'Loods', [[478, 560, 562, 605]], { H: 90, color: '#8a8f99', style: 'loods' }),
   bld('bhc', 'BHC', [[484, 640, 556, 700]], { brand: 'bhc' }),
 ];
 // Gebouwen van buren (niet van de campus): alleen decor.
@@ -102,7 +102,7 @@ const station = (px, py, dx = 70, dy = 56) => { const [x, y] = pt(px, py); retur
 export const STATIONS = {
   bhc: station(498, 722),
   driessen: station(1145, 465, 110, 4),   // bij de voordeur aan de noordkant
-  bloeij: station(493, 542),
+  bloeij: { ...station(489, 542), flagLeft: true },   // vlag links, zodat de muurschildering zichtbaar blijft
   ijk: station(835, 780),
   haert: station(996, 770),
   reijn: station(1112, 735),

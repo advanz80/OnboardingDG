@@ -194,7 +194,7 @@ export class WorldScene extends Phaser.Scene {
       this.add.image(x, y, 'flowers').setOrigin(0.5, 1).setDepth(y - 40);
       placed++;
     }
-    for (const st of Object.values(STATIONS)) this.addProp('flowerpot', st.x - 96, st.y + 6, { r: 10 });
+    for (const st of Object.values(STATIONS)) this.addProp('flowerpot', st.flagLeft ? st.x + 96 : st.x - 96, st.y + 6, { r: 10 });
 
     // vlinders (weinig, voor de sfeer)
     if (!this.anims.exists('butterfly_fly')) this.anims.create({ key: 'butterfly_fly', frames: [{ key: 'butterfly', frame: 'f0' }, { key: 'butterfly', frame: 'f1' }], frameRate: 10, repeat: -1 });
@@ -224,7 +224,7 @@ export class WorldScene extends Phaser.Scene {
       sign.add(logo(this, b, 0, 0, 100));
       this.tweens.add({ targets: sign, y: signY - 6, duration: 1400, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
       // vlag
-      const fx = st.x + 120, fy = st.y + 10;
+      const fx = st.flagLeft ? st.x - 150 : st.x + 120, fy = st.y + 10;
       this.addProp('flagpole', fx, fy, { r: 8 });
       const cloth = this.add.image(fx + 2, fy - 150, 'flagcloth').setOrigin(0, 0.5).setTint(b.color).setDepth(fy + 1);
       this.tweens.add({ targets: cloth, scaleX: { from: 1, to: 0.82 }, scaleY: { from: 1, to: 1.06 }, duration: 500 + Math.random() * 200, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
