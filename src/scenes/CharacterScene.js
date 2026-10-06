@@ -1,0 +1,145 @@
+import Phaser from 'phaser';
+import { DESIGN, centerDesign } from '../core/layout.js';
+import { t, setTextVars } from '../core/i18n.js';
+import { P, HEX, textStyle, titleStyle, FONT } from '../gfx/palette.js';
+import { button, panel, transitionTo } from '../ui/widgets.js';
+import {
+  SKINS, HAIRS, SHIRTS, BOTTOM_COLORS, HAIR_STYLES, HATS, TOPS, BOTTOMS, EYES, ACCESSORIES, PATTERNS,
+  makeCharacter, ensureAnims,
+} from '../gfx/CharacterFactory.js';
+import { SaveManager } from '../core/SaveManager.js';
+import { Audio } from '../core/AudioEngine.js';
+import { burst } from '../core/Juice.js';
+
+const SHOES = ['#5b4636', '#3b3f55', '#ffffff', '#e8504c', '#3d8fe0', '#f6c33b'];
+// [labelsleutel, eigenschap, lijst, type]
+const COL_A = [
+  ['skin', 'skin', SKINS, 'color'],
+  ['hair', 'hair', HAIRS, 'color'],
+  ['style', 'hairStyle', HAIR_STYLES, 'value'],
+  ['eyes', 'eyes', EYES, 'value'],
+  ['hat', 'hat', HATS, 'value'],
+  ['accessory', 'accessory', ACCESSORIES, 'value'],
+];
+const COL_B = [
+  ['top', 'top', TOPS, 'value'],
+  ['shirtColor', 'shirt', SHIRTS, 'color'],
+  ['pattern', 'pattern', PATTERNS, 'value'],
+  ['bottom', 'bottom', BOTTOMS, 'value'],
+  ['pantsColor', 'pants', BOTTOM_COLORS, 'color'],
+  ['shoes', 'shoes', SHOES, 'color'],
+];
+const FACINGS = ['idle', 'side_idle', 'back_idle'];
+
+export class CharacterScene extends Phaser.Scene {
+  constructor() { super('Character'); }
+
+  create() {
+    const { width, height } = DESIGN;
+    this.cameras.main.fadeIn(400, 15, 61, 92);
+    this.add.tileSprite(0, 0, width, height, 'water').setOrigin(0).setDepth(-100);
+    this.waves = this.add.tileSprite(0, 0, width, height, 'waves').setOrigin(0).setAlpha(0.5).setDepth(-99);
+    this.add.text(width / 2, 60, t('character.title'), titleStyle(60, P.gold)).setOrigin(0.5);
+
+    // startwaarden: willekeurig maar vriendelijk
+    this.idx = {};
+    for (const [, prop, list] of [...COL_A, ...COL_B]) this.idx[prop] = Phaser.Math.Between(0, list.length - 1);
+    Object.assign(this.idx, { hat: 0, accessory: 0, pattern: 0, eyes: 0 });
+    this.look = {};
+    this.applyIdx();
+
+    // voorbeeld
+    panel(this, 260, 400, 360, 520);
+    this.add.image(260, 600, 'shadow').setScale(3, 2.4);
+    this.facing = 0;
+    this.preview = this.add.sprite(260, 612, 'icons', 'star').setOrigin(0.5, 1).setScale(3.3);
+    this.tweens.add({ targets: this.preview, scaleY: 3.4, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
+    button(this, 260, 168, `↻ ${t('character.turn')}`, () => this.turn(), { width: 150, height: 52, size: 20, color: HEX.cream });
+
+    // naam + opties
+    panel(this, 800, 400, 760, 520);
+    this.add.text(445, 172, t('character.namePrompt'), textStyle(24, P.ink)).setOrigin(0, 0.5);
+    const prevName = SaveManager.state?.player?.name || '';
+    const font = FONT.ui.replace(/"/g, "'");
+    this.nameEl = this.add.dom(870, 172).createFromHTML(
+      `<input type="text" maxlength="16" placeholder="${t('character.namePlaceholder')}" value="${prevName.replace(/"/g, '')}"
+        style="width:440px;height:48px;border:4px solid ${P.ink};border-radius:14px;padding:0 14px;font:600 24px ${font};color:${P.ink};background:#fff;outline:none;box-sizing:border-box" />`,
+    );
+    this.swatchMap = {};
+    const row = (opt, x0, y) => {
+      const [label, prop, list, type] = opt;
+      this.add.text(x0, y, t(`character.${label}`), textStyle(19, P.ink)).setOrigin(0, 0.5);
+      const sw = this.add.container(x0 + 222, y);
+      button(this, x0 + 150, y, '◀', () => this.step(opt, -1), { width: 44, height: 42, size: 16, color: HEX.cream });
+      button(this, x0 + 294, y, '▶', () => this.step(opt, 1), { width: 44, height: 42, size: 16, color: HEX.cream });
+      this.swatchMap[prop] = sw;
+      this.drawSwatch(opt);
+      void list; void type;
+    };
+    COL_A.forEach((o, i) => row(o, 445, 240 + i * 56));
+    COL_B.forEach((o, i) => row(o, 805, 240 + i * 56));
+
+    button(this, 620, 610, t('character.random'), () => this.randomize(), { width: 230, color: HEX.teal, icon: 'bulb', size: 22 });
+    button(this, 940, 610, t('character.start'), () => this.start(), { width: 260, color: HEX.gold, icon: 'ship' });
+    this.refreshPreview();
+    centerDesign(this, '#1a6fa3');
+  }
+
+  applyIdx() {
+    for (const [, prop, list] of [...COL_A, ...COL_B]) this.look[prop] = list[this.idx[prop]];
+  }
+
+  drawSwatch(opt) {
+    const [, prop, list, type] = opt;
+    const c = this.swatchMap[prop];
+    c.removeAll(true);
+    const v = list[this.idx[prop]];
+    if (type === 'color') c.add(this.add.circle(0, 0, 16, parseInt(v.slice(1), 16)).setStrokeStyle(4, HEX.ink));
+    else c.add(this.add.text(0, 0, t(`character.values.${v || 'none'}`), textStyle(17, P.ink)).setOrigin(0.5));
+  }
+
+  step(opt, d) {
+    const [, prop, list] = opt;
+    this.idx[prop] = (this.idx[prop] + d + list.length) % list.length;
+    this.applyIdx();
+    this.drawSwatch(opt);
+    this.refreshPreview(true);
+    Audio.sfx('pop');
+  }
+
+  turn() {
+    this.facing = (this.facing + 1) % FACINGS.length;
+    this.preview.setFrame(FACINGS[this.facing]);
+    Audio.sfx('select');
+  }
+
+  refreshPreview(react = false) {
+    makeCharacter(this, 'preview_char', this.look);
+    ensureAnims(this, 'preview_char');
+    this.preview.setTexture('preview_char', react && this.facing === 0 ? 'happy' : FACINGS[this.facing]);
+    if (this.reactTimer) this.reactTimer.remove();
+    this.reactTimer = this.time.delayedCall(450, () => this.preview.setFrame(FACINGS[this.facing]));
+  }
+
+  randomize() {
+    for (const [, prop, list] of [...COL_A, ...COL_B]) this.idx[prop] = Phaser.Math.Between(0, list.length - 1);
+    this.applyIdx();
+    for (const o of [...COL_A, ...COL_B]) this.drawSwatch(o);
+    this.refreshPreview(true);
+    Audio.sfx('select');
+  }
+
+  start() {
+    const input = this.nameEl.node.querySelector('input');
+    const name = (input.value || '').trim().slice(0, 16) || t('character.defaultName');
+    SaveManager.newGame({ name, look: { ...this.look } });
+    makeCharacter(this, 'player', this.look);
+    setTextVars({ naam: name });
+    this.preview.setFrame('cheer');
+    burst(this, 260, 400, 'confetti', 40);
+    Audio.sfx('great');
+    this.time.delayedCall(350, () => transitionTo(this, 'World'));
+  }
+
+  update(_t, dt) { this.waves.tilePositionX += dt * 0.02; }
+}
