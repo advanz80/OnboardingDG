@@ -54,7 +54,7 @@ export const PATHS = [
   { pts: [pt(990, 428), pt(992, 540), pt(995, 662)], w: 64 },     // ingang campus vanaf de Dreef
   { pts: [pt(1000, 560), pt(1030, 585)], w: 52 },                 // binnenterrein → terras
   { pts: [pt(985, 672), pt(988, 790)], w: 48 },                   // langs de vijver
-  { pts: [pt(790, 700), pt(785, 664)], w: 44 },                   // fietsenstalling IJk
+  { pts: [pt(784, 664), pt(787, 717), pt(796, 717)], w: 40 },      // fietsenstalling → entree IJk (westkant)
   { pts: [pt(520, 528), pt(520, 545), pt(568, 545)], w: 44 },     // Bloeij
   { pts: [pt(560, 718), pt(575, 718)], w: 44 },                   // BHC
 ];
@@ -82,7 +82,7 @@ export const BUILDINGS = [
   bld('driessen', 'Driessen', [[1065, 485, 1185, 530], [1105, 530, 1170, 600], [1100, 600, 1210, 650]], { H: 110, brand: 'driessen', style: 'driessen', entrance: 0 }),
   bld('rovc', 'ROVC', [[875, 597, 970, 650]], { color: '#3D2152' }),
   // IJk: twee langgerekte blokken (noord hoog, zuid lager) met een glazen dakstrook ertussen; entree aan de westkant
-  bld('ijk', 'IJk', [[806, 678, 945, 712], [800, 712, 955, 722], [800, 722, 960, 760]], { H: 120, brand: 'ijk', style: 'ijk', kinds: ['tall', 'glassroof', 'low'], Hs: [120, 0, 100], labelPart: 2 }),
+  bld('ijk', 'IJk', [[795, 678, 932, 712], [795, 712, 960, 722], [818, 722, 975, 760]], { H: 120, brand: 'ijk', style: 'ijk', kinds: ['tall', 'glassroof', 'low'], Hs: [120, 0, 100], labelPart: 2 }),
   bld('atelier', 'Het Atelier', [[1018, 676, 1082, 748]], { H: 110, brand: ['haert', 'reijn'] }),
   bld('bloeij', 'Bloeij', [[478, 462, 562, 518]], { brand: 'bloeij' }),
   bld('loods', 'Loods', [[478, 560, 562, 605]], { H: 80, color: '#8a8f99' }),
