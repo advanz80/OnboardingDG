@@ -8,7 +8,7 @@ import { burst, shake, floatText, wobble } from '../../core/Juice.js';
 import { card } from '../../ui/widgets.js';
 import { makeDriessenBg } from '../../gfx/tex/acbg.js';
 import { dragTap } from '../../ui/dragtap.js';
-import { makeCharacter, randomLook, pirateLook } from '../../gfx/CharacterFactory.js';
+import { makeCharacter, randomLook, roverLook } from '../../gfx/CharacterFactory.js';
 
 const ROLES = { lifeguard: 'lifebuoy', cook: 'chefhat', mechanic: 'wrench', barista: 'coffee', entertainer: 'music', cleaner: 'broom' };
 const SHIFTS = { morning: 'sun', evening: 'moon', weekend: 'weekend' };
@@ -46,7 +46,7 @@ export class DriessenMission extends MissionBase {
     this.names = Phaser.Utils.Array.Shuffle(this.T('names').slice());
     this.looks = [];
     for (let i = 0; i < 8; i++) { const k = `cand_${i}`; makeCharacter(this, k, randomLook()); this.looks.push(k); }
-    for (let i = 0; i < 3; i++) { const k = `candp_${i}`; makeCharacter(this, k, pirateLook(Math.random, { hat: null, bandana: null, eyepatch: true, shirt: '#ffffff' })); this.looks.push(k); }
+    for (let i = 0; i < 3; i++) { const k = `candp_${i}`; makeCharacter(this, k, roverLook(Math.random, { hat: null, pattern: null, shirt: '#ffffff', tie: '#26202c' })); this.looks.push(k); }
 
     this.dt = dragTap(this, { onDrop: (item, target) => { this.binBg?.setTint(0xf3d6d6); return this.onDrop(item, target); }, onSelect: () => this.binBg?.setTint(0xffb3a8) });
 

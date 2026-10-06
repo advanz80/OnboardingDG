@@ -1,7 +1,7 @@
 {
   "game": {
     "title": "Driessen Groep Campus Crossing",
-    "subtitle": "Bevrijd prinses Mensenmens van Kapitein Rompslomp",
+    "subtitle": "Bevrijd prinses Mensenmens van Roverhoofdman Rompslomp",
     "version": "v1.0"
   },
   "menu": {
@@ -120,7 +120,7 @@
   "npc": {
     "petra": "Receptionist Petra",
     "jan": "Prinses Mensenmens",
-    "captain": "Kapitein Rompslomp",
+    "captain": "Roverhoofdman Rompslomp",
     "parrot": "Kroko Paragraaf",
     "guard": "Kroko Paragraaf",
     "player": "{naam}",
@@ -134,7 +134,7 @@
       },
       {
         "speaker": "buddy",
-        "text": "Je komt alleen op een gekke dag… Vanochtend kwam Kapitein Rompslomp de campus op. Met kantoorpiraten, stapels formulieren en een paarse krokodil."
+        "text": "Je komt alleen op een gekke dag… Vanochtend kwam Roverhoofdman Rompslomp de campus op. Met zijn bende tijdrovers, stapels formulieren en een paarse krokodil."
       },
       {
         "speaker": "buddy",
@@ -142,7 +142,7 @@
       },
       {
         "speaker": "buddy",
-        "text": "Werkdruk, regeltjes, bureaucratie, eindeloze administratie… zolang Rompslomp de baas is, is er geen werkgeluk te bekennen."
+        "text": "Ze roven je tijd met eindeloze vergaderingen, je energie met werkdruk en je plezier met regeltjes en administratie. Zolang Rompslomp de baas is, is er geen werkgeluk te bekennen."
       },
       {
         "speaker": "buddy",
@@ -180,7 +180,7 @@
       },
       {
         "speaker": "guard",
-        "text": "Je hebt er pas {aantal}. Dien eerst maar een volledig dossier in. In drievoud."
+        "text": "Je hebt er pas {aantal}. Dien eerst maar een volledig dossier in. In drievoud. Snap!"
       }
     ],
     "guardNoBridge": [
@@ -206,18 +206,19 @@
       "Is dit nog werktijd of al overwerk?",
       "Die krokodil heeft mijn parkeerkaart gejat!",
       "Weet iemand of ik voor koffie een aanvraag moet indienen?",
-      "Ik heb de kantoorpiraten om hun cv gevraagd. In drievoud, zeiden ze.",
+      "Een tijdrover heeft net mijn hele ochtend gestolen. Met één vergadering!",
       "Volgens Rompslomp is lachen tijdens werktijd niet declarabel.",
       "Heeft iemand de wifi-code? Of moet ik die ook aanvragen?",
       "Ik mis prinses Mensenmens. Met haar was werken gewoon leuk.",
       "Stiekem is de koffie hier best goed."
     ],
     "pirateAmbient": [
-      "Arrr! Eerst een formulier invullen!",
-      "Wie heeft mijn nietmachine gezien?",
-      "Ik ben eigenlijk zzp-piraat. Facturen? Graag via de portal.",
-      "De kapitein zegt dat vakantiedagen een administratieve last zijn.",
-      "Mijn functieomschrijving? 'Arrr.' Met bijlage A tot en met F."
+      "Hah! Weer een uur gestolen met een vergadering zonder agenda!",
+      "Wie heeft mijn maskertje gezien?",
+      "Ik ben energierover. Ik steel je puf met mailtjes om 23:00.",
+      "De hoofdman zegt dat vakantiedagen een administratieve last zijn.",
+      "Mijn buit vandaag? Drie koffiepauzes en een vrijdagmiddagborrel.",
+      "Formulier B-27 invullen of je tijd kwijt. Kies maar!"
     ],
     "buddyTips": [
       "Ik heb je planning al even op een rijtje gezet. Volg de pijlen!",
@@ -243,7 +244,7 @@
         },
         {
           "speaker": "npc",
-          "text": "Helaas hebben de kantoorpiraten van Rompslomp onze skill-badges over de hele campus verspreid."
+          "text": "Helaas hebben de tijdrovers van Rompslomp onze skill-badges over de hele campus verspreid."
         },
         {
           "speaker": "npc",
@@ -325,7 +326,7 @@
         },
         {
           "speaker": "npc",
-          "text": "Let op: er zitten ook een paar kantoorpiraten in vermomming tussen. Die herken je aan het ooglapje."
+          "text": "Let op: er zitten ook een paar tijdrovers in vermomming tussen. Die herken je aan hun zwarte maskertje."
         }
       ],
       "howTo": [
@@ -338,8 +339,8 @@
           "text": "Perfecte match = juiste vaardigheid én beschikbaar op het goede moment."
         },
         {
-          "icon": "skull",
-          "text": "Kantoorpiraat in vermomming? Sleep hem naar de prullenbak!"
+          "icon": "warning",
+          "text": "Tijdrover in vermomming? Sleep hem naar de prullenbak!"
         },
         {
           "icon": "clock",
@@ -352,8 +353,8 @@
       "perfect": "Perfecte match!",
       "skillOnly": "Goed, maar niet op het juiste moment",
       "wrongSkill": "Die kan dat niet!",
-      "pirateHired": "Je hebt een kantoorpiraat aangenomen!",
-      "pirateRejected": "Kantoorpiraat ontmaskerd!",
+      "pirateHired": "Je hebt een tijdrover aangenomen!",
+      "pirateRejected": "Tijdrover ontmaskerd!",
       "goodRejected": "Zonde, dat was een prima kandidaat",
       "combo": "Combo x{n}!",
       "outro": [
@@ -402,12 +403,13 @@
         "Gijs"
       ],
       "pirateNames": [
-        "Kapitein Haak-Nee",
-        "Blauwbaard B.V.",
-        "Één-Oog Erik",
-        "Paperclip Piet"
+        "Tijdrover Tinus",
+        "Graaier Gijs",
+        "Rover Rekel B.V.",
+        "Paperclip Piet",
+        "Klokkenkaper Karel"
       ],
-      "pirateCv": "CV: '7 jaar formulieren'"
+      "pirateCv": "CV: '7 jaar tijd gestolen'"
     },
     "bloeij": {
       "title": "Fit aan het werk",
@@ -420,7 +422,7 @@
         },
         {
           "speaker": "npc",
-          "text": "De kantoorpiraten lopen rond met megafoons en deadlines en jagen iedereen de stress in."
+          "text": "De tijdrovers lopen rond met megafoons en deadlines en jagen iedereen de stress in."
         },
         {
           "speaker": "npc",
@@ -446,7 +448,7 @@
         },
         {
           "icon": "megaphone",
-          "text": "Ontwijk de kantoorpiraten met megafoons: die zorgen voor stress!"
+          "text": "Ontwijk de tijdrovers met megafoons: die zorgen voor stress!"
         }
       ],
       "vitality": "Teamvitaliteit",
@@ -539,7 +541,7 @@
       "intro": [
         {
           "speaker": "npc",
-          "text": "{naam}! Bart van IJk hier. Rompslomps kantoorpiraten hebben de loonadministratie gesaboteerd!"
+          "text": "{naam}! Bart van IJk hier. Rompslomps tijdrovers hebben de loonadministratie gesaboteerd!"
         },
         {
           "speaker": "npc",
@@ -551,7 +553,7 @@
         },
         {
           "speaker": "npc",
-          "text": "Iedereen moet vrijdag wel gewoon betaald worden. Ook de kantoorpiraten, helaas."
+          "text": "Iedereen moet vrijdag wel gewoon betaald worden. Ook de tijdrovers, helaas."
         }
       ],
       "howTo": [
@@ -635,7 +637,7 @@
         },
         {
           "speaker": "npc",
-          "text": "En pas op: een kantoorpiraat probeert 'gelukszoekers' tussen de aanbieders te smokkelen. Check altijd het KvK-nummer!"
+          "text": "En pas op: een tijdrover probeert 'gelukszoekers' tussen de aanbieders te smokkelen. Check altijd het KvK-nummer!"
         }
       ],
       "howTo": [
@@ -730,14 +732,14 @@
         "Goudschat Consultancy",
         "Snelle Jelle Services",
         "100% Echt B.V.",
-        "Kapitein Koopje"
+        "Rover Koopje"
       ],
       "tapJob": "tik om te kiezen",
       "offersFor": "Opdracht {letter}: {job}, kies een aanbieder",
       "needs": "Eisen:"
     },
     "reijn": {
-      "title": "Quickscan bij de crew",
+      "title": "Quickscan bij de bende",
       "zone": "Het Atelier",
       "npc": "Directeur Wendy",
       "intro": [
@@ -747,21 +749,21 @@
         },
         {
           "speaker": "npc",
-          "text": "Moet je horen: een groepje kantoorpiraten van Rompslomp klopte net bij ons aan. Het is daar één grote chaos, niemand is gelukkig en de helft wil eigenlijk overstappen."
+          "text": "Moet je horen: een groepje tijdrovers van Rompslomp klopte net bij ons aan. Het is daar één grote chaos, niemand is gelukkig en de helft wil eigenlijk overstappen."
         },
         {
           "speaker": "npc",
-          "text": "Help jij mij met een quickscan bij die crew? Stel goede vragen, ontdek wat er écht speelt en kies het passende advies."
+          "text": "Help jij mij met een quickscan bij die bende? Stel goede vragen, ontdek wat er écht speelt en kies het passende advies."
         },
         {
           "speaker": "npc",
-          "text": "Als ons advies hout snijdt, lopen er vast een paar crewleden over naar onze kant. Handig voor straks in de toren…"
+          "text": "Als ons advies hout snijdt, lopen er vast een paar bendeleden over naar onze kant. Handig voor straks in de toren…"
         }
       ],
       "howTo": [
         {
           "icon": "chat",
-          "text": "Interview de crewleden. Je mag in totaal {max} vragen stellen, dus kies slim."
+          "text": "Interview de bendeleden. Je mag in totaal {max} vragen stellen, dus kies slim."
         },
         {
           "icon": "notebook",
@@ -773,7 +775,7 @@
         },
         {
           "icon": "bulb",
-          "text": "Kies het passende advies. Goed advies = crewleden lopen over!"
+          "text": "Kies het passende advies. Goed advies = bendeleden lopen over!"
         }
       ],
       "questionsLeft": "Vragen over: {n}",
@@ -787,39 +789,39 @@
       "close": "Klaar met {naam}",
       "diagnosisRight": "Raak! Dat is precies het kernprobleem.",
       "diagnosisWrong": "Hmm, dat is een symptoom, niet de kern.",
-      "adviceRight": "Sterk advies! De crew knikt instemmend.",
-      "adviceWrong": "De crew kijkt elkaar twijfelend aan…",
-      "defected": "{n} crewleden lopen over naar jouw kant!",
+      "adviceRight": "Sterk advies! De bende knikt instemmend.",
+      "adviceWrong": "De bende kijkt elkaar twijfelend aan…",
+      "defected": "{n} bendeleden lopen over naar jouw kant!",
       "outro": [
         {
           "speaker": "npc",
-          "text": "Kijk eens aan: de crew knikt. Zo kan het bij Rompslomp niet langer, en dat weten ze nu zelf ook."
+          "text": "Kijk eens aan: de bende knikt. Zo kan het bij Rompslomp niet langer, en dat weten ze nu zelf ook."
         },
         {
           "speaker": "npc",
-          "text": "Een paar van hen helpen je straks in de toren. En dit sleutelfragment had de kapitein bij hen verstopt. Namens Reijn: goed gedaan!"
+          "text": "Een paar van hen helpen je straks in de toren. En dit sleutelfragment had de hoofdman bij hen verstopt. Namens Reijn: goed gedaan!"
         }
       ],
       "questions": {
-        "role": "Wat is precies jouw taak aan boord?",
+        "role": "Wat is precies jouw taak in de bende?",
         "team": "Hoe gaat de samenwerking met de rest?",
-        "change": "Wat zou jij veranderen als je de kapitein was?"
+        "change": "Wat zou jij veranderen als je de hoofdman was?"
       },
       "crew": [
         {
           "id": "kok",
-          "name": "Kok Kees",
-          "role": "Scheepskok"
+          "name": "Kampkok Kees",
+          "role": "Kampkok"
         },
         {
           "id": "stuur",
-          "name": "Stuurman Saïd",
-          "role": "Stuurman"
+          "name": "Tijdrover Saïd",
+          "role": "Tijdrover"
         },
         {
           "id": "kanon",
-          "name": "Kanonnier Kim",
-          "role": "Kanonnier"
+          "name": "Plezierrover Kim",
+          "role": "Plezierrover"
         },
         {
           "id": "uitkijk",
@@ -828,8 +830,8 @@
         },
         {
           "id": "matroos",
-          "name": "Matroos Max",
-          "role": "Matroos"
+          "name": "Buitsjouwer Max",
+          "role": "Buitsjouwer"
         }
       ],
       "problems": {
@@ -839,16 +841,16 @@
       },
       "advices": {
         "structure": "Bouw een helder functiehuis: functies beschrijven, rollen verdelen en waarderen",
-        "conflict": "Zet mediation in en organiseer vast teamoverleg tussen dek en kombuis",
-        "culture": "Leiderschapsontwikkeling voor de kapitein en een veilige feedbackcultuur",
-        "party": "Gewoon een extra feestje met grog, dan komt het vanzelf goed",
-        "fire": "Iedereen ontslaan en een nieuwe crew werven"
+        "conflict": "Zet mediation in en organiseer vast teamoverleg tussen kamp en buitploeg",
+        "culture": "Leiderschapsontwikkeling voor de hoofdman en een veilige feedbackcultuur",
+        "party": "Gewoon een extra feestje met taart, dan komt het vanzelf goed",
+        "fire": "Iedereen ontslaan en een nieuwe bende werven"
       },
       "scenarios": {
         "structure": {
           "kok": {
             "role": {
-              "a": "Koken, maar ook kanonnen poetsen, zeilen naaien en de boekhouding. Ik weet het eigenlijk niet.",
+              "a": "Koken, maar ook buit tellen, maskers naaien en de boekhouding. Ik weet het eigenlijk niet.",
               "clue": "Kok doet van alles, taken onduidelijk"
             },
             "team": {
@@ -861,32 +863,32 @@
           },
           "stuur": {
             "role": {
-              "a": "Volgens mijn contract ben ik 'piraat'. Dat is alles. Soms stuur ik, soms ook niet.",
-              "clue": "Geen functieomschrijving, alleen 'piraat'"
+              "a": "Volgens mijn contract ben ik 'rover'. Dat is alles. Soms roof ik tijd, soms ook niet.",
+              "clue": "Geen functieomschrijving, alleen 'rover'"
             },
             "team": {
-              "a": "Gaat best, al sturen er soms drie mensen tegelijk. Dan varen we in rondjes."
+              "a": "Gaat best, al plannen er soms drie mensen tegelijk dezelfde vergadering."
             },
             "change": {
-              "a": "Dat de kapitein eens vertelt wat iedereen verdient en waarom. Kim verdient meer dan ik, voor hetzelfde werk!",
+              "a": "Dat de hoofdman eens vertelt wat iedereen verdient en waarom. Kim verdient meer dan ik, voor hetzelfde werk!",
               "clue": "Beloning ongelijk, geen functiewaardering"
             }
           },
           "kanon": {
             "role": {
-              "a": "Kanonnier! Denk ik. Gisteren moest ik aardappels schillen."
+              "a": "Plezierrover! Denk ik. Gisteren moest ik aardappels schillen."
             },
             "team": {
               "a": "Gezellig hoor. Maar als er iets misgaat, weet niemand wie verantwoordelijk is.",
               "clue": "Verantwoordelijkheden niet belegd"
             },
             "change": {
-              "a": "Meer grog. Grapje. Een beetje dan."
+              "a": "Meer taart. Grapje. Een beetje dan."
             }
           },
           "uitkijk": {
             "role": {
-              "a": "Uitkijken. En de kapitein vroeg me ook stuurman te zijn. En kok. Ik zit vooral in de mast te stressen."
+              "a": "Uitkijken. En de hoofdman vroeg me ook tijdrover te zijn. En kok. Ik zit vooral in de boom te stressen."
             },
             "team": {
               "a": "We praten genoeg, hoor. We weten alleen niet wie wat moet doen."
@@ -898,25 +900,25 @@
           },
           "matroos": {
             "role": {
-              "a": "Ik ben al drie jaar 'tijdelijk matroos'. Doorgroeien? Waarnaartoe dan?",
+              "a": "Ik ben al drie jaar 'tijdelijk buitsjouwer'. Doorgroeien? Waarnaartoe dan?",
               "clue": "Geen loopbaanpad of functieniveaus"
             },
             "team": {
-              "a": "Fijne crew! Echt. Alleen wel rommelig."
+              "a": "Fijne bende! Echt. Alleen wel rommelig."
             },
             "change": {
-              "a": "Een nieuwe hangmat. Die van mij lekt."
+              "a": "Een nieuwe slaapzak. Die van mij lekt."
             }
           }
         },
         "conflict": {
           "kok": {
             "role": {
-              "a": "Ik kook. Duidelijk toch. Al eet het dek tegenwoordig liever beschuit dan mijn soep."
+              "a": "Ik kook. Duidelijk toch. Al eet de buitploeg tegenwoordig liever beschuit dan mijn soep."
             },
             "team": {
-              "a": "Met het dek? Die praten al maanden niet tegen ons. Sinds het Grote Soepincident.",
-              "clue": "Dek en kombuis praten niet meer"
+              "a": "Met de buitploeg? Die praten al maanden niet tegen ons. Sinds het Grote Soepincident.",
+              "clue": "Kamp en buitploeg praten niet meer"
             },
             "change": {
               "a": "Eén keer met z'n allen aan tafel. Zonder messen.",
@@ -925,10 +927,10 @@
           },
           "stuur": {
             "role": {
-              "a": "Ik stuur. Mijn functie is prima beschreven, hoor. Hangt naast het roer."
+              "a": "Ik roof tijd. Mijn functie is prima beschreven, hoor. Hangt naast de vergaderplanner."
             },
             "team": {
-              "a": "Het kombuis? Die saboteren ons. Gisteren zat er zout in mijn koffie.",
+              "a": "Het kamp? Die saboteren ons. Gisteren zat er zout in mijn koffie.",
               "clue": "Wederzijdse beschuldigingen"
             },
             "change": {
@@ -938,11 +940,11 @@
           },
           "kanon": {
             "role": {
-              "a": "Kanonnier. Ik weet precies wat ik moet doen. Knallen."
+              "a": "Plezierrover. Ik weet precies wat ik moet doen. Feestjes afblazen."
             },
             "team": {
-              "a": "Ik zit ertussenin. Het dek en het kombuis hebben er zelfs een lijn met krijt voor getrokken.",
-              "clue": "Kampen binnen de crew"
+              "a": "Ik zit ertussenin. Het kamp en de buitploeg hebben er zelfs een lijn met krijt voor getrokken.",
+              "clue": "Kampen binnen de bende"
             },
             "change": {
               "a": "Een vast overleg. Elke week. Met koekjes."
@@ -953,7 +955,7 @@
               "a": "Uitkijken. Ik zie alles. Ook dat ze elkaar steeds negeren."
             },
             "team": {
-              "a": "Vergaderen we nooit. Echt nooit. Alles gaat via briefjes in flessen.",
+              "a": "Vergaderen we nooit. Echt nooit. Alles gaat via briefjes aan een boom.",
               "clue": "Geen enkel teamoverleg"
             },
             "change": {
@@ -962,10 +964,10 @@
           },
           "matroos": {
             "role": {
-              "a": "Matroos, dat staat gewoon in mijn functieomschrijving. Prima."
+              "a": "Buitsjouwer, dat staat gewoon in mijn functieomschrijving. Prima."
             },
             "team": {
-              "a": "Vervelend. Ik moet steeds kiezen tussen dek of kombuis. Ik eet stiekem in de mast."
+              "a": "Vervelend. Ik moet steeds kiezen tussen kamp of buitploeg. Ik eet stiekem in de boom."
             },
             "change": {
               "a": "Ik zou de soepruzie eindelijk oplossen. Hij duurt nu al vier maanden.",
@@ -979,20 +981,20 @@
               "a": "Koken. Duidelijke taak. Mijn functie is netjes beschreven."
             },
             "team": {
-              "a": "Met de collega's? Prima. Maar als de kapitein binnenkomt, is het stil.",
-              "clue": "Stilte zodra de kapitein binnenkomt"
+              "a": "Met de collega's? Prima. Maar als de hoofdman binnenkomt, is het stil.",
+              "clue": "Stilte zodra de hoofdman binnenkomt"
             },
             "change": {
-              "a": "Dat je iets mag zeggen zonder over de plank te moeten lopen.",
+              "a": "Dat je iets mag zeggen zonder dat je formulier Z-12 moet invullen.",
               "clue": "Angst voor straf"
             }
           },
           "stuur": {
             "role": {
-              "a": "Ik stuur. Waar de kapitein wil. Ook als we op de rotsen afvaren."
+              "a": "Ik roof tijd. Waar de hoofdman wil. Ook als iedereen ziet dat het misgaat."
             },
             "team": {
-              "a": "We zagen die rotsen allemaal. Niemand durfde iets te zeggen.",
+              "a": "We zagen het allemaal aankomen. Niemand durfde iets te zeggen.",
               "clue": "Fouten niet bespreekbaar"
             },
             "change": {
@@ -1001,13 +1003,13 @@
           },
           "kanon": {
             "role": {
-              "a": "Kanonnier. Ik weet precies wat ik moet doen."
+              "a": "Plezierrover. Ik weet precies wat ik moet doen."
             },
             "team": {
-              "a": "Goed hoor! We helpen elkaar. Stiekem, als de kapitein niet kijkt."
+              "a": "Goed hoor! We helpen elkaar. Stiekem, als de hoofdman niet kijkt."
             },
             "change": {
-              "a": "Een kapitein die vraagt hoe het gaat, in plaats van alleen schreeuwt.",
+              "a": "Een hoofdman die vraagt hoe het gaat, in plaats van alleen schreeuwt.",
               "clue": "Leiderschap via schreeuwen"
             }
           },
@@ -1016,7 +1018,7 @@
               "a": "Uitkijken. Zie ik iets, dan meld ik het. Of nou ja… dat deed ik vroeger."
             },
             "team": {
-              "a": "De vorige uitkijk meldde een storm. Die moest de kombuis dweilen, een maand lang.",
+              "a": "De vorige uitkijk meldde onweer. Die moest een maand lang de kampkeuken dweilen.",
               "clue": "Slecht nieuws brengen wordt bestraft"
             },
             "change": {
@@ -1025,7 +1027,7 @@
           },
           "matroos": {
             "role": {
-              "a": "Matroos. Dek schrobben, touwen trekken. Ik weet wat ik moet doen."
+              "a": "Buitsjouwer. Buit sjouwen, kamp opruimen. Ik weet wat ik moet doen."
             },
             "team": {
               "a": "We hebben het fijn samen. Als je maar niks fout doet."
@@ -1037,8 +1039,8 @@
           }
         }
       },
-      "defected1": "1 crewlid loopt over naar jouw kant!",
-      "defected0": "Niemand loopt over… de crew twijfelt nog."
+      "defected1": "1 bendelid loopt over naar jouw kant!",
+      "defected0": "Niemand loopt over… de bende twijfelt nog."
     }
   },
   "finale": {
@@ -1046,11 +1048,11 @@
     "intro": [
       {
         "speaker": "captain",
-        "text": "Arrr! Dus jij bent die {naam} die mijn hele campus op stelten zet? Heb je daar wel een formulier voor?"
+        "text": "Hah! Dus jij bent die {naam} die mijn hele campus op stelten zet? Heb je daar wel een formulier voor?"
       },
       {
         "speaker": "captain",
-        "text": "Ik ben Kapitein Rompslomp! Werkgeluk? Niet in de begroting! Overleg? Eerst een vergaderverzoek! Mensen? Dat zijn dossiers!"
+        "text": "Ik ben Roverhoofdman Rompslomp! Ik roof tijd, energie en plezier. Werkgeluk? Niet in de begroting! Mensen? Dat zijn dossiers!"
       },
       {
         "speaker": "jan",
@@ -1058,18 +1060,18 @@
       },
       {
         "speaker": "captain",
-        "text": "Stil daar, prinses! Wil je haar bevrijden? Dan moet je eerst langs mij én langs Kroko Paragraaf. Arrr!"
+        "text": "Stil daar, prinses! Wil je haar bevrijden? Dan moet je eerst langs mij én langs Kroko Paragraaf!"
       }
     ],
-    "helpers": "{n} overgelopen crewleden helpen je!",
+    "helpers": "{n} overgelopen bendeleden helpen je!",
     "noHelpers": "Je staat er alleen voor… succes!",
     "phase1": "Fase 1: De juiste mens op de juiste plek",
-    "phase1How": "Kies voor elke post in de toren de crew met de juiste vaardigheid. Elke goede match schiet een gat in de papierberg!",
+    "phase1How": "Kies voor elke post in de toren de bende met de juiste vaardigheid. Elke goede match schiet een gat in de papierberg!",
     "phase2": "Fase 2: Koppelen",
     "phase2How": "Verbind de touwen van de katrol naar de sloten van de kooi. Tik op een stuk om het te draaien.",
     "phase3": "Fase 3: Adviseren",
-    "phase3How": "De kapitein roept de ene onzin na de andere. Weerleg hem met het juiste advies!",
-    "helperBonus": "Crewlid {naam} helpt: {bonus}",
+    "phase3How": "De hoofdman roept de ene onzin na de andere. Weerleg hem met het juiste advies!",
+    "helperBonus": "Bendelid {naam} helpt: {bonus}",
     "bonusTime": "+10 seconden!",
     "bonusShield": "schild tegen één fout!",
     "bonusHint": "één fout antwoord weggestreept!",
@@ -1120,7 +1122,7 @@
         "claim": "Externe specialisten? Eerst veertien aanbestedingsrondes en een notaris!",
         "options": [
           "Met een goede regisseur kies je snel betrouwbare, gecontroleerde specialisten tegen een eerlijke prijs.",
-          "Je hebt gelijk, iedereen is een piraat.",
+          "Je hebt gelijk, iedereen is een rover.",
           "Kies gewoon de goedkoopste."
         ],
         "answer": 0
@@ -1138,7 +1140,7 @@
         "claim": "Samenwerken met scholen en overheid? Daar zijn geen formulieren voor!",
         "options": [
           "Klopt, iedereen voor zich.",
-          "Scholen zijn voor landrotten.",
+          "Scholen zijn tijdverspilling.",
           "Samen met onderwijs en overheid bouw je aan het talent van morgen."
         ],
         "answer": 2
@@ -1146,23 +1148,23 @@
     ],
     "captainHurt": [
       "Au! Mijn formulieren!",
-      "Arrr! Dat was een goede!",
+      "Dat was een goede!",
       "Nee! Niet dat argument!",
       "Mijn stempel! Mijn prachtige stempel!"
     ],
     "captainLaugh": [
-      "Hahaha! Precies wat ik dacht!",
-      "Arrr, jij snapt het!",
+      "Hahaha! Weer een uur van je gestolen!",
+      "Hah, jij snapt het!",
       "Daar heb ik niks aan, hahaha!"
     ],
     "victory": [
       {
         "speaker": "captain",
-        "text": "Nee! Mijn regels zijn op! Mijn formulieren! Mijn… ARRRR!"
+        "text": "Nee! Mijn regels zijn op! Mijn formulieren! Mijn gestolen uren! GRRR!"
       },
       {
         "speaker": "captain",
-        "text": "Misschien… misschien kan het ook wel wat simpeler. Ik ga een cursus doen. Iets met 'minder regels, meer mensen'."
+        "text": "Misschien… misschien kan het ook wel wat simpeler. Ik geef alle gestolen tijd terug. En ik ga een cursus doen: 'minder regels, meer mensen'."
       },
       {
         "speaker": "jan",
@@ -1177,7 +1179,7 @@
         "text": "Iedereen naar het terras: de koffie is van mij!"
       }
     ],
-    "lose": "De kapitein houdt het nog vol… probeer deze fase opnieuw!",
+    "lose": "De hoofdman houdt het nog vol… probeer deze fase opnieuw!",
     "shield": "Schild! Deze fout telt niet.",
     "phaseTime": "Tijd voor deze fase is op!",
     "slot": "Slot {n}",
@@ -1209,8 +1211,8 @@
       "Held van de dag",
       "{naam}",
       "",
-      "Kapitein Rompslomp",
-      "volgt nu een cursus 'minder regels, meer mensen'",
+      "Roverhoofdman Rompslomp",
+      "geeft alle gestolen tijd terug en volgt een cursus 'minder regels, meer mensen'",
       "",
       "Kroko Paragraaf",
       "is omgeschoold tot vlogger",

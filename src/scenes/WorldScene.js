@@ -11,7 +11,7 @@ const NO_CONTROLS = { vector: () => ({ x: 0, y: 0 }), action: () => false, setVi
 import { burst, shake, floatText, confettiRain } from '../core/Juice.js';
 import { logo, bake } from '../ui/widgets.js';
 import { showDialog } from './DialogScene.js';
-import { makeCharacter, ensureAnims, randomLook, pirateLook, faceMove } from '../gfx/CharacterFactory.js';
+import { makeCharacter, ensureAnims, randomLook, roverLook, faceMove } from '../gfx/CharacterFactory.js';
 import { rng } from '../gfx/draw.js';
 import { buildTerrainChunks, inPoly, inRect, onInfrastructure } from '../world/terrain.js';
 import { makeCampusBuildings } from '../gfx/tex/campus.js';
@@ -377,7 +377,7 @@ export class WorldScene extends Phaser.Scene {
       [...pt(860, 800), 'c'], [...pt(1140, 470), 'c'], [...pt(590, 680), 'c'], [...pt(700, 620), 'p'], [...pt(790, 560), 'p']];
     homes.forEach(([x, y, type], i) => {
       const key = `amb_${i}`;
-      makeCharacter(this, key, type === 'p' ? pirateLook(r) : randomLook(r));
+      makeCharacter(this, key, type === 'p' ? roverLook(r) : randomLook(r));
       const spr = this.add.sprite(x, y, key, 'idle').setOrigin(0.5, 0.92).setScale(CS);
       const w = { spr, key, anim: ensureAnims(this, key), home: { x, y }, target: null, wait: r() * 3000, type, bubble: null };
       this.wanderers.push(w);

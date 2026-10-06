@@ -36,6 +36,18 @@ export function randomLook(r = Math.random, extra = {}) {
   };
 }
 
+/** Rover (tijdrovers van Rompslomp): gestreepte trui, maskertje, muts of pet. */
+export function roverLook(r = Math.random, extra = {}) {
+  const mc = pick(r, ['#26202c', '#26202c', '#3b2f3f']);
+  return {
+    skin: pick(r, SKINS), hair: pick(r, HAIRS.slice(0, 6)), hairStyle: pick(r, ['short', 'curly', 'crew', 'ponytail', 'bun', 'long']),
+    shirt: '#f4efe4', top: 'tee', pattern: 'stripes', patternColor: pick(r, ['#26202c', '#3b3f55', '#5b4636']),
+    pants: pick(r, ['#26202c', '#3b3f55', '#5b4636']), bottom: 'pants', shoes: '#26202c',
+    hat: pick(r, ['beanie', 'beanie', 'cap', null]), capColor: pick(r, ['#26202c', '#3b3f55', '#8a2d3b', '#4a3b2c']),
+    beard: r() < 0.4 ? pick(r, HAIRS.slice(0, 6)) : null, mask: true, maskColor: mc, eyes: 'dot', ...extra,
+  };
+}
+
 export function pirateLook(r = Math.random, extra = {}) {
   return {
     skin: pick(r, SKINS), hair: pick(r, HAIRS.slice(0, 6)), hairStyle: pick(r, ['short', 'long', 'curly', 'bald', 'ponytail']),
@@ -477,6 +489,25 @@ function drawFace(ctx, L, cx, hy, dir, pose) {
     else { ctx.arc(x, ey - 4.5, 3.4, 1.25 * Math.PI, 1.75 * Math.PI); }
     ctx.stroke();
   });
+  // roversmasker: zwarte band met oogjes erdoor
+  if (L.mask) {
+    const mc = L.maskColor || '#26202c';
+    ctx.save();
+    ctx.beginPath();
+    const x0 = side ? cx - 6 : cx - 15.5, x1 = side ? cx + 22 : cx + 15.5;
+    ctx.moveTo(x0, ey - 4.5);
+    ctx.quadraticCurveTo((x0 + x1) / 2, ey - 7.5, x1, ey - 4.5);
+    ctx.quadraticCurveTo(x1 + 1, ey + 1, x1 - 1, ey + 4);
+    ctx.quadraticCurveTo((x0 + x1) / 2, ey + 1.5, x0 + 1, ey + 4);
+    ctx.quadraticCurveTo(x0 - 1, ey + 1, x0, ey - 4.5);
+    ctx.closePath();
+    eyeXs.forEach((x) => { ctx.moveTo(x + 3.6, ey); ctx.ellipse(x, ey, 3.6, 3, 0, 0, Math.PI * 2); });
+    ctx.fillStyle = mc; ctx.fill('evenodd');
+    ctx.strokeStyle = shade(mc, 0.25); ctx.lineWidth = 0.8; ctx.stroke();
+    // knoopje van de band opzij
+    if (!side) { ctx.strokeStyle = mc; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(x0, ey - 2); ctx.lineTo(x0 - 4, ey - 4); ctx.moveTo(x1, ey - 2); ctx.lineTo(x1 + 4, ey - 4); ctx.stroke(); }
+    ctx.restore();
+  }
   // ooglapje
   if (L.eyepatch) {
     const x = side ? cx + 11 : cx + 8;
@@ -595,6 +626,21 @@ function drawHat(ctx, L, cx, hy, dir) {
         ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.3; ctx.beginPath(); ctx.moveTo(hx - 4, hy - 19.5); ctx.lineTo(hx + 4, hy - 22); ctx.moveTo(hx + 4, hy - 19.5); ctx.lineTo(hx - 4, hy - 22); ctx.stroke();
       }
       if (L.hat === 'captain') { ctx.beginPath(); ctx.moveTo(hx + 7, hy - 31); ctx.quadraticCurveTo(hx + 30, hy - 52, hx + 22, hy - 24); ctx.quadraticCurveTo(hx + 18, hy - 33, hx + 7, hy - 31); paint(ctx, P.red, 1.2); }
+      break;
+    }
+    case 'rover': {
+      // brede vilten roovershoed met een veer
+      const c = L.hatColor || '#4a3b2c';
+      ell(ctx, hx, hy - 9, 32, 8.5); soft(ctx, () => ell(ctx, hx, hy - 9, 32, 8.5), c, hy - 17, hy - 1, 1.5);
+      const p = () => { ctx.beginPath(); ctx.moveTo(hx - 16, hy - 10); ctx.quadraticCurveTo(hx - 17, hy - 34, hx, hy - 33); ctx.quadraticCurveTo(hx + 17, hy - 34, hx + 16, hy - 10); ctx.closePath(); };
+      soft(ctx, p, shade(c, 0.08), hy - 34, hy - 10, 1.5);
+      ctx.fillStyle = shade(c, -0.3); ctx.fillRect(hx - 16, hy - 16, 32, 4.5);
+      if (dir !== 'back') {
+        const fx = side ? hx - 10 : hx + 12;
+        ctx.beginPath(); ctx.moveTo(fx, hy - 14); ctx.quadraticCurveTo(fx + 14, hy - 40, fx + 4, hy - 52); ctx.quadraticCurveTo(fx + 2, hy - 34, fx - 3, hy - 16); ctx.closePath();
+        paint(ctx, L.feather || '#e8504c', 1.1);
+        ctx.strokeStyle = shade(L.feather || '#e8504c', -0.35); ctx.lineWidth = 0.8; ctx.beginPath(); ctx.moveTo(fx, hy - 15); ctx.quadraticCurveTo(fx + 8, hy - 34, fx + 4, hy - 50); ctx.stroke();
+      }
       break;
     }
     case 'crown': {

@@ -10,7 +10,7 @@ import { SaveManager } from '../core/SaveManager.js';
 import { burst, shake, floatText, flash, confettiRain, hitstop } from '../core/Juice.js';
 import { card, button, meter, panel, transitionTo } from '../ui/widgets.js';
 import { dragTap } from '../ui/dragtap.js';
-import { makeCharacter, pirateLook } from '../gfx/CharacterFactory.js';
+import { makeCharacter, roverLook } from '../gfx/CharacterFactory.js';
 import { makeTexture, circle, style } from '../gfx/draw.js';
 import { showDialog } from './DialogScene.js';
 import { makeTowerTopBg } from '../gfx/tex/rompslomp.js';
@@ -25,7 +25,7 @@ export class FinaleScene extends MissionBase {
 
   init(data) {
     super.init(data);
-    this.brand = { id: 'finale', name: t('finale.title'), short: 'Finale', initials: '☠', color: HEX.pirateRed, css: P.pirateRed };
+    this.brand = { id: 'finale', name: t('finale.title'), short: 'Finale', initials: '⌛', color: HEX.pirateRed, css: P.pirateRed };
     this.hp = 100;
   }
 
@@ -34,7 +34,7 @@ export class FinaleScene extends MissionBase {
 
   create() {
     if (!this.textures.exists('logofb_finale')) {
-      const fr = this.textures.getFrame('icons', 'skull');
+      const fr = this.textures.getFrame('icons', 'hourglass');
       makeTexture(this, 'logofb_finale', 128, 128, (c) => {
         circle(c, 64, 64, 58); style(c, { fill: P.pirateRed, lw: 6 });
         c.drawImage(fr.source.image, fr.cutX, fr.cutY, 64, 64, 24, 22, 80, 80);
@@ -76,7 +76,7 @@ export class FinaleScene extends MissionBase {
     const crew = t('missions.reijn.crew');
     for (let i = 0; i < n; i++) {
       const key = `fin_help${i}`;
-      makeCharacter(this, key, pirateLook(rng(i * 7 + 3)));
+      makeCharacter(this, key, roverLook(rng(i * 7 + 3)));
       const s = this.add.sprite(70 + i * 70, 420 + (i % 2) * 30, key, 'cheer').setOrigin(0.5, 0.92).setScale(1.1).setDepth(15);
       this.tweens.add({ targets: s, y: s.y - 10, duration: 300 + i * 40, yoyo: true, repeat: -1 });
       const fl = this.add.image(s.x + 12, s.y - 120, 'flagcloth').setScale(0.35).setTint(BRANDS.reijn.color).setDepth(16);

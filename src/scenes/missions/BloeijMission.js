@@ -8,7 +8,7 @@ import { Audio } from '../../core/AudioEngine.js';
 import { Controls, isTouch } from '../../core/Controls.js';
 import { burst, shake, floatText } from '../../core/Juice.js';
 import { meter, panel, button } from '../../ui/widgets.js';
-import { makeCharacter, ensureAnims, randomLook, pirateLook, faceMove } from '../../gfx/CharacterFactory.js';
+import { makeCharacter, ensureAnims, randomLook, roverLook, faceMove } from '../../gfx/CharacterFactory.js';
 import { makeBloeijBg } from '../../gfx/tex/acbg.js';
 
 const SPOTS = [[250, 300], [520, 260], [830, 300], [1090, 270], [330, 500], [660, 470], [960, 520], [560, 640]];
@@ -101,7 +101,7 @@ export class BloeijMission extends MissionBase {
 
   spawnPirate(x, y) {
     const key = `bl_pir${this.pirates.length}`;
-    makeCharacter(this, key, pirateLook(Math.random, { angry: true }));
+    makeCharacter(this, key, roverLook(Math.random, { angry: true }));
     const spr = this.add.sprite(x, y, key, 'idle').setOrigin(0.5, 0.92);
     const mega = this.add.image(x + 26, y - 50, 'icons', 'megaphone').setDisplaySize(40, 40);
     ensureAnims(this, key);

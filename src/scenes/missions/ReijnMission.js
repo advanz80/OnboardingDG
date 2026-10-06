@@ -7,7 +7,7 @@ import { P, HEX, textStyle, titleStyle } from '../../gfx/palette.js';
 import { Audio } from '../../core/AudioEngine.js';
 import { burst, shake, floatText, confettiRain } from '../../core/Juice.js';
 import { panel, button, dim } from '../../ui/widgets.js';
-import { makeCharacter, pirateLook, ensureAnims } from '../../gfx/CharacterFactory.js';
+import { makeCharacter, roverLook, ensureAnims } from '../../gfx/CharacterFactory.js';
 import { rng } from '../../gfx/draw.js';
 import { makeDeckBg } from '../../gfx/tex/acbg.js';
 
@@ -47,7 +47,7 @@ export class ReijnMission extends MissionBase {
     this.crew = this.T('crew').map((c, i) => {
       const key = `reijn_${c.id}`;
       const r = rng(i * 7 + 3);
-      makeCharacter(this, key, pirateLook(r, c.id === 'kok' ? { hat: 'bandana', bandana: '#ffffff' } : {}));
+      makeCharacter(this, key, roverLook(r, c.id === 'kok' ? { hat: 'beanie', capColor: '#ffffff' } : {}));
       const spr = this.add.sprite(CREW_X[i], CREW_Y, key, 'idle').setOrigin(0.5, 0.92).setScale(1.25).setDepth(CREW_Y);
       this.tweens.add({ targets: spr, scaleY: 1.3, duration: 700 + i * 90, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
       const nm = this.add.text(CREW_X[i], CREW_Y + 30, c.name, textStyle(18, P.cream, { stroke: P.ink, strokeThickness: 5 })).setOrigin(0.5).setDepth(600);

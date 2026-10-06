@@ -20,7 +20,7 @@ export const NPC_LOOKS = {
   reijn: { skin: '#f8d5b5', hair: '#5a3825', hairStyle: 'curly', shirt: '#f4efe4', top: 'tee', pattern: 'stripes', patternColor: BRANDS.reijn.css, pants: '#3b2f3f', bottom: 'shorts', eyes: 'lashes', accessory: 'earrings', shoes: '#3b2f3f' },
   // Prinses Mensenmens (sleutel blijft 'jan' zodat bestaande code werkt)
   jan: { skin: '#f5c9a0', hair: '#e8c46a', hairStyle: 'long', shirt: '#ff9ecf', top: 'blouse', pattern: 'dots', patternColor: '#ffffff', pants: '#8e5bd8', bottom: 'skirt', eyes: 'lashes', hat: 'crown', accessory: 'earrings', shoes: '#f6c33b' },
-  // Kapitein Rompslomp: grijs pak, stropdas van rode tape, leesbril
-  captain: { skin: '#f5c9a0', hair: '#9a9aa6', hairStyle: 'short', shirt: '#f4efe4', top: 'shirt', coat: '#5b5f6b', tie: P.pirateRed, pants: '#3b3f55', bottom: 'pants', hat: 'captain', beard: '#9a9aa6', eyepatch: true, glasses: 'rect', hook: true, angry: true, badge: '#ffffff', shoes: '#3b2f3f' },
+  // Roverhoofdman Rompslomp: brede roovershoed met veer, maskertje, grijze baard, lange jas
+  captain: { skin: '#f5c9a0', hair: '#9a9aa6', hairStyle: 'short', shirt: '#f4efe4', top: 'shirt', coat: '#3d4a33', tie: P.pirateRed, pants: '#3b3f55', bottom: 'pants', hat: 'rover', hatColor: '#3b2a1e', feather: '#e8504c', beard: '#9a9aa6', mask: true, angry: true, badge: '#ffffff', shoes: '#3b2f3f' },
   guard: { skin: '#b57b4c', hair: '#2d1e14', hairStyle: 'bald', shirt: '#f4efe4', top: 'tee', pattern: 'stripes', patternColor: P.pirateRed, pants: '#3b2f3f', bottom: 'shorts', hat: 'bandana', bandana: '#3b2f3f', beard: '#2d1e14', eyepatch: true, shoes: '#3b2f3f' },
 };
