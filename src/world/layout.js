@@ -82,7 +82,7 @@ const bld = (id, name, rects, opts = {}) => ({ id, name, parts: rects.map((r) =>
 export const BUILDINGS = [
   // Driessen (rechtgezet): entreevleugel noord, twee even brede dwarsvleugels, daartussen een iets smaller middenblok met glazen atrium
   // noordkant: twee uitstulpingen aan weerszijden, met daartussen de entree (logo boven de deur)
-  bld('driessen', 'Driessen', [[1088, 473, 1112, 487], [1178, 473, 1202, 487], [1085, 487, 1205, 530], [1091, 530, 1199, 605], [1085, 605, 1205, 650]],
+  bld('driessen', 'Driessen', [[1093, 473, 1124, 487], [1166, 473, 1197, 487], [1085, 487, 1205, 530], [1091, 530, 1199, 605], [1085, 605, 1205, 650]],
     { H: 110, brand: 'driessen', style: 'driessen', entrance: 2, kinds: ['roof', 'roof', 'roof', 'atriumroof', 'wing'] }),
   bld('rovc', 'ROVC', [[875, 597, 970, 650]], { color: '#3D2152' }),
   // IJk: twee langgerekte blokken (noord hoog, zuid lager) met een glazen dakstrook ertussen; entree aan de westkant
