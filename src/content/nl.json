@@ -1220,7 +1220,8 @@
       "",
       "Bedankt voor het spelen!"
     ],
-    "congrats": "Gefeliciteerd, {naam}!"
+    "congrats": "Gefeliciteerd, {naam}!",
+    "submitting": "Je score wordt op het leaderboard gezet…"
   },
   "leaderboard": {
     "title": "Leaderboard",
@@ -1232,6 +1233,7 @@
     "loading": "Scores ophalen…",
     "online": "Gedeeld leaderboard: iedereen ziet deze scores",
     "offline": "Geen verbinding: alleen scores van dit apparaat",
-    "localOnly": "Scores van dit apparaat"
+    "localOnly": "Scores van dit apparaat",
+    "you": "jij!"
   }
 }

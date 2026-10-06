@@ -9,6 +9,7 @@ import { burst, confettiRain, popIn } from '../core/Juice.js';
 import { panel, button, transitionTo, logo } from '../ui/widgets.js';
 import { BRANDS, MISSION_IDS } from '../config/brands.js';
 import { makeSunsetBg } from '../gfx/tex/acbg.js';
+import { acTitle } from '../gfx/tex/logo.js';
 
 export class CreditsScene extends Phaser.Scene {
   constructor() { super('Credits'); }
@@ -56,7 +57,7 @@ export class CreditsScene extends Phaser.Scene {
     const rollH = lines.length * 40 + 120;
     const maskG = this.make.graphics().fillRect(0, 110, width, 400);
     roll.setMask(maskG.createGeometryMask());
-    this.add.text(width / 2, 50, t('credits.title'), titleStyle(64, P.gold)).setOrigin(0.5).setDepth(1001);
+    acTitle(this, width / 2, 52, t('credits.title'), 54).setDepth(1001);
     this.rollTween = this.tweens.add({ targets: roll, y: 110 - rollH, duration: 26000, ease: 'Linear', onComplete: () => this.showScore() });
     const skip = button(this, width - 110, height - 50, t('common.skip'), () => { this.rollTween.stop(); roll.destroy(); this.showScore(); }, { width: 180, height: 56, size: 20, color: HEX.cream }).setDepth(1002);
     this.skipBtn = skip;
@@ -74,7 +75,7 @@ export class CreditsScene extends Phaser.Scene {
     const pnl = panel(this, width / 2, height / 2 - 20, 620, 420);
     L.add(pnl);
     popIn(this, pnl);
-    L.add(this.add.text(width / 2, height / 2 - 180, t('credits.congrats', { naam: s?.player?.name || '' }), titleStyle(44, P.gold)).setOrigin(0.5));
+    L.add(acTitle(this, width / 2, height / 2 - 180, t('credits.congrats', { naam: s?.player?.name || '' }), 40));
     L.add(this.add.text(width / 2 - 200, height / 2 - 100, t('credits.yourScore'), textStyle(26, P.inkSoft)).setOrigin(0, 0.5));
     const sc = this.add.text(width / 2 + 200, height / 2 - 100, '0', textStyle(40, P.ink)).setOrigin(1, 0.5);
     L.add(sc);
@@ -82,26 +83,28 @@ export class CreditsScene extends Phaser.Scene {
     this.tweens.add({ targets: ctr, v: score, duration: 1500, ease: 'Cubic.Out', onUpdate: () => sc.setText(Math.round(ctr.v)) });
     L.add(this.add.text(width / 2 - 200, height / 2 - 40, t('credits.yourTime'), textStyle(26, P.inkSoft)).setOrigin(0, 0.5));
     L.add(this.add.text(width / 2 + 200, height / 2 - 40, formatTime(time), textStyle(34, P.ink)).setOrigin(1, 0.5));
-    const name = s?.player?.name || t('character.defaultName');
-    this.nameEl = this.add.dom(width / 2, height / 2 + 30).createFromHTML(
-      `<input type="text" maxlength="16" value="${name.replace(/"/g, '')}" style="width:380px;height:50px;border:4px solid ${P.ink};border-radius:14px;padding:0 14px;font:600 24px ${FONT.ui.replace(/"/g, "'")};color:${P.ink};text-align:center;outline:none;box-sizing:border-box" />`,
-    );
-    const submit = button(this, width / 2, height / 2 + 110, t('credits.submit'), async () => {
-      submit.setEnabled(false);
-      const nm = (this.nameEl.node.querySelector('input').value || name).trim();
-      const entry = await Leaderboard.submit({ name: nm, score, timeMs: time });
+    const name = (s?.player?.name || t('character.defaultName')).trim().slice(0, 16);
+    const status = this.add.text(width / 2, height / 2 + 40, t('credits.submitting'), textStyle(26, P.inkSoft)).setOrigin(0.5);
+    L.add(status);
+    // meteen insturen en door naar het leaderboard met je eigen plek gemarkeerd
+    const go = async () => {
+      let entry = s?.submittedEntry;
+      if (!entry) {
+        entry = await Leaderboard.submit({ name, score, timeMs: time });
+        if (s) { s.submittedEntry = entry; SaveManager.save(); }
+      }
       const top = await Leaderboard.top(100);
       const rank = top.findIndex((e) => sameEntry(e, entry)) + 1;
-      const offline = Leaderboard.shared && Leaderboard.lastSource !== 'online';
-      this.nameEl.destroy();
-      submit.destroy();
+      if (!this.sys.isActive()) return;
       Audio.sfx('fanfare');
       burst(this, width / 2, height / 2 + 30, 'confetti', 40, { depth: 2100 });
-      L.add(this.add.text(width / 2, height / 2 + 30, `${t('credits.submitted')}${rank ? ` — ${t('credits.rank', { n: rank })}` : ''}`, textStyle(26, P.green)).setOrigin(0.5));
-      if (offline) L.add(this.add.text(width / 2, height / 2 + 62, t('credits.savedOffline'), textStyle(18, P.inkSoft)).setOrigin(0.5));
-      L.add(button(this, width / 2, height / 2 + 110, t('leaderboard.title'), () => transitionTo(this, 'Leaderboard', { highlight: entry }), { width: 300, color: HEX.gold, icon: 'star' }));
-    }, { width: 340, color: HEX.green, icon: 'star' });
-    L.add(submit);
+      status.setText(`${t('credits.submitted')}${rank ? ` — ${t('credits.rank', { n: rank })}` : ''}`).setColor(P.green);
+      if (Leaderboard.shared && Leaderboard.lastSource !== 'online') L.add(this.add.text(width / 2, height / 2 + 74, t('credits.savedOffline'), textStyle(18, P.inkSoft)).setOrigin(0.5));
+      const btn = button(this, width / 2, height / 2 + 130, t('leaderboard.title'), () => transitionTo(this, 'Leaderboard', { highlight: entry }), { width: 300, color: HEX.gold, icon: 'star' });
+      L.add(btn);
+      this.time.delayedCall(2800, () => { if (this.sys.isActive()) transitionTo(this, 'Leaderboard', { highlight: entry }); });
+    };
+    this.time.delayedCall(1700, go);
     L.add(button(this, width - 200, height - 50, t('credits.playAgain'), () => transitionTo(this, 'Menu'), { width: 340, color: HEX.cream, icon: 'home', size: 22 }));
   }
 }

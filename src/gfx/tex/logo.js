@@ -58,6 +58,43 @@ export function drawGameLogo(c, cx, cy, size, { font = 'Fredoka, "Trebuchet MS",
   return total;
 }
 
+/** Losse tekst in dezelfde Animal Crossing-stijl (bolle crème letters, dikke bruine rand). */
+export function drawACText(c, cx, cy, text, size, { font = 'Fredoka, "Trebuchet MS", sans-serif', bounce = true } = {}) {
+  c.save();
+  c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineJoin = 'round';
+  c.font = `700 ${size}px ${font}`;
+  const widths = [...text].map((ch) => c.measureText(ch).width * 0.97);
+  const total = widths.reduce((a, b) => a + b, 0);
+  let x = cx - total / 2;
+  const pos = [...text].map((ch, i) => {
+    const w = widths[i], px = x + w / 2; x += w;
+    return { ch, x: px, y: cy + (bounce ? Math.sin(i * 1.3) * size * 0.05 : 0), r: bounce ? Math.sin(i * 2.1) * 0.05 : 0 };
+  });
+  for (const [lw, col, dx, dy] of [[size * 0.24, 'rgba(60,30,10,0.35)', size * 0.03, size * 0.07], [size * 0.22, BROWN, 0, 0]]) {
+    for (const p of pos) { c.save(); c.translate(p.x + dx, p.y + dy); c.rotate(p.r); c.lineWidth = lw; c.strokeStyle = col; c.strokeText(p.ch, 0, 0); c.restore(); }
+  }
+  pos.forEach((p, i) => {
+    c.save(); c.translate(p.x, p.y); c.rotate(p.r);
+    c.fillStyle = LETTER_TINTS[i % LETTER_TINTS.length]; c.fillText(p.ch, 0, 0);
+    if (p.ch.trim()) { c.fillStyle = 'rgba(255,255,255,0.7)'; c.beginPath(); c.ellipse(-size * 0.1, -size * 0.2, size * 0.045, size * 0.028, -0.5, 0, Math.PI * 2); c.fill(); }
+    c.restore();
+  });
+  c.restore();
+  return total;
+}
+
+/** Phaser-afbeelding met tekst in Animal Crossing-stijl (origin midden). */
+export function acTitle(scene, x, y, text, size = 64) {
+  const key = `ac_${size}_${text}`;
+  if (!scene.textures.exists(key)) {
+    const probe = document.createElement('canvas').getContext('2d');
+    probe.font = `700 ${size}px Fredoka, sans-serif`;
+    const w = Math.ceil(probe.measureText(text).width + size * 0.9), h = Math.ceil(size * 1.6);
+    makeTexture(scene, key, w, h, (c) => drawACText(c, w / 2, h * 0.48, text, size));
+  }
+  return scene.add.image(x, y, key);
+}
+
 /** Phaser-texture 'game_logo' (origin midden). */
 export function makeLogoTexture(scene, size = 100) {
   const w = Math.round(size * 9.5), h = Math.round(size * 2.3);
