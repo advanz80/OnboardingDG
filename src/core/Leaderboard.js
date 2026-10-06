@@ -11,7 +11,7 @@ import { LEADERBOARD } from '../config/leaderboard.js';
  *   async top(limit: number): Promise<Entry[]>
  */
 
-const KEY = 'ppz.leaderboard.v1';
+const KEY = 'odg.leaderboard.v1';
 
 export class LocalStorageProvider {
   _read() {
@@ -28,10 +28,10 @@ export class LocalStorageProvider {
 
 /**
  * Supabase (PostgREST) met de gedeelde tabel `app_data` (zie docs/supabase.sql):
- * elke score is een rij met app = 'portzelande', key = 'leaderboard' en de score als JSON in `value`.
+ * elke score is een rij met app = 'OnboardingDG', key = 'leaderboard' en de score als JSON in `value`.
  */
 export class SupabaseProvider {
-  constructor(url, anonKey, { table = 'app_data', app = 'portzelande', key = 'leaderboard' } = {}) {
+  constructor(url, anonKey, { table = 'app_data', app = 'OnboardingDG', key = 'leaderboard' } = {}) {
     this.base = `${url.replace(/\/+$/, '')}/rest/v1/${table}`;
     this.anon = anonKey;
     this.app = app;
@@ -84,7 +84,7 @@ export function sameEntry(a, b) {
   return !!a && !!b && a.name === b.name && Math.abs(new Date(a.date) - new Date(b.date)) < 2;
 }
 
-const PENDING = 'ppz.leaderboard.pending.v1';
+const PENDING = 'odg.leaderboard.pending.v1';
 const readPending = () => { try { return JSON.parse(localStorage.getItem(PENDING)) || []; } catch { return []; } };
 const writePending = (list) => { try { localStorage.setItem(PENDING, JSON.stringify(list.slice(-20))); } catch { /* privé */ } };
 

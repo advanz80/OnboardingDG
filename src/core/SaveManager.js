@@ -1,7 +1,7 @@
 import { MISSION_IDS } from '../config/brands.js';
 
-const KEY = 'ppz.save.v1';
-const SETTINGS_KEY = 'ppz.settings.v1';
+const KEY = 'odg.save.v1';
+const SETTINGS_KEY = 'odg.settings.v1';
 
 function safeGet(key) {
   try { return JSON.parse(localStorage.getItem(key)); } catch { return null; }

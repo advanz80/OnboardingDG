@@ -18,6 +18,6 @@ export const LEADERBOARD = {
   supabaseAnonKey: ANON_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY || '',
   // scores komen in de gedeelde tabel app_data (zie docs/supabase.sql)
   table: 'app_data',
-  app: 'portzelande',
+  app: 'OnboardingDG',
   key: 'leaderboard',
 };

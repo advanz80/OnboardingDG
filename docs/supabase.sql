@@ -2,7 +2,7 @@
 -- Staat deze tabel al in je Supabase-project? Dan hoef je niets te doen.
 -- Anders: plak dit in Supabase → SQL Editor en klik "Run".
 --
--- Het spel slaat elke score op als: app = 'portzelande', key = 'leaderboard',
+-- Het spel slaat elke score op als: app = 'OnboardingDG', key = 'leaderboard',
 -- value = {"name": "...", "score": 1234, "timeMs": 1500000, "date": "..."}.
 
 create table if not exists app_data (

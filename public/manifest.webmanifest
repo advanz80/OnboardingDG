@@ -1,6 +1,7 @@
 {
-  "name": "Pirates of Port Zélande",
-  "short_name": "Port Zélande",
+  "id": "/OnboardingDG/",
+  "name": "OnboardingDG — Driessen Groep",
+  "short_name": "OnboardingDG",
   "description": "Bevrijd Jan Driessen uit handen van de piraten!",
   "start_url": "./",
   "scope": "./",

@@ -1,4 +1,11 @@
-# Pirates of Port Zélande 🏴‍☠️
+# OnboardingDG 🏴‍☠️
+
+**Speel online:** https://advanz80.github.io/OnboardingDG/
+
+> Nieuwe variant van [Pirates of Port Zélande](https://github.com/advanz80/portzelande)
+> ([spelen](https://advanz80.github.io/portzelande/)). Beide versies draaien naast elkaar op
+> advanz80.github.io: deze variant gebruikt eigen localStorage-sleutels (`odg.*`), een eigen
+> leaderboard (`app = 'OnboardingDG'`) en een eigen app-id in het manifest.
 
 Een top-down avonturengame in de browser voor de collega's van Driessen Groep.
 Piraten hebben Port Zélande gekaapt en Jan Driessen opgesloten op hun schip. Help de zes
@@ -120,7 +127,7 @@ zodat er geen zwarte balken naast het beeld komen.
 Zonder instellingen bewaart het spel de scores alleen op het eigen apparaat. Met een gratis
 [Supabase](https://supabase.com)-project ziet iedereen elkaars scores.
 
-De scores komen in de gedeelde tabel **`app_data`** (`app = 'portzelande'`, `key = 'leaderboard'`,
+De scores komen in de gedeelde tabel **`app_data`** (`app = 'OnboardingDG'`, `key = 'leaderboard'`,
 de score als JSON in `value`). Die tabel kan ook door andere apps gebruikt worden.
 
 1. Heb je de tabel `app_data` nog niet? Open in Supabase de **SQL Editor**, plak
@@ -139,7 +146,7 @@ Goed om te weten:
 - Geen internet? Dan toont het spel de scores van het eigen apparaat en verstuurt het je score
   later alsnog.
 - Scores verwijderen (bijv. na een testronde) doe je in Supabase via **Table Editor → app_data**
-  (filter op `app = portzelande`).
+  (filter op `app = OnboardingDG`).
 - Omdat iedereen in `app_data` mag schrijven, toont het spel alleen geldige scores (naam tot 20
   tekens, score 0–20.000). Iemand die handig is kan wel een nepscore insturen; voor een teamuitje
   is dat meestal prima. Wijzigen of verwijderen kan niemand behalve de beheerder.
