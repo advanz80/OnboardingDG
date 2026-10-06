@@ -106,20 +106,15 @@ function drawDriessenPart(c, w, h, H, { front, entrance, kind, logoImg }) {
       c.strokeStyle = P.line; c.lineWidth = 2; c.strokeRect(gx - 2, gy - 2, gw + 4, gh + 4);
     }
     if (entrance) {
-      // glazen entree met luifel, en het Driessen-logo erboven
-      const dw = 70, dx = w / 2 - dw / 2;
-      c.fillStyle = '#ffffff'; c.fillRect(dx - 10, 0, dw + 20, 30); c.strokeStyle = P.line; c.lineWidth = 2.4; c.strokeRect(dx - 10, 0, dw + 20, 30);
-      const g = c.createLinearGradient(dx, 4, dx + dw, 28); g.addColorStop(0, '#dff3ff'); g.addColorStop(1, '#7fb6d4');
-      c.fillStyle = g; c.fillRect(dx, 4, dw, 24);
-      c.strokeStyle = '#ffffff'; c.lineWidth = 2; c.beginPath(); c.moveTo(w / 2, 4); c.lineTo(w / 2, 28); c.stroke();
+      // rechthoekig Driessen-logobord op de noordrand, boven de ingang (dak loopt door)
+      const bw = 96, bh = 30, bx = w / 2 - bw / 2;
+      c.fillStyle = '#ffffff'; c.fillRect(bx, 0, bw, bh); c.strokeStyle = P.line; c.lineWidth = 2.4; c.strokeRect(bx, 0, bw, bh);
       if (logoImg) {
-        const lh = 34, lw2 = lh * (logoImg.width / logoImg.height);
-        c.fillStyle = '#ffffff'; c.beginPath(); c.arc(w / 2, 52, 26, 0, Math.PI * 2); c.fill(); c.strokeStyle = P.line; c.lineWidth = 2.4; c.stroke();
-        c.save(); c.beginPath(); c.arc(w / 2, 52, 24, 0, Math.PI * 2); c.clip();
-        c.drawImage(logoImg, w / 2 - Math.min(lw2, 44) / 2, 52 - lh / 2 * Math.min(1, 44 / lw2), Math.min(lw2, 44), lh * Math.min(1, 44 / lw2));
-        c.restore();
+        const sc = Math.min((bw - 10) / logoImg.width, (bh - 6) / logoImg.height);
+        const lw = logoImg.width * sc, lh = logoImg.height * sc;
+        c.drawImage(logoImg, w / 2 - lw / 2, bh / 2 - lh / 2, lw, lh);
       } else {
-        c.fillStyle = BRICK; c.font = '700 16px Fredoka, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('driessen', w / 2, 46);
+        c.fillStyle = BRICK; c.font = '700 16px Fredoka, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('driessen', w / 2, bh / 2);
       }
     }
     return;
