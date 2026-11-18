@@ -77,6 +77,8 @@ export class BhcMission extends MissionBase {
   startBuild() {
     const { width } = DESIGN;
     this.running = true;
+    this.hintBtn.setVisible(true);
+    this.setGoal(this.T('goalBuild'));
     this.errors = 0;
     this.pillars = [];
     const xs = [420, 660, 900];
@@ -137,6 +139,16 @@ export class BhcMission extends MissionBase {
       this.selectBadge(b);
     }));
     this.pillars.forEach((p) => p.zone.setInteractive().on('pointerup', () => { if (this.selected) this.tryPlace(this.selected, p); }));
+  }
+
+  giveHint() {
+    if (!this.badges) return false;
+    for (const b of this.badges) {
+      if (b.placed) continue;
+      const p = this.pillars.find((x) => !x.done && !x.sectors.has(b.sector));
+      if (p) { this.hintMark(b.x, b.y, 50); const s = p.slots.find((sl) => !sl.badge); this.hintMark(p.x, s ? s.y : 480, 50); return true; }
+    }
+    return false;
   }
 
   selectBadge(b) {

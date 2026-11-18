@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { t, setTextVars } from '../core/i18n.js';
-import { P, HEX, textStyle, titleStyle } from '../gfx/palette.js';
+import { P, HEX, textStyle, titleStyle, MOBILE } from '../gfx/palette.js';
 import { BRANDS, MISSION_IDS } from '../config/brands.js';
 import { NPC_LOOKS } from '../config/npcs.js';
 import { SaveManager } from '../core/SaveManager.js';
@@ -68,7 +68,7 @@ export class WorldScene extends Phaser.Scene {
     this.dyn.push(this.player);
     cam.startFollow(this.player, true, 0.12, 0.12);
     // Op kleine schermen (telefoon) iets inzoomen voor leesbaarheid
-    this.baseZoom = this.scale.displayScale.x > 1.4 ? 1.25 : 1;
+    this.baseZoom = MOBILE ? 1.6 : this.scale.displayScale.x > 1.4 ? 1.25 : 1;
     cam.setZoom(this.baseZoom);
     cam.fadeIn(500, 15, 61, 92);
 
@@ -89,15 +89,75 @@ export class WorldScene extends Phaser.Scene {
           lines: t('story.intro'),
           onDone: () => {
             s.seenIntro = true; SaveManager.save();
-            if (isTouch(this) && !SaveManager.settings.seenTouchHelp) this.showTouchCoach(() => this.hud.toast('→ ' + BRANDS.bhc.name, BRANDS.bhc.color, 'map'));
-            else {
-              this.hud.toast(t(isTouch(this) ? 'hud.moveHintTouch' : 'hud.moveHintKeys'), HEX.cream, 'shoe', 4000);
-              this.time.delayedCall(4600, () => this.hud.toast('→ ' + BRANDS.bhc.name, BRANDS.bhc.color, 'map'));
-            }
+            const tut = () => this.startTutorial();
+            if (isTouch(this) && !SaveManager.settings.seenTouchHelp) this.showTouchCoach(tut);
+            else tut();
           },
         });
       });
     }
+  }
+
+  // ── Oefenronde met Buddy ─────────────────────────────────────────────
+  /** Drie korte stapjes: lopen (formulieren rapen), de kaart openen, en klaar. Overslaan kan altijd. */
+  startTutorial() {
+    const s = SaveManager.state;
+    if (s.tutorialDone) return this.afterTutorial();
+    const p = this.player;
+    // drie formulieren vlak bij de speler, op beloopbare plekken
+    const offs = [[260, -40], [380, 160], [120, 260], [-220, 180], [-300, -60], [200, -220]];
+    const spots = offs.map(([dx, dy]) => [p.x + dx, p.y + dy]).filter(([x, y]) => this.walkable(x, y)).slice(0, 3);
+    this.tut = { step: 1, sheets: spots.map(([x, y]) => {
+      const img = this.add.image(x, y, 'paper_sheet').setScale(1.6).setDepth(y);
+      const ring = this.add.circle(x, y, 30).setStrokeStyle(5, HEX.gold).setDepth(y - 1);
+      this.tweens.add({ targets: img, y: y - 10, angle: { from: -8, to: 8 }, duration: 600, yoyo: true, repeat: -1 });
+      this.tweens.add({ targets: ring, scale: 1.3, alpha: 0.4, duration: 600, yoyo: true, repeat: -1 });
+      return { x, y, img, ring, taken: false };
+    }) };
+    if (!this.tut.sheets.length) return this.endTutorial();
+    this.say(this.buddyBubble || (this.buddyBubble = { spr: this.buddy, type: 'c', bubble: null }), t('tutorial.buddy1'));
+    this.hud.tutorial(t('tutorial.step1', { n: 0, total: this.tut.sheets.length }), 1, 3, () => this.endTutorial(true));
+  }
+
+  updateTutorial() {
+    const tu = this.tut;
+    if (!tu || tu.step !== 1) return;
+    for (const sh of tu.sheets) {
+      if (sh.taken || Math.hypot(this.player.x - sh.x, this.player.y - sh.y) > 60) continue;
+      sh.taken = true;
+      Audio.sfx('pickup');
+      burst(this, sh.x, sh.y, 'stars', 12);
+      this.tweens.killTweensOf([sh.img, sh.ring]);
+      sh.ring.destroy();
+      this.tweens.add({ targets: sh.img, y: sh.y - 80, alpha: 0, duration: 400, onComplete: () => sh.img.destroy() });
+      const n = tu.sheets.filter((x) => x.taken).length;
+      this.hud.tutorial(t('tutorial.step1', { n, total: tu.sheets.length }), 1, 3);
+      if (n === tu.sheets.length) {
+        tu.step = 2;
+        this.time.delayedCall(600, () => {
+          this.say(this.buddyBubble, t('tutorial.buddy2'));
+          this.hud.tutorial(t('tutorial.step2'), 2, 3);
+          this.hud.pointAt(this.hud.mapBtn);
+          this.hud.events.once('map-opened', () => { if (this.tut) this.tut.step = 3; this.hud.pointAt(null); });
+          this.hud.events.once('map-closed', () => this.endTutorial());
+        });
+      }
+    }
+  }
+
+  endTutorial(skipped = false) {
+    if (this.tut) for (const sh of this.tut.sheets) { this.tweens.killTweensOf([sh.img, sh.ring]); sh.img.destroy(); sh.ring.destroy(); }
+    this.tut = null;
+    this.hud.tutorial(null);
+    this.hud.pointAt(null);
+    SaveManager.state.tutorialDone = true; SaveManager.save();
+    if (!skipped) { Audio.sfx('great'); burst(this, this.player.x, this.player.y - 60, 'confetti', 30); }
+    this.time.delayedCall(skipped ? 0 : 400, () => this.afterTutorial());
+  }
+
+  afterTutorial() {
+    this.say(this.buddyBubble || (this.buddyBubble = { spr: this.buddy, type: 'c', bubble: null }), t('tutorial.buddyDone'));
+    this.hud.toast('→ ' + BRANDS.bhc.name, BRANDS.bhc.color, 'map', 3500);
   }
 
   /** Uitleg over de stuurcirkel (alleen op touch, één keer). */
@@ -741,6 +801,7 @@ export class WorldScene extends Phaser.Scene {
 
     this.updateWanderers(dt);
     this.updateBuddy(dt);
+    this.updateTutorial();
 
     const p = this.player;
     const canMove = !this.dialogOpen && !this.busy && !this.hud?.paused;
@@ -805,8 +866,15 @@ export class WorldScene extends Phaser.Scene {
       return this.hunt.badges.filter((b) => !b.taken).map((b) => ({ x: b.x, y: b.y, color: SECTOR_COLORS[b.sector] }));
     }
     const fr = SaveManager.state.fragments;
+    // gekozen op de plattegrond: alleen die pijl tonen, tot je er bent
+    const mt = this.mapTarget;
+    if (mt) {
+      const tg = mt === 'finale' ? GUARD : STATIONS[mt].npc;
+      if (Math.hypot(this.player.x - tg.x, this.player.y - tg.y) < 220 || (mt !== 'finale' && fr[mt])) this.mapTarget = null;
+      else return [{ x: tg.x, y: tg.y, color: mt === 'finale' ? HEX.gold : BRANDS[mt].color, label: mt === 'finale' ? '!' : BRANDS[mt].initials, big: true }];
+    }
     const list = MISSION_IDS.filter((id) => !fr[id]).map((id) => ({ x: STATIONS[id].npc.x, y: STATIONS[id].npc.y, color: BRANDS[id].color, label: BRANDS[id].initials }));
-    if (SaveManager.allFragments()) list.push({ x: GUARD.x, y: GUARD.y, color: HEX.gold, label: '☠' });
+    if (SaveManager.allFragments()) list.push({ x: GUARD.x, y: GUARD.y, color: HEX.gold, label: '!' });
     return list;
   }
 }

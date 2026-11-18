@@ -4,13 +4,15 @@
 import Phaser from 'phaser';
 import { DESIGN, centerDesign } from '../../core/layout.js';
 import { t } from '../../core/i18n.js';
-import { P, HEX, textStyle, titleStyle, shade } from '../../gfx/palette.js';
+import { P, HEX, textStyle, titleStyle, shade, MOBILE } from '../../gfx/palette.js';
 import { BRANDS } from '../../config/brands.js';
 import { SaveManager } from '../../core/SaveManager.js';
 import { Audio } from '../../core/AudioEngine.js';
 import { panel, button, roundButton, logo, dim, meter, bake } from '../../ui/widgets.js';
 import { burst, confettiRain, floatText, popIn, shake } from '../../core/Juice.js';
 import { showDialog } from '../DialogScene.js';
+
+const HINT_COST = 25;
 
 export class MissionBase extends Phaser.Scene {
   /**
@@ -67,18 +69,66 @@ export class MissionBase extends Phaser.Scene {
 
   buildHeader() {
     const { width } = DESIGN;
-    this.header = this.add.container(0, 0).setDepth(1000);
+    this.header = this.add.container(0, 0).setDepth(3600);
     const bar = this.add.nineslice(width / 2, 44, 'ui_panel', undefined, width - 24, 76, 30, 30, 30, 30);
     const l = logo(this, this.brand, 60, 42, 54);
     const title = this.add.text(100, 42, this.T('title'), textStyle(28, P.ink)).setOrigin(0, 0.5);
+    this.titleText = title;
     this.scoreText = this.add.text(width - 120, 42, `${t('common.score')}: 0`, textStyle(28, P.ink)).setOrigin(1, 0.5);
-    const quit = roundButton(this, width - 54, 42, 'cross', () => this.askQuit(), 54);
-    this.header.add([bar, l, title, this.scoreText, quit]);
+    const quit = roundButton(this, width - 54, 42, 'cross', () => this.askQuit(), MOBILE ? 64 : 54);
+    quit.add(this.add.text(0, MOBILE ? 36 : 32, t('common.stop'), textStyle(13, P.ink, { backgroundColor: '#fff8e7', padding: { x: 4, y: 1 } })).setOrigin(0.5));
+    // hintknop (kost punten); verschijnt zodra het spel loopt en de missie hints kent
+    this.hintBtn = roundButton(this, width - 300, 42, 'bulb', () => this.useHint(), MOBILE ? 64 : 54, HEX.gold).setVisible(false);
+    this.hintBtn.add(this.add.text(0, 30, `-${HINT_COST}`, textStyle(14, P.ink, { backgroundColor: '#fff8e7', padding: { x: 4, y: 1 } })).setOrigin(0.5));
+    this.header.add([bar, l, title, this.scoreText, quit, this.hintBtn]);
     if (this.opts.timeLimit) {
       this.timerIcon = this.add.image(width / 2 - 170, 42, 'icons', 'clock').setDisplaySize(40, 40);
       this.timerBar = meter(this, width / 2 - 140, 42, 300, 30, HEX.green);
       this.header.add([this.timerIcon, this.timerBar]);
     }
+  }
+
+  // ── Doel en hints ────────────────────────────────────────────────────
+  /** Toont kort wat de speler moet doen en zet het daarna klein in de kop. */
+  setGoal(text) {
+    if (!text) return;
+    const { width, height } = DESIGN;
+    this.goalText = text;
+    // kop: titel vervangen door het doel
+    this.titleText.setText(`🎯 ${text}`).setFontSize(MOBILE ? 24 : 20).setWordWrapWidth(this.opts.timeLimit ? 360 : 720).setLineSpacing(-2);
+    // past het niet in de kop? dan kleiner
+    for (let f = MOBILE ? 24 : 20; this.titleText.height > 62 && f > 13; f--) this.titleText.setFontSize(f);
+    // grote kaart in beeld, verdwijnt vanzelf of bij tikken
+    const c = this.add.container(width / 2, height / 2 - 40).setDepth(2500);
+    const tx = this.add.text(0, 6, text, textStyle(34, P.ink, { align: 'center', wordWrap: { width: 760 } })).setOrigin(0.5);
+    const bg = this.add.nineslice(0, 0, 'ui_card', undefined, Math.max(520, tx.width + 120), tx.height + 90, 18, 18, 18, 18).setTint(0xfff3c4);
+    const ic = this.add.text(0, -tx.height / 2 - 18, '🎯 ' + t('common.goal'), textStyle(22, P.inkSoft)).setOrigin(0.5);
+    c.add([bg, ic, tx]);
+    c.setScale(0.4).setAlpha(0);
+    this.tweens.add({ targets: c, scale: 1, alpha: 1, duration: 250, ease: 'Back.Out' });
+    const close = () => { if (!c.active) return; this.tweens.add({ targets: c, alpha: 0, y: 40, scale: 0.3, duration: 300, onComplete: () => c.destroy() }); };
+    bg.setInteractive().on('pointerdown', close);
+    this.time.delayedCall(2600, close);
+  }
+
+  /** Overschrijf in een missie: toon de goede zet en geef true terug als dat lukte. */
+  giveHint() { return false; }
+
+  useHint() {
+    if (!this.running || this.finished || this.quitOpen) return;
+    if (this.giveHint()) {
+      this.addScore(-HINT_COST, DESIGN.width - 300, 110);
+      Audio.sfx('pop');
+    } else floatText(this, DESIGN.width - 300, 110, t('common.noHint'), P.cream, 22);
+  }
+
+  /** Laat iets opvallen: gouden ring + stuiterende pijl. */
+  hintMark(x, y, r = 70) {
+    const ring = this.add.circle(x, y, r).setStrokeStyle(8, HEX.gold).setDepth(3500);
+    const arrow = this.add.image(x, y - r - 40, 'icons', 'arrow').setRotation(Math.PI / 2).setDisplaySize(60, 60).setTint(HEX.gold).setDepth(3501);
+    this.tweens.add({ targets: ring, scale: 1.15, duration: 350, yoyo: true, repeat: 4 });
+    this.tweens.add({ targets: arrow, y: arrow.y - 16, duration: 300, yoyo: true, repeat: 5 });
+    this.time.delayedCall(3200, () => { ring.destroy(); arrow.destroy(); });
   }
 
   setScore(v) {
@@ -119,7 +169,9 @@ export class MissionBase extends Phaser.Scene {
     const go = () => {
       if (L.done) return; L.done = true;
       this.howTo = null;
-      this.tweens.add({ targets: L, alpha: 0, duration: 200, onComplete: () => { L.destroy(); onStart(); } });
+      // niet afhankelijk van de tween: die kan door het stopmenu worden onderbroken
+      this.tweens.add({ targets: L, alpha: 0, duration: 200 });
+      this.time.delayedCall(220, () => { L.destroy(); onStart(); });
     };
     const b = button(this, width / 2, height / 2 + 20 + h / 2 - 50, t('common.start'), go, { width: 260, color: HEX.green, icon: 'check' });
     L.add(b);
@@ -150,13 +202,16 @@ export class MissionBase extends Phaser.Scene {
     this.running = true;
     this.timeLeft = this.opts.timeLimit || 0;
     this.startGame();
+    this.hintBtn.setVisible(this.giveHint !== MissionBase.prototype.giveHint);
+    const goal = t(`missions.${this.missionId}.goal`);
+    if (goal && !goal.startsWith('missions.')) this.setGoal(goal);
   }
 
   /** Implementeer in de missie. */
   startGame() {}
 
   update(time, delta) {
-    if (!this.running) return;
+    if (!this.running || this.quitOpen) return;
     delta = Math.min(delta, 100); // bij haperende frames loopt de klok niet weg
     if (this.opts.timeLimit && !this.timerPaused) {
       const before = Math.ceil(this.timeLeft);
@@ -269,20 +324,24 @@ export class MissionBase extends Phaser.Scene {
   }
 
   askQuit() {
-    if (this.finished || this.quitOpen) return;
+    if (this.finished || this.quitOpen || this.exiting) return;
     this.quitOpen = true;
-    const wasRunning = this.running;
-    this.running = false;
+    // echt pauzeren: klok (aftellen, timers) én animaties stilzetten, zodat er niets doorloopt
+    this.time.paused = true;
     this.tweens.pauseAll();
+    this.hintBtn?.disableInteractive();
     const { width, height } = DESIGN;
     const L = this.add.container(0, 0).setDepth(5000);
     L.add(dim(this, 0.6));
     L.add(panel(this, width / 2, height / 2, 600, 300));
     L.add(this.add.text(width / 2, height / 2 - 60, t('common.quitConfirm'), textStyle(26, P.ink, { align: 'center', wordWrap: { width: 500 } })).setOrigin(0.5));
-    L.add(button(this, width / 2 - 140, height / 2 + 70, t('common.quit'), () => { this.tweens.resumeAll(); this.exit(false); }, { width: 240, color: HEX.red, textColor: P.cream }));
-    L.add(button(this, width / 2 + 140, height / 2 + 70, t('hud.resume'), () => {
-      L.destroy(); this.quitOpen = false; this.tweens.resumeAll(); this.running = wasRunning;
-    }, { width: 240, color: HEX.green }));
+    const resume = () => {
+      L.destroy(); this.quitOpen = false;
+      this.time.paused = false; this.tweens.resumeAll();
+      this.hintBtn?.setInteractive({ useHandCursor: true });
+    };
+    L.add(button(this, width / 2 - 140, height / 2 + 70, t('common.quit'), () => { resume(); this.running = false; this.exit(false); }, { width: 240, color: HEX.red, textColor: P.cream }));
+    L.add(button(this, width / 2 + 140, height / 2 + 70, t('hud.resume'), resume, { width: 240, color: HEX.green }));
   }
 
   exit(success) {

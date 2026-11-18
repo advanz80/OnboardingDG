@@ -96,17 +96,41 @@ export class ReijnMission extends MissionBase {
       L.add(b);
       return b;
     });
-    void btns;
+    this.interviewQ = { c, btns };
     L.add(button(this, width / 2 + 330, height / 2 + 240, this.T('close', { naam: c.name.split(' ')[1] || c.name }), () => this.closeModal(), { width: 280, height: 60, size: 20, color: HEX.green }));
     L.setAlpha(0);
     this.tweens.add({ targets: L, alpha: 1, duration: 180 });
     Audio.sfx('pop');
   }
 
+  giveHint() {
+    // keuzemenu (diagnose/advies): wijs het goede antwoord aan
+    if (this.modalBtns) {
+      const hit = this.modalBtns.find((m) => m.value === this.scenario);
+      if (hit) { this.hintMark(hit.b.x - 380, hit.b.y, 40); return true; }
+      return false;
+    }
+    // interview open: wijs een vraag met een aanwijzing aan
+    if (this.modal && this.interviewQ) {
+      const sc = this.T('scenarios')[this.scenario][this.interviewQ.c.id];
+      const k = ['role', 'team', 'change'].findIndex((q) => sc[q]?.clue && !this.interviewQ.c.askedQ.has(q));
+      if (k >= 0) { const b = this.interviewQ.btns[k]; this.hintMark(b.x - 330, b.y, 36); return true; }
+      return false;
+    }
+    if (this.modal) return false;
+    // anders: wie heeft nog een aanwijzing?
+    const sc = this.T('scenarios')[this.scenario];
+    const i = this.crew.findIndex((c) => ['role', 'team', 'change'].some((q) => sc[c.id][q]?.clue && !c.askedQ.has(q)));
+    if (i >= 0 && this.qLeft > 0) { const c = this.crew[i]; this.hintMark(c.spr.x, c.spr.y - 60, 70); return true; }
+    if (this.diagBtn) { this.hintMark(this.diagBtn.x, this.diagBtn.y, 80); return true; }
+    return false;
+  }
+
   closeModal() {
     const L = this.modal;
     if (!L) return;
     this.modal = null;
+    this.interviewQ = null;
     this.tweens.add({ targets: L, alpha: 0, duration: 150, onComplete: () => L.destroy() });
     if (this.qLeft <= 0) this.time.delayedCall(300, () => { floatText(this, 500, 300, this.T('noQuestions'), P.cream, 30); this.time.delayedCall(900, () => this.startDiagnosis()); });
   }
@@ -153,6 +177,7 @@ export class ReijnMission extends MissionBase {
     const { width, height } = DESIGN;
     const L = this.add.container(0, 0).setDepth(2000);
     this.modal = L;
+    this.modalBtns = [];
     L.add(dim(this, 0.55));
     const h = 160 + options.length * 86;
     L.add(panel(this, width / 2, height / 2 + 20, 980, h));
@@ -160,8 +185,11 @@ export class ReijnMission extends MissionBase {
     options.forEach((o, i) => {
       const b = button(this, width / 2, height / 2 + 20 - h / 2 + 125 + i * 86, o.label, () => {
         if (L.picked) return; L.picked = true;
-        this.tweens.add({ targets: L, alpha: 0, duration: 200, onComplete: () => { L.destroy(); this.modal = null; onPick(o.value); } });
+        this.modalBtns = null;
+        this.tweens.add({ targets: L, alpha: 0, duration: 200 });
+        this.time.delayedCall(220, () => { L.destroy(); this.modal = null; onPick(o.value); });
       }, { width: 900, height: 72, size: 20, color: HEX.cream });
+      this.modalBtns.push({ b, value: o.value });
       b.alpha = 0; this.tweens.add({ targets: b, alpha: 1, delay: i * 80, duration: 200 });
       L.add(b);
     });

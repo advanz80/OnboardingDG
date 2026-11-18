@@ -174,6 +174,16 @@ export class HaertMission extends MissionBase {
     });
   }
 
+  giveHint() {
+    let c = this.selected;
+    if (!c || c.done) { c = this.jobs.find((j) => j && !j.done); if (!c) return false; this.selectJob(c); }
+    const i = c.job.offers.findIndex((o) => o.kind === 'ok');
+    const oc = this.offerObjs[i + 1];
+    if (!oc) return false;
+    this.time.delayedCall(350, () => this.hintMark(860 + 220, oc.y, 60));
+    return true;
+  }
+
   pick(i) {
     const c = this.selected;
     if (!this.running || !c || c.done || !c.job.offers[i]) return;

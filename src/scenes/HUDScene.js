@@ -8,6 +8,7 @@ import { formatTime } from '../core/Leaderboard.js';
 import { Audio } from '../core/AudioEngine.js';
 import { pulse, burst } from '../core/Juice.js';
 import { isTouch, Controls } from '../core/Controls.js';
+import { WORLD_W, WORLD_H, ROADS, ROUNDABOUT, PARKINGS, BUILDINGS, NEIGHBOURS, BIGPOND, POND, MOAT, STATIONS, GUARD } from '../world/layout.js';
 
 export class HUDScene extends Phaser.Scene {
   constructor() { super('HUD'); }
@@ -36,6 +37,9 @@ export class HUDScene extends Phaser.Scene {
       this.muteBtn.icon.setFrame(m ? 'speakerOff' : 'speaker');
     }, 64, HEX.blue);
     roundButton(this, width - 46, 50, 'pause', () => this.pause(), 64, HEX.purple);
+    // plattegrond
+    this.mapBtn = roundButton(this, width - 194, 50, 'map', () => this.openMap(), 64, HEX.gold);
+    this.add.text(width - 194, 92, t('hud.map'), textStyle(16, P.cream, { stroke: P.ink, strokeThickness: 4 })).setOrigin(0.5);
 
     // prompt
     this.prompt = this.add.container(width / 2, 640).setVisible(false);
@@ -66,6 +70,7 @@ export class HUDScene extends Phaser.Scene {
     this.controls.setActionVisible(false);
 
     this.input.keyboard.on('keydown-ESC', () => (this.paused ? this.closePause?.() : this.pause()));
+    this.input.keyboard.on('keydown-M', () => (this.mapOpen ? this.closeMap?.() : this.openMap()));
     this.input.keyboard.on('keydown-P', () => (this.paused ? this.closePause?.() : this.pause()));
   }
 
@@ -149,7 +154,7 @@ export class HUDScene extends Phaser.Scene {
       c.arrow.setPosition(Math.cos(ang) * 30, Math.sin(ang) * 30);
       c.dot.setFillStyle(tg.color);
       c.label.setText(tg.label || '');
-      c.setScale(1 + Math.sin(this.time.now / 200) * 0.06);
+      c.setScale((tg.big ? 1.45 : 1) * (1 + Math.sin(this.time.now / 200) * 0.06));
     });
   }
 
@@ -157,10 +162,105 @@ export class HUDScene extends Phaser.Scene {
     if (SaveManager.state) this.timeText.setText(formatTime(SaveManager.state.elapsedMs));
   }
 
+  /** Oefenronde-balk bovenin. text=null verbergt hem. */
+  tutorial(text, step, total, onSkip) {
+    if (!text) { this.tutBar?.destroy(); this.tutBar = null; return; }
+    const { width } = this.scale;
+    if (!this.tutBar) {
+      const c = this.add.container(width / 2, 150).setDepth(60);
+      const bg = this.add.nineslice(0, 0, 'ui_btn', undefined, 760, 84, 20, 20, 20, 24).setTint(0xfff3c4);
+      const tag = this.add.text(-360, -4, '', textStyle(18, P.cream, { backgroundColor: '#4cb35a', padding: { x: 8, y: 4 } })).setOrigin(0, 0.5);
+      const tx = this.add.text(-250, -4, '', textStyle(24, P.ink, { wordWrap: { width: 470 } })).setOrigin(0, 0.5);
+      const skip = button(this, 300, -2, t('tutorial.skip'), () => onSkip?.(), { width: 140, height: 52, size: 18, color: HEX.cream });
+      c.add([bg, tag, tx, skip]); c.tag = tag; c.tx = tx;
+      this.tutBar = c;
+      c.setScale(0.5); this.tweens.add({ targets: c, scale: 1, duration: 250, ease: 'Back.Out' });
+    }
+    this.tutBar.tag.setText(`${t('tutorial.label')} ${step}/${total}`);
+    this.tutBar.tx.setText(text);
+    pulse(this, this.tutBar, 1.06, 150);
+  }
+
+  /** Gouden pijl die naar een HUD-knop wijst (null = weg). */
+  pointAt(obj) {
+    this.pointer?.destroy(); this.pointer = null;
+    if (!obj) return;
+    const a = this.add.image(obj.x - 70, obj.y + 70, 'icons', 'arrow').setDisplaySize(64, 64).setRotation(-Math.PI / 4).setTint(HEX.gold).setDepth(70);
+    this.tweens.add({ targets: a, x: a.x + 12, y: a.y - 12, duration: 350, yoyo: true, repeat: -1 });
+    this.pointer = a;
+  }
+
+  /** Plattegrond van de campus: gebouwen, waar je bent en welke opdrachten nog open staan. */
+  openMap() {
+    const world = this.scene.get('World');
+    if (this.paused || this.mapOpen || world.dialogOpen || world.busy || world.hunt) return;
+    this.mapOpen = true;
+    this.events.emit('map-opened');
+    SaveManager.clockRunning = false;
+    this.scene.pause('World');
+    const { width, height } = this.scale;
+    const L = this.add.container(0, 0).setDepth(250);
+    L.add(dim(this, 0.65));
+    const mw = Math.min(width - 60, 1180), mh = height - 140;
+    const s = Math.min((mw - 40) / WORLD_W, (mh - 70) / WORLD_H);
+    const ox = width / 2 - (WORLD_W * s) / 2, oy = 120 + (mh - 70 - WORLD_H * s) / 2;
+    L.add(panel(this, width / 2, height / 2 + 30, mw, mh));
+    L.add(this.add.text(width / 2, 92, t('hud.mapTitle'), textStyle(30, P.ink)).setOrigin(0.5));
+    const X = (x) => ox + x * s, Y = (y) => oy + y * s;
+    const g = this.add.graphics();
+    g.fillStyle(0x7cc95a).fillRoundedRect(X(0), Y(0), WORLD_W * s, WORLD_H * s, 10);
+    g.lineStyle(Math.max(4, 84 * s), 0x868a93);
+    for (const r of ROADS) { g.beginPath(); g.moveTo(X(r.pts[0][0]), Y(r.pts[0][1])); for (const [x, y] of r.pts.slice(1)) g.lineTo(X(x), Y(y)); g.strokePath(); }
+    g.fillStyle(0x868a93).fillCircle(X(ROUNDABOUT.x), Y(ROUNDABOUT.y), ROUNDABOUT.r * s);
+    g.fillStyle(0x9ea2aa); for (const p of PARKINGS) g.fillRect(X(p.x), Y(p.y), p.w * s, p.h * s);
+    g.fillStyle(0x2ea6d9).fillRect(X(BIGPOND.x), Y(BIGPOND.y), BIGPOND.w * s, BIGPOND.h * s).fillEllipse(X(POND.x), Y(POND.y), POND.rx * 2 * s, POND.ry * 2 * s);
+    g.fillStyle(0xe9e4d8).fillRect(X(MOAT.outer.x), Y(MOAT.outer.y), MOAT.outer.w * s, MOAT.outer.h * s);
+    g.fillStyle(0xc9c2b8); for (const b of NEIGHBOURS) for (const p of b.parts) g.fillRect(X(p.x), Y(p.y), p.w * s, p.h * s);
+    L.add(g);
+    for (const b of BUILDINGS) {
+      const col = b.brand ? BRANDS[Array.isArray(b.brand) ? b.brand[0] : b.brand].color : 0x9a9aa6;
+      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      for (const p of b.parts) {
+        L.add(this.add.rectangle(X(p.x), Y(p.y), p.w * s, p.h * s, 0xf1ece2).setOrigin(0).setStrokeStyle(3, col));
+        minX = Math.min(minX, p.x); minY = Math.min(minY, p.y); maxX = Math.max(maxX, p.x + p.w); maxY = Math.max(maxY, p.y + p.h);
+      }
+      L.add(this.add.text(X((minX + maxX) / 2), Y((minY + maxY) / 2), b.name, textStyle(16, P.ink, { stroke: '#ffffff', strokeThickness: 4 })).setOrigin(0.5));
+    }
+    L.add(this.add.text(X(MOAT.outer.x + MOAT.outer.w / 2), Y(MOAT.outer.y + MOAT.outer.h / 2), t('hud.mapTower'), textStyle(15, P.ink, { stroke: '#ffffff', strokeThickness: 4, align: 'center' })).setOrigin(0.5));
+    // opdrachten: logo + vinkje of uitroepteken; tikken = route erheen
+    const fr = SaveManager.state.fragments;
+    const targets = MISSION_IDS.map((id) => ({ id, x: STATIONS[id].npc.x, y: STATIONS[id].npc.y }));
+    if (SaveManager.allFragments()) targets.push({ id: 'finale', x: GUARD.x, y: GUARD.y });
+    for (const tg of targets) {
+      const done = tg.id !== 'finale' && fr[tg.id];
+      const c = this.add.container(X(tg.x), Y(tg.y));
+      if (tg.id === 'finale') c.add(this.add.circle(0, 0, 26, HEX.gold).setStrokeStyle(4, HEX.ink));
+      else c.add(logo(this, BRANDS[tg.id], 0, 0, 52));
+      c.add(this.add.image(20, -20, 'icons', done ? 'check' : 'exclaim').setDisplaySize(28, 28));
+      if (tg.id === 'finale') c.add(this.add.text(0, 0, '!', textStyle(26, P.ink)).setOrigin(0.5));
+      if (!done) this.tweens.add({ targets: c, scale: 1.12, duration: 500, yoyo: true, repeat: -1 });
+      c.setSize(64, 64).setInteractive({ useHandCursor: true }).on('pointerup', () => { world.mapTarget = tg.id === 'finale' ? 'finale' : tg.id; this.closeMap(); this.toast(t('hud.mapRoute'), HEX.gold, 'map', 2000); });
+      L.add(c);
+    }
+    // jij bent hier
+    const p = world.player;
+    const me = this.add.container(X(p.x), Y(p.y));
+    me.add([this.add.circle(0, 0, 14, 0xe8504c).setStrokeStyle(4, 0xffffff), this.add.text(0, -30, t('hud.mapYou'), textStyle(16, P.cream, { stroke: P.ink, strokeThickness: 4 })).setOrigin(0.5)]);
+    this.tweens.add({ targets: me.list[0], scale: 1.4, duration: 450, yoyo: true, repeat: -1 });
+    L.add(me);
+    L.add(button(this, width / 2, height - 52, t('hud.mapClose'), () => this.closeMap(), { width: 260, color: HEX.green, icon: 'check' }));
+    L.add(this.add.text(X(WORLD_W) - 6, Y(WORLD_H) - 8, t('hud.mapHint'), textStyle(15, P.inkSoft, { backgroundColor: '#fff8e7', padding: { x: 6, y: 2 } })).setOrigin(1, 1));
+    this.closeMap = () => {
+      if (!this.mapOpen) return;
+      this.mapOpen = false; L.destroy(); SaveManager.clockRunning = true; this.scene.resume('World');
+      this.events.emit('map-closed');
+    };
+  }
+
   pause() {
     if (this.paused) return;
     const world = this.scene.get('World');
-    if (world.dialogOpen) return;
+    if (world.dialogOpen || this.mapOpen) return;
     this.paused = true;
     SaveManager.clockRunning = false;
     this.scene.pause('World');

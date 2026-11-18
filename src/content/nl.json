@@ -113,7 +113,14 @@
     "dragToWalk": "Sleep om te lopen",
     "coachMove": "Zet je duim op de cirkel linksonder en schuif in de richting waarin je wilt lopen. Loslaten = stoppen.",
     "coachAction": "Tik hier om te praten of iets te doen",
-    "coachOk": "Begrepen!"
+    "coachOk": "Begrepen!",
+    "map": "Kaart",
+    "mapTitle": "Plattegrond Brainport Human Campus",
+    "mapTower": "Toren van\nPaperassen",
+    "mapYou": "Jij",
+    "mapClose": "Terug",
+    "mapHint": "Tik op een logo: de pijl wijst je de weg",
+    "mapRoute": "Volg de grote pijl!"
   },
   "common": {
     "start": "Start!",
@@ -137,8 +144,11 @@
     "failHint": "Je hebt minstens 1 ster nodig voor het fragment. Probeer het nog eens!",
     "stars": "sterren",
     "quit": "Stoppen",
-    "quitConfirm": "Missie afbreken? Je voortgang in deze missie gaat verloren.",
-    "skip": "Overslaan"
+    "quitConfirm": "Deze opdracht stoppen? Je kunt hem later opnieuw doen of eerst een andere kiezen (via de kaart).",
+    "skip": "Overslaan",
+    "goal": "Wat moet je doen?",
+    "noHint": "Nu even geen hint",
+    "stop": "stoppen"
   },
   "npc": {
     "petra": "Receptionist Petra",
@@ -161,11 +171,7 @@
       },
       {
         "speaker": "buddy",
-        "text": "Ze hebben prinses Mensenmens ontvoerd, onze allerbelangrijkste klant! Ze zit opgesloten in de Toren van Paperassen, midden op de campus tussen Bloeij en ROVC."
-      },
-      {
-        "speaker": "buddy",
-        "text": "Ze roven je tijd met eindeloze vergaderingen, je energie met werkdruk en je plezier met regeltjes en administratie. Zolang Rompslomp de baas is, is er geen werkgeluk te bekennen."
+        "text": "Ze hebben prinses Mensenmens ontvoerd, onze allerbelangrijkste klant! Ze zit in de Toren van Paperassen, midden op de campus."
       },
       {
         "speaker": "buddy",
@@ -173,15 +179,7 @@
       },
       {
         "speaker": "buddy",
-        "text": "Help de collega's van Driessen, Bloeij, IJk, Haert, Reijn en Brainport Human Campus, dan krijg je de fragmenten. Ik maak het je zo makkelijk mogelijk!"
-      },
-      {
-        "speaker": "buddy",
-        "text": "Volg de gekleurde pijlen aan de rand van je scherm. Bij elk gebouw staat iemand die je hulp kan gebruiken. Praat met mij als je even niet weet waar je heen moet."
-      },
-      {
-        "speaker": "buddy",
-        "text": "Tip: begin bij Brainport Human Campus, linksonder op de campus. Zonder brug komen we nooit bij die toren!"
+        "text": "Help de collega's van Driessen, Bloeij, IJk, Haert, Reijn en Brainport Human Campus. Ik help je!"
       }
     ],
     "petraAgain": [
@@ -277,15 +275,11 @@
       "howTo": [
         {
           "icon": "map",
-          "text": "Er liggen 9 badges op de campus. Volg de pijlen en loop eroverheen."
+          "text": "Loop over de 9 badges. De pijlen wijzen de weg."
         },
         {
           "icon": "warning",
-          "text": "Pas op voor de handlangers van Rompslomp: die jatten een badge en verstoppen hem opnieuw."
-        },
-        {
-          "icon": "clock",
-          "text": "Hoe sneller je bent, hoe meer punten. Daarna bouw je de brug."
+          "text": "Papieren vliegtuigjes jatten badges: wees snel!"
         }
       ],
       "huntStart": "Zoek de 9 badges!",
@@ -294,7 +288,7 @@
       "huntDone": "Alle badges! Terug naar Judith!",
       "huntTimeout": "Tijd op! De laatste badges vliegen vanzelf naar je toe…",
       "buildTitle": "Bouw de brug",
-      "buildHowTo": "Tik op een badge en daarna op een pijler (of sleep hem erheen). Elke pijler heeft precies één badge van elke sector nodig: bedrijfsleven, onderwijs en overheid.",
+      "buildHowTo": "Sleep (of tik) een badge naar een pijler. Elke pijler krijgt precies één badge van elke kleur: bedrijfsleven, onderwijs en overheid.",
       "buildWrong": "Deze pijler heeft al een badge uit die sector!",
       "buildDone": "Driemaal hoera voor de triple helix!",
       "outro": [
@@ -328,7 +322,8 @@
           "Verbinden",
           "Toekomst"
         ]
-      }
+      },
+      "goalBuild": "Zet op elke pijler 1 badge van elke kleur"
     },
     "driessen": {
       "title": "Werven & plaatsen",
@@ -355,19 +350,15 @@
       "howTo": [
         {
           "icon": "people",
-          "text": "Tik op een kandidaat en daarna op de vacature die past (of sleep)."
+          "text": "Sleep een kandidaat naar de vacature die past."
         },
         {
           "icon": "check",
-          "text": "Perfecte match = juiste vaardigheid én beschikbaar op het goede moment."
+          "text": "Past = goede vaardigheid (icoon) én goed moment (zon/maan/weekend)."
         },
         {
           "icon": "warning",
-          "text": "Tijdrover in vermomming? Sleep hem naar de prullenbak!"
-        },
-        {
-          "icon": "clock",
-          "text": "Snelle matches leveren een combobonus op."
+          "text": "Kandidaat met zwart maskertje? Sleep naar de prullenbak."
         }
       ],
       "queue": "Kandidaten",
@@ -432,7 +423,8 @@
         "Paperclip Piet",
         "Klokkenkaper Karel"
       ],
-      "pirateCv": "CV: '7 jaar tijd gestolen'"
+      "pirateCv": "CV: '7 jaar tijd gestolen'",
+      "goal": "Sleep elke kandidaat naar de passende vacature"
     },
     "bloeij": {
       "title": "Fit aan het werk",
@@ -459,19 +451,15 @@
       "howTo": [
         {
           "icon": "shoe",
-          "text": "Loop naar een collega met een icoontje boven het hoofd."
+          "text": "Loop naar een collega met een icoontje en tik op de gele knop."
         },
         {
           "icon": "chat",
-          "text": "Lees wat er speelt en kies: rust, gesprek, aangepast werk of beweging."
+          "text": "Kies wat hem of haar helpt."
         },
         {
           "icon": "heart",
-          "text": "Houd de vitaliteitsmeter op peil. Bijtanken doe je bij het fruit en het water."
-        },
-        {
-          "icon": "megaphone",
-          "text": "Ontwijk de tijdrovers met megafoons: die zorgen voor stress!"
+          "text": "Bijtanken bij FRUIT en WATER. Ontwijk de tijdrovers."
         }
       ],
       "vitality": "Teamvitaliteit",
@@ -555,7 +543,8 @@
         "low": "move"
       },
       "closer": "Loop eerst dichterbij!",
-      "helpPrompt": "{persoon} helpen"
+      "helpPrompt": "{persoon} helpen",
+      "goal": "Loop naar een collega met een icoontje en help"
     },
     "ijk": {
       "title": "Data stroomt, loon klopt",
@@ -582,15 +571,11 @@
       "howTo": [
         {
           "icon": "gear",
-          "text": "Deel 1: tik op een buisstuk om het te draaien. Verbind elke databron met het HR-systeem."
-        },
-        {
-          "icon": "database",
-          "text": "Stroomt de data? Dan kleurt de buis op. Zijn alle bronnen verbonden, dan is het level klaar."
+          "text": "Deel 1: tik op buizen om ze te draaien tot alle bronnen het HR-systeem bereiken."
         },
         {
           "icon": "payslip",
-          "text": "Deel 2: controleer de loonstroken met de cao-kaart. Tik op het veld dat niet klopt, of op 'Klopt!'."
+          "text": "Deel 2: vergelijk de loonstrook met de cao-kaart. Tik op wat fout is, of op 'Klopt!'."
         }
       ],
       "part1": "Deel 1: Koppelingen",
@@ -639,7 +624,9 @@
         "E. Vos",
         "P. Peters",
         "N. Hendriks"
-      ]
+      ],
+      "goal1": "Draai de buizen: verbind elke bron met het HR-systeem",
+      "goal2": "Klopt de loonstrook? Tik op de fout of op 'Klopt!'"
     },
     "haert": {
       "title": "De regisseur",
@@ -666,19 +653,15 @@
       "howTo": [
         {
           "icon": "notebook",
-          "text": "Links staan de opdrachten (A, B, C). Tik op een opdracht: rechts verschijnen de aanbieders vóór die opdracht."
+          "text": "Tik links op een opdracht (A, B of C)."
         },
         {
           "icon": "handshake",
-          "text": "Kies de aanbieder die binnen het budget blijft, genoeg sterren heeft en op tijd kan starten. De eisen staan bovenaan in de gekleurde balk."
+          "text": "Kies rechts de aanbieder die binnen budget, sterren en starttijd past."
         },
         {
           "icon": "warning",
-          "text": "Geen KvK-nummer of te mooi om waar te zijn? Gelukszoeker! Niet kiezen."
-        },
-        {
-          "icon": "hourglass",
-          "text": "Opdrachten verlopen als je te lang wacht."
+          "text": "Geen KvK? Gelukszoeker: niet kiezen."
         }
       ],
       "board": "Marktplaats",
@@ -759,7 +742,8 @@
       ],
       "tapJob": "tik om te kiezen",
       "offersFor": "Opdracht {letter}: {job}, kies een aanbieder",
-      "needs": "Eisen:"
+      "needs": "Eisen:",
+      "goal": "Kies de aanbieder die aan álle eisen voldoet"
     },
     "reijn": {
       "title": "Quickscan bij de bende",
@@ -786,19 +770,11 @@
       "howTo": [
         {
           "icon": "chat",
-          "text": "Interview de bendeleden. Je mag in totaal {max} vragen stellen, dus kies slim."
-        },
-        {
-          "icon": "notebook",
-          "text": "Belangrijke bevindingen komen vanzelf in je notitieboek."
-        },
-        {
-          "icon": "magnifier",
-          "text": "Stel daarna de diagnose: wat is het kernprobleem?"
+          "text": "Tik op bendeleden en stel vragen ({max} in totaal)."
         },
         {
           "icon": "bulb",
-          "text": "Kies het passende advies. Goed advies = bendeleden lopen over!"
+          "text": "Kies daarna het kernprobleem en het beste advies."
         }
       ],
       "questionsLeft": "Vragen over: {n}",
@@ -1063,7 +1039,8 @@
         }
       },
       "defected1": "1 bendelid loopt over naar jouw kant!",
-      "defected0": "Niemand loopt over… de bende twijfelt nog."
+      "defected0": "Niemand loopt over… de bende twijfelt nog.",
+      "goal": "Tik op een bendelid en stel een vraag"
     }
   },
   "finale": {
@@ -1089,11 +1066,11 @@
     "helpers": "{n} overgelopen bendeleden helpen je!",
     "noHelpers": "Je staat er alleen voor… succes!",
     "phase1": "Fase 1: De juiste mens op de juiste plek",
-    "phase1How": "Kies voor elke post in de toren de bende met de juiste vaardigheid. Elke goede match schiet een gat in de papierberg!",
+    "phase1How": "Sleep elk bendelid naar de post die bij zijn vaardigheid past.",
     "phase2": "Fase 2: Koppelen",
-    "phase2How": "Verbind de touwen van de katrol naar de sloten van de kooi. Tik op een stuk om het te draaien.",
+    "phase2How": "Tik op stukken touw om ze te draaien tot de katrol beide sloten raakt.",
     "phase3": "Fase 3: Adviseren",
-    "phase3How": "De hoofdman roept de ene onzin na de andere. Weerleg hem met het juiste advies!",
+    "phase3How": "Kies het antwoord dat de onzin van Rompslomp weerlegt.",
     "helperBonus": "Bendelid {naam} helpt: {bonus}",
     "bonusTime": "+10 seconden!",
     "bonusShield": "schild tegen één fout!",
@@ -1260,5 +1237,14 @@
     "offline": "Geen verbinding: alleen scores van dit apparaat",
     "localOnly": "Scores van dit apparaat",
     "you": "jij!"
+  },
+  "tutorial": {
+    "label": "Oefenen",
+    "skip": "Overslaan",
+    "step1": "Loop over de formulieren om ze op te rapen ({n}/{total})",
+    "step2": "Tik op de knop Kaart (rechtsboven) om de plattegrond te zien",
+    "buddy1": "Eerst even oefenen! Raap die formulieren op.",
+    "buddy2": "Top! Nu de kaart: daar zie je alle opdrachten.",
+    "buddyDone": "Klaar! Volg de pijl naar Brainport Human Campus. Kom je er niet uit? Tik op de 💡 in een opdracht."
   }
 }

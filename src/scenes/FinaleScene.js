@@ -109,6 +109,28 @@ export class FinaleScene extends MissionBase {
     });
   }
 
+  giveHint() {
+    if (this.p1 && this.p1.active && !this.p1Ended) {
+      const items = this.p1.list.filter((c) => c.skill && c.skill !== 'decoy' && !c.locked);
+      const posts = this.p1.list.filter((c) => c.post);
+      for (const it of items) { const p = posts.find((q) => q.post === it.skill); if (p) { this.hintMark(it.x, it.y, 80); this.hintMark(p.x, p.y, 120); return true; } }
+      return false;
+    }
+    if (this.puzzle && !this.p2Ended && !this.puzzle.solved) {
+      const p = this.puzzle;
+      for (let y = 0; y < p.o.h; y++) for (let x = 0; x < p.o.w; x++) {
+        const c = p.cells[y][x];
+        if (p.inNet[y][x] && c.m !== p.sol[y][x]) { p.rotateCell(c); const m = c.spr.getWorldTransformMatrix(); this.hintMark(m.tx, m.ty, 50); return true; }
+      }
+      return false;
+    }
+    if (this.claimBtns && !this.answered) {
+      const b = this.claimBtns[this.claims[this.claimIdx].answer];
+      if (b) { this.hintMark(b.x - 470, b.y, 40); return true; }
+    }
+    return false;
+  }
+
   // ── Algemene effecten ────────────────────────────────────────────────
   setHp(v) {
     this.hp = Math.max(0, v);
@@ -194,6 +216,7 @@ export class FinaleScene extends MissionBase {
   phase1() {
     this.showHowTo(this.T('phase1'), [{ icon: 'people', text: this.T('phase1How') }], () => {
       this.running = true;
+      this.hintBtn.setVisible(true);
       this.p1 = this.add.container(0, 0).setDepth(30);
       this.p1Done = 0;
       const dt = dragTap(this, { onDrop: (item, tg) => this.p1Drop(item, tg) });
@@ -323,10 +346,12 @@ export class FinaleScene extends MissionBase {
     Audio.sfx('squawk');
     const wrongs = cl.options.map((_, i) => i).filter((i) => i !== cl.answer);
     const struck = this.hint ? Phaser.Utils.Array.GetRandom(wrongs) : -1;
+    this.claimBtns = [];
     cl.options.forEach((o, i) => {
       const b = button(this, 590, 400 + i * 106, o, () => this.answer(i, b), { width: 900, height: 98, size: 25, color: HEX.cream });
       b.label.setWordWrapWidth(830).setAlign('center');
       if (i === struck) { b.setEnabled(false); b.label.setColor(P.inkSoft); }
+      this.claimBtns.push(b);
       L.add(b);
       b.setScale(0);
       this.tweens.add({ targets: b, scale: 1, delay: 200 + i * 80, duration: 220, ease: 'Back.Out' });

@@ -28,8 +28,17 @@ export const FONT = {
 export const OUTLINE = 3.2;
 
 /** Standaard tekststijl voor Phaser Text. */
+/** Telefoon/tablet (grove aanwijzer): kleine teksten worden groter, zodat alles leesbaar blijft. */
+export const MOBILE = typeof window !== 'undefined' && !!window.matchMedia?.('(pointer: coarse)').matches;
+
+/** Lettergrootte voor het huidige apparaat: op mobiel worden kleine maten tot ±30% groter. */
+export function fs(size) {
+  if (!MOBILE || size >= 30) return size;
+  return Math.round(Math.min(size * 1.3, Math.max(size, 30)));
+}
+
 export function textStyle(size = 24, color = P.ink, extra = {}) {
-  return { fontFamily: FONT.ui, fontSize: `${size}px`, color, fontStyle: '600', ...extra };
+  return { fontFamily: FONT.ui, fontSize: `${fs(size)}px`, color, fontStyle: '600', ...extra };
 }
 
 export function titleStyle(size = 48, color = P.cream, extra = {}) {

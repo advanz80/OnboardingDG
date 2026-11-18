@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { t } from '../core/i18n.js';
-import { P, HEX, textStyle } from '../gfx/palette.js';
+import { P, HEX, textStyle, MOBILE } from '../gfx/palette.js';
 import { panel, button } from '../ui/widgets.js';
 import { Audio } from '../core/AudioEngine.js';
 
@@ -49,25 +49,28 @@ export class DialogScene extends Phaser.Scene {
     this.blocker.alpha = 0;
     this.tweens.add({ targets: this.blocker, alpha: 1, duration: 200 });
 
+    // op mobiel een hogere box met grotere letters
+    const BH = MOBILE ? 270 : 210;
+    this.boxY = height - (MOBILE ? 150 : 130);
     this.box = this.add.container(width / 2, height + 150);
-    const bg = panel(this, 0, 0, 1180, 210);
+    const bg = panel(this, 0, 0, 1180, BH);
     this.portraitBg = this.add.circle(-500, -10, 82, 0xffffff).setStrokeStyle(6, HEX.ink);
     this.portraitMask = this.make.graphics().fillCircle(0, 0, 78);
     this.portrait = this.add.sprite(-500, 70, 'player', 'idle').setOrigin(0.5, 1).setScale(1.9);
-    this.nameTag = this.add.container(-500, -110);
+    this.nameTag = this.add.container(-500, MOBILE ? -140 : -110);
     this.nameBg = this.add.nineslice(0, 0, 'ui_btn', undefined, 260, 54, 20, 20, 20, 24);
     this.nameText = this.add.text(0, -4, '', textStyle(24, P.cream, { stroke: P.ink, strokeThickness: 5 })).setOrigin(0.5);
     this.nameTag.add([this.nameBg, this.nameText]);
-    this.text = this.add.text(-390, -70, '', textStyle(28, P.ink, { wordWrap: { width: 900 }, lineSpacing: 6 })).setOrigin(0, 0);
-    this.more = this.add.text(540, 70, '▼', textStyle(26, P.inkSoft)).setOrigin(0.5);
-    this.tweens.add({ targets: this.more, y: 78, duration: 400, yoyo: true, repeat: -1 });
+    this.text = this.add.text(-390, MOBILE ? -105 : -70, '', { ...textStyle(28, P.ink, { wordWrap: { width: 920 }, lineSpacing: 6 }), fontSize: MOBILE ? '38px' : '28px' }).setOrigin(0, 0);
+    this.more = this.add.text(540, MOBILE ? 100 : 70, '▼', textStyle(26, P.inkSoft)).setOrigin(0.5);
+    this.tweens.add({ targets: this.more, y: this.more.y + 8, duration: 400, yoyo: true, repeat: -1 });
     this.box.add([bg, this.portraitBg, this.portrait, this.nameTag, this.text, this.more]);
 
     // portret maskeren binnen de cirkel
-    this.portraitMask.setPosition(width / 2 - 500, height - 130);
+    this.portraitMask.setPosition(width / 2 - 500, this.boxY - 10);
     this.portrait.setMask(this.portraitMask.createGeometryMask());
 
-    this.tweens.add({ targets: this.box, y: height - 130, duration: 320, ease: 'Back.Out', onUpdate: () => this.portraitMask.setPosition(width / 2 - 500, this.box.y - 10) });
+    this.tweens.add({ targets: this.box, y: this.boxY, duration: 320, ease: 'Back.Out', onUpdate: () => this.portraitMask.setPosition(width / 2 - 500, this.box.y - 10) });
 
     this.input.on('pointerdown', () => this.advance());
     this.input.keyboard.on('keydown-SPACE', () => this.advance());
@@ -132,7 +135,7 @@ export class DialogScene extends Phaser.Scene {
     this.choiceLayer = this.add.container(0, 0);
     const n = this.choices.length;
     this.choices.forEach((c, idx) => {
-      const b = button(this, width / 2 + 200, height - 270 - (n - 1 - idx) * 78, c.label, () => this.finish(c.value), { width: 520, color: c.color ?? HEX.cream, size: 24 });
+      const b = button(this, width / 2 + 200, height - (MOBILE ? 320 : 270) - (n - 1 - idx) * (MOBILE ? 92 : 78), c.label, () => this.finish(c.value), { width: MOBILE ? 620 : 520, height: MOBILE ? 80 : 68, color: c.color ?? HEX.cream, size: 24 });
       b.alpha = 0; b.x += 40;
       this.tweens.add({ targets: b, alpha: 1, x: b.x - 40, delay: idx * 80, duration: 250 });
       this.choiceLayer.add(b);

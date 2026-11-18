@@ -32,6 +32,7 @@ export class IjkMission extends MissionBase {
       { w: 7, h: 5, sources: [0, 2, 4], target: 2, keys: ['time', 'leave', 'contracts'] },
     ];
     this.startLevel();
+    this.setGoal(this.T('goal1'));
   }
 
   // ── Deel 1: koppelingspuzzel ─────────────────────────────────────────
@@ -83,6 +84,7 @@ export class IjkMission extends MissionBase {
   }
 
   startPart2() {
+    this.setGoal(this.T('goal2'));
     const { width, height } = DESIGN;
     this.slipIdx = 0;
     this.slipCount = 10;
@@ -160,6 +162,25 @@ export class IjkMission extends MissionBase {
     this.judging = false;
     this.tweens.add({ targets: s, x: 780, duration: 450, ease: 'Back.Out' });
     this.tweens.add({ targets: this.belt, tilePositionX: '-=300', duration: 450 });
+  }
+
+  giveHint() {
+    if (this.puzzle && !this.puzzle.solved && this.puzzle.enabled) {
+      const p = this.puzzle;
+      for (let y = 0; y < p.o.h; y++) for (let x = 0; x < p.o.w; x++) {
+        const c = p.cells[y][x];
+        if (p.inNet[y][x] && c.m !== p.sol[y][x]) { p.rotateCell(c); const m = c.spr.getWorldTransformMatrix(); this.hintMark(m.tx, m.ty, 50); return true; }
+      }
+      return false;
+    }
+    if (this.slip && !this.judging) {
+      const d = this.slipData;
+      if (d.error) { const row = this.fieldObjs[d.error]; this.hintMark(this.slip.x, this.slip.y + row.y, 60); }
+      else if (this.okBtn) this.hintMark(this.okBtn.x, this.okBtn.y, 80);
+      else return false;
+      return true;
+    }
+    return false;
   }
 
   judge(field) {

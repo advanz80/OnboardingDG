@@ -174,6 +174,20 @@ export class BloeijMission extends MissionBase {
     } else { this.prompt.setVisible(false); this.controls.action(); }
   }
 
+  giveHint() {
+    if (this.choosing && this.current && this.choiceBtns) {
+      const i = INTERVENTIONS.findIndex(([k]) => k === this.current.answer);
+      const b = this.choiceBtns[i];
+      if (b) { this.hintMark(b.x, b.y, 70); return true; }
+      return false;
+    }
+    const open = this.people.filter((p) => !p.done);
+    if (!open.length) return false;
+    const n = open.reduce((a, p) => (Phaser.Math.Distance.Between(this.player.x, this.player.y, p.x, p.y) < Phaser.Math.Distance.Between(this.player.x, this.player.y, a.x, a.y) ? p : a));
+    this.hintMark(n.x, n.y - 50, 70);
+    return true;
+  }
+
   openChoice(person) {
     if (this.choosing) return;
     this.choosing = true;
@@ -191,9 +205,10 @@ export class BloeijMission extends MissionBase {
     L.add(av);
     L.add(this.add.text(width / 2 - 390, height - 290, this.T('choose', { persoon: person.name }), textStyle(26, P.ink)).setOrigin(0, 0.5));
     L.add(this.add.text(width / 2 - 390, height - 240, `"${person.line}"`, textStyle(22, P.inkSoft, { fontStyle: 'italic 600', wordWrap: { width: 860 } })).setOrigin(0, 0.5));
+    this.choiceBtns = [];
     INTERVENTIONS.forEach(([key, icon], i) => {
       const b = button(this, width / 2 - 270 + i * 225, height - 120, `${i + 1}. ${this.T(`interventions.${key}`)}`, () => this.choose(key), { width: 215, height: 90, size: 20, icon, color: HEX.cream });
-      L.add(b);
+      L.add(b); this.choiceBtns.push(b);
       b.setScale(0); this.tweens.add({ targets: b, scale: 1, delay: i * 60, duration: 250, ease: 'Back.Out' });
     });
     L.setAlpha(0);

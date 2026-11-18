@@ -91,6 +91,17 @@ export class DriessenMission extends MissionBase {
     this.time.delayedCall(600, () => this.ensureMatches());
   }
 
+  giveHint() {
+    for (const v of this.vacancies) {
+      if (!v || v.filled) continue;
+      const q = this.queue.find((c) => this.isPerfect(c, v));
+      if (q) { this.hintMark(q.x, q.y, 90); this.hintMark(v.x, v.y, 110); return true; }
+    }
+    const pirate = this.queue.find((c) => c && c.pirate && !c.locked);
+    if (pirate) { this.hintMark(pirate.x, pirate.y, 90); this.hintMark(this.bin.x, this.bin.y, 80); return true; }
+    return false;
+  }
+
   isPerfect(q, v) { return q && !q.pirate && !q.locked && q.skills.includes(v.role) && q.shifts.includes(v.shift); }
 
   /** Zorg dat elke open vacature minstens één perfecte kandidaat in de rij heeft. */
