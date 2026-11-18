@@ -167,18 +167,17 @@ export class HUDScene extends Phaser.Scene {
     if (!text) { this.tutBar?.destroy(); this.tutBar = null; return; }
     const { width } = this.scale;
     if (!this.tutBar) {
-      const c = this.add.container(width / 2, 150).setDepth(60);
+      const c = this.add.container(width / 2, 170).setDepth(60);
       const bg = this.add.nineslice(0, 0, 'ui_btn', undefined, 760, 84, 20, 20, 20, 24).setTint(0xfff3c4);
       const tag = this.add.text(-360, -4, '', textStyle(18, P.cream, { backgroundColor: '#4cb35a', padding: { x: 8, y: 4 } })).setOrigin(0, 0.5);
       const tx = this.add.text(-250, -4, '', textStyle(24, P.ink, { wordWrap: { width: 470 } })).setOrigin(0, 0.5);
       const skip = button(this, 300, -2, t('tutorial.skip'), () => onSkip?.(), { width: 140, height: 52, size: 18, color: HEX.cream });
       c.add([bg, tag, tx, skip]); c.tag = tag; c.tx = tx;
       this.tutBar = c;
-      c.setScale(0.5); this.tweens.add({ targets: c, scale: 1, duration: 250, ease: 'Back.Out' });
+      c.setAlpha(0); this.tweens.add({ targets: c, alpha: 1, duration: 250 });
     }
     this.tutBar.tag.setText(`${t('tutorial.label')} ${step}/${total}`);
     this.tutBar.tx.setText(text);
-    pulse(this, this.tutBar, 1.06, 150);
   }
 
   /** Gouden pijl die naar een HUD-knop wijst (null = weg). */
@@ -202,10 +201,10 @@ export class HUDScene extends Phaser.Scene {
     const L = this.add.container(0, 0).setDepth(250);
     L.add(dim(this, 0.65));
     const mw = Math.min(width - 60, 1180), mh = height - 140;
-    const s = Math.min((mw - 40) / WORLD_W, (mh - 70) / WORLD_H);
-    const ox = width / 2 - (WORLD_W * s) / 2, oy = 120 + (mh - 70 - WORLD_H * s) / 2;
+    const s = Math.min((mw - 40) / WORLD_W, (mh - 100) / WORLD_H);
+    const ox = width / 2 - (WORLD_W * s) / 2, oy = 150 + (mh - 90 - WORLD_H * s) / 2;
     L.add(panel(this, width / 2, height / 2 + 30, mw, mh));
-    L.add(this.add.text(width / 2, 92, t('hud.mapTitle'), textStyle(30, P.ink)).setOrigin(0.5));
+    L.add(this.add.text(width / 2, 128, t('hud.mapTitle'), textStyle(28, P.ink)).setOrigin(0.5));
     const X = (x) => ox + x * s, Y = (y) => oy + y * s;
     const g = this.add.graphics();
     g.fillStyle(0x7cc95a).fillRoundedRect(X(0), Y(0), WORLD_W * s, WORLD_H * s, 10);

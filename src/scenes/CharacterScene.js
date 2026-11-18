@@ -10,6 +10,9 @@ import {
 import { SaveManager } from '../core/SaveManager.js';
 import { Audio } from '../core/AudioEngine.js';
 import { burst, shake } from '../core/Juice.js';
+
+// vaste lay-out: hier geen automatisch grotere letters op mobiel (dan loopt het over)
+const ts = (size, color, extra = {}) => ({ ...textStyle(size, color, extra), fontSize: `${size}px` });
 import { Leaderboard } from '../core/Leaderboard.js';
 import { acTitle } from '../gfx/tex/logo.js';
 
@@ -62,7 +65,7 @@ export class CharacterScene extends Phaser.Scene {
 
     // naam + opties
     panel(this, 800, 400, 760, 520);
-    this.add.text(445, 168, t('character.namePrompt'), textStyle(22, P.ink)).setOrigin(0, 0.5);
+    this.add.text(445, 168, t('character.namePrompt'), ts(22, P.ink)).setOrigin(0, 0.5);
     const prevName = SaveManager.state?.player?.name || '';
     const prevOrg = SaveManager.state?.player?.org || '';
     const font = FONT.ui.replace(/"/g, "'");
@@ -71,7 +74,7 @@ export class CharacterScene extends Phaser.Scene {
       `<input type="text" maxlength="16" placeholder="${t('character.namePlaceholder')}" value="${prevName.replace(/"/g, '')}" style="width:440px;${field}" />`,
     );
     // organisatie: keuzelijst + vrij veld voor klant/andere organisatie
-    this.add.text(445, 222, t('character.orgPrompt'), textStyle(22, P.ink)).setOrigin(0, 0.5);
+    this.add.text(445, 222, t('character.orgPrompt'), ts(22, P.ink)).setOrigin(0, 0.5);
     const orgs = t('character.orgs');
     const known = orgs.find((o) => o === prevOrg);
     const opts = [`<option value="" disabled ${prevOrg ? '' : 'selected'}>${t('character.orgChoose')}</option>`]
@@ -87,11 +90,11 @@ export class CharacterScene extends Phaser.Scene {
     if (!known && prevOrg) sel.value = t('character.orgNeedsText')[0];
     syncOther();
     this.needsOrgText = needsText;
-    this.errText = this.add.text(800, 258, '', textStyle(18, P.red)).setOrigin(0.5);
+    this.errText = this.add.text(800, 258, '', ts(18, P.red)).setOrigin(0.5);
     this.swatchMap = {};
     const row = (opt, x0, y) => {
       const [label, prop, list, type] = opt;
-      this.add.text(x0, y, t(`character.${label}`), textStyle(19, P.ink)).setOrigin(0, 0.5);
+      this.add.text(x0, y, t(`character.${label}`), ts(19, P.ink)).setOrigin(0, 0.5);
       const sw = this.add.container(x0 + 222, y);
       button(this, x0 + 150, y, '◀', () => this.step(opt, -1), { width: 44, height: 42, size: 16, color: HEX.cream });
       button(this, x0 + 294, y, '▶', () => this.step(opt, 1), { width: 44, height: 42, size: 16, color: HEX.cream });
@@ -118,7 +121,7 @@ export class CharacterScene extends Phaser.Scene {
     c.removeAll(true);
     const v = list[this.idx[prop]];
     if (type === 'color') c.add(this.add.circle(0, 0, 16, parseInt(v.slice(1), 16)).setStrokeStyle(4, HEX.ink));
-    else c.add(this.add.text(0, 0, t(`character.values.${v || 'none'}`), textStyle(17, P.ink)).setOrigin(0.5));
+    else c.add(this.add.text(0, 0, t(`character.values.${v || 'none'}`), ts(17, P.ink)).setOrigin(0.5));
   }
 
   step(opt, d) {
