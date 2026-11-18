@@ -56,7 +56,7 @@ async function start() {
       const w = gameWidth();
       if (Math.abs(w - game.scale.width) < 16) return;
       const menu = game.scene.getScene('Menu');
-      if (game.scene.isActive('Menu')) { game.scale.setGameSize(w, 720); menu.scene.restart(); }
+      if (game.scene.isActive('Menu') && !menu.cameras.main.fadeEffect.isRunning) { game.scale.setGameSize(w, 720); menu.scene.restart(); }
     }, 300);
   });
 

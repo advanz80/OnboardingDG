@@ -12,7 +12,10 @@
     "yes": "Ja, opnieuw!",
     "no": "Nee, terug",
     "tapToStart": "Tik of druk op een toets om te beginnen",
-    "credits": "Gemaakt voor alle collega's van Driessen Groep"
+    "credits": "Gemaakt voor alle collega's van Driessen Groep",
+    "fsTitle": "Speel op volledig scherm",
+    "fsIos": "Op iPhone/iPad: tik in Safari op Deel  ⬆️  en kies 'Zet op beginscherm'. Start het spel daarna vanaf je beginscherm: geen adresbalk meer!",
+    "fsOk": "Begrepen"
   },
   "character": {
     "title": "Wie is onze held?",
@@ -120,7 +123,8 @@
     "mapYou": "Jij",
     "mapClose": "Terug",
     "mapHint": "Tik op een logo: de pijl wijst je de weg",
-    "mapRoute": "Volg de grote pijl!"
+    "mapRoute": "Volg de grote pijl!",
+    "fullscreen": "Scherm"
   },
   "common": {
     "start": "Start!",

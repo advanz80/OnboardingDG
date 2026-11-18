@@ -50,7 +50,7 @@ export class ReijnMission extends MissionBase {
       makeCharacter(this, key, roverLook(r, c.id === 'kok' ? { hat: 'beanie', capColor: '#ffffff' } : {}));
       const spr = this.add.sprite(CREW_X[i], CREW_Y, key, 'idle').setOrigin(0.5, 0.92).setScale(1.25).setDepth(CREW_Y);
       this.tweens.add({ targets: spr, scaleY: 1.3, duration: 700 + i * 90, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
-      const nm = this.add.text(CREW_X[i], CREW_Y + 30, c.name, textStyle(18, P.cream, { stroke: P.ink, strokeThickness: 5 })).setOrigin(0.5).setDepth(600);
+      const nm = this.add.text(CREW_X[i], CREW_Y + 14, c.name.replace(' ', '\n'), textStyle(22, P.cream, { stroke: P.ink, strokeThickness: 6, align: 'center', lineSpacing: -4 })).setOrigin(0.5, 0).setDepth(600);
       const bubble = this.add.image(CREW_X[i], CREW_Y - 150, 'icons', 'chat').setDisplaySize(44, 44).setDepth(601);
       this.tweens.add({ targets: bubble, y: bubble.y - 8, duration: 600, yoyo: true, repeat: -1 });
       spr.setInteractive({ useHandCursor: true }).on('pointerup', () => this.openInterview(i));
@@ -64,7 +64,7 @@ export class ReijnMission extends MissionBase {
     this.notes = this.add.container(0, 0).setDepth(6);
     this.qText = this.add.text(500, 120, '', textStyle(24, P.cream, { stroke: P.ink, strokeThickness: 5 })).setOrigin(0.5).setDepth(10);
     this.updateQ();
-    this.diagBtn = button(this, 1120, 650, this.T('toDiagnosis'), () => this.startDiagnosis(), { width: 270, color: this.brand.color, textColor: P.cream, size: 20, icon: 'magnifier' }).setDepth(10);
+    this.diagBtn = button(this, 1120, 650, this.T('toDiagnosis'), () => this.startDiagnosis(), { width: 290, color: this.brand.color, textColor: P.cream, size: 24, icon: 'magnifier' }).setDepth(10);
     this.diagBtn.setEnabled(false);
   }
 
@@ -81,8 +81,8 @@ export class ReijnMission extends MissionBase {
     const av = this.add.sprite(width / 2 - 400, height / 2 + 120, c.key, 'talk').setOrigin(0.5, 1).setScale(1.8);
     L.add(av);
     L.add(this.add.text(width / 2 - 320, height / 2 - 220, this.T('interview', { naam: c.name }), textStyle(30, P.ink)).setOrigin(0, 0.5));
-    L.add(this.add.text(width / 2 - 320, height / 2 - 182, c.role, textStyle(20, P.inkSoft)).setOrigin(0, 0.5));
-    const answer = this.add.text(width / 2 - 320, height / 2 + 120, '', textStyle(23, P.ink, { wordWrap: { width: 740 }, fontStyle: 'italic 600' })).setOrigin(0, 0.5);
+    L.add(this.add.text(width / 2 - 320, height / 2 - 182, c.role, textStyle(24, P.inkSoft)).setOrigin(0, 0.5));
+    const answer = this.add.text(width / 2 - 320, height / 2 + 78, '', textStyle(27, P.ink, { wordWrap: { width: 760 }, fontStyle: 'italic 600' })).setOrigin(0, 0);
     L.add(answer);
     const qs = ['role', 'team', 'change'];
     const btns = qs.map((q, k) => {
@@ -91,13 +91,13 @@ export class ReijnMission extends MissionBase {
         if (this.qLeft <= 0 || c.askedQ.has(q)) return;
         this.ask(c, q, answer, av);
         b.setEnabled(false);
-      }, { width: 760, height: 64, size: 21, color: HEX.cream });
+      }, { width: 760, height: 64, size: 26, color: HEX.cream });
       if (done || this.qLeft <= 0) b.setEnabled(false);
       L.add(b);
       return b;
     });
     this.interviewQ = { c, btns };
-    L.add(button(this, width / 2 + 330, height / 2 + 240, this.T('close', { naam: c.name.split(' ')[1] || c.name }), () => this.closeModal(), { width: 280, height: 60, size: 20, color: HEX.green }));
+    L.add(button(this, width / 2 + 330, height / 2 + 240, this.T('close', { naam: c.name.split(' ')[1] || c.name }), () => this.closeModal(), { width: 300, height: 64, size: 24, color: HEX.green }));
     L.setAlpha(0);
     this.tweens.add({ targets: L, alpha: 1, duration: 180 });
     Audio.sfx('pop');
@@ -163,8 +163,11 @@ export class ReijnMission extends MissionBase {
     this.clues.push(text);
     this.addScore(40);
     Audio.sfx('coin');
-    const y = 215 + (this.clues.length - 1) * 58;
-    const note = this.add.text(990, y, `• ${text}`, textStyle(17, P.ink, { wordWrap: { width: 255 } })).setOrigin(0, 0);
+    // onder de vorige notitie, ongeacht hoe groot de letters zijn
+    const last = this.notes.list[this.notes.list.length - 1];
+    const y = last ? last.y + last.height + 10 : 215;
+    const note = this.add.text(990, y, `• ${text}`, textStyle(22, P.ink, { wordWrap: { width: 270 } })).setOrigin(0, 0);
+    if (y + note.height > 620) note.setFontSize(17);
     this.notes.add(note);
     note.setAlpha(0).x += 30;
     this.tweens.add({ targets: note, alpha: 1, x: 990, duration: 300, delay: 200 });
@@ -188,7 +191,7 @@ export class ReijnMission extends MissionBase {
         this.modalBtns = null;
         this.tweens.add({ targets: L, alpha: 0, duration: 200 });
         this.time.delayedCall(220, () => { L.destroy(); this.modal = null; onPick(o.value); });
-      }, { width: 900, height: 72, size: 20, color: HEX.cream });
+      }, { width: 940, height: 76, size: 26, color: HEX.cream });
       this.modalBtns.push({ b, value: o.value });
       b.alpha = 0; this.tweens.add({ targets: b, alpha: 1, delay: i * 80, duration: 200 });
       L.add(b);

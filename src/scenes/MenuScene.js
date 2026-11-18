@@ -1,3 +1,4 @@
+import { canFullscreen, isFullscreen, enterFullscreen, toggleFullscreen, isIOS, isStandalone } from '../fullscreen.js';
 import Phaser from 'phaser';
 import { t } from '../core/i18n.js';
 import { P, HEX, textStyle, titleStyle } from '../gfx/palette.js';
@@ -10,6 +11,8 @@ import { SaveManager } from '../core/SaveManager.js';
 import { Audio } from '../core/AudioEngine.js';
 import { makeCharacter } from '../gfx/CharacterFactory.js';
 import { setTextVars } from '../core/i18n.js';
+
+let Menu_fsAsked = false;
 
 export class MenuScene extends Phaser.Scene {
   constructor() { super('Menu'); }
@@ -96,11 +99,38 @@ export class MenuScene extends Phaser.Scene {
       this.muteBtn.icon.setFrame(m ? 'speakerOff' : 'speaker');
     }, 64, HEX.blue);
 
+    // volledig scherm (telefoon/tablet): eerste tik zet het aan; knop linksboven om te wisselen
+    if (big) {
+      if (canFullscreen && !isFullscreen() && !Menu_fsAsked) {
+        this.input.once('pointerup', () => { Menu_fsAsked = true; enterFullscreen(); });
+      }
+      if (canFullscreen || (isIOS && !isStandalone)) {
+        roundButton(this, 50, 50, 'fullscreen', () => (canFullscreen ? toggleFullscreen() : this.iosTip()), 64, HEX.green);
+      }
+      let tipSeen = Menu_fsAsked;
+      try { tipSeen = tipSeen || localStorage.getItem('odg.fsTip') === '1'; localStorage.setItem('odg.fsTip', '1'); } catch { /* */ }
+      if (isIOS && !isStandalone && !tipSeen) { Menu_fsAsked = true; this.time.delayedCall(1400, () => this.iosTip()); }
+    }
+
     this.input.keyboard.once('keydown-ENTER', () => (hasSave ? this.continueGame() : this.newGame(false)));
   }
 
   update(_t, dt) {
     if (this.waves) { this.waves.tilePositionX += dt * 0.02; this.waves.tilePositionY -= dt * 0.01; }
+  }
+
+  iosTip() {
+    if (this.tipLayer) return;
+    const { width, height } = this.scale;
+    const layer = this.add.container(0, 0).setDepth(5000);
+    this.tipLayer = layer;
+    const close = () => { layer.destroy(); this.tipLayer = null; };
+    layer.add(this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.55).setInteractive().on('pointerup', close));
+    layer.add(panel(this, width / 2, height / 2, 860, 380));
+    layer.add(this.add.image(width / 2, height / 2 - 120, 'icons', 'fullscreen').setDisplaySize(70, 70));
+    layer.add(this.add.text(width / 2, height / 2 - 60, t('menu.fsTitle'), textStyle(32, P.ink)).setOrigin(0.5));
+    layer.add(this.add.text(width / 2, height / 2 + 20, t('menu.fsIos'), textStyle(26, P.ink, { align: 'center', wordWrap: { width: 760 } })).setOrigin(0.5));
+    layer.add(button(this, width / 2, height / 2 + 125, t('menu.fsOk'), close, { width: 260, height: 70, size: 28, color: HEX.green }));
   }
 
   continueGame() {

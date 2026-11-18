@@ -629,9 +629,10 @@ export class WorldScene extends Phaser.Scene {
 
   spawnBadge(x, y, sector, name) {
     const c = this.add.container(x, y).setDepth(y);
-    const glow = this.add.image(0, -10, 'glow').setTint(SECTOR_COLORS[sector]).setScale(0.9).setAlpha(0.8);
-    const b = this.add.image(0, -20, 'badge').setTint(SECTOR_COLORS[sector]).setScale(0.75);
-    const ic = this.add.image(0, -26, 'icons', SECTOR_ICONS[sector]).setDisplaySize(30, 30);
+    // groot genoeg om op de campus goed te zien
+    const glow = this.add.image(0, -16, 'glow').setTint(SECTOR_COLORS[sector]).setScale(1.5).setAlpha(0.85);
+    const b = this.add.image(0, -30, 'badge').setTint(SECTOR_COLORS[sector]).setScale(1.25);
+    const ic = this.add.image(0, -38, 'icons', SECTOR_ICONS[sector]).setDisplaySize(50, 50);
     c.add([glow, b, ic]);
     this.tweens.add({ targets: [b, ic], y: '-=10', duration: 700, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
     this.tweens.add({ targets: glow, scale: 1.1, alpha: 0.5, duration: 700, yoyo: true, repeat: -1 });

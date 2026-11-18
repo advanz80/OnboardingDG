@@ -248,6 +248,17 @@ const ICONS = {
     c.strokeStyle = P.red; c.lineWidth = 6;
     c.beginPath(); c.moveTo(42, 22); c.lineTo(58, 42); c.moveTo(58, 22); c.lineTo(42, 42); c.stroke();
   },
+  fullscreen(c) {
+    const corner = (pts) => {
+      c.lineCap = 'round'; c.lineJoin = 'round';
+      for (const [col, lw] of [[P.ink, 13], [P.cream, 7]]) {
+        c.strokeStyle = col; c.lineWidth = lw; c.beginPath();
+        pts.forEach(([x, y], i) => (i ? c.lineTo(x, y) : c.moveTo(x, y))); c.stroke();
+      }
+    };
+    corner([[10, 24], [10, 10], [24, 10]]); corner([[40, 10], [54, 10], [54, 24]]);
+    corner([[54, 40], [54, 54], [40, 54]]); corner([[24, 54], [10, 54], [10, 40]]);
+  },
   pause(c) {
     rrect(c, 16, 12, 12, 40, 4); style(c, { fill: P.cream }); rrect(c, 36, 12, 12, 40, 4); style(c, { fill: P.cream });
   },

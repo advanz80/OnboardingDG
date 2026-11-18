@@ -88,8 +88,8 @@ export class BhcMission extends MissionBase {
       const zone = this.add.zone(x, 480, 130, 330).setRectangleDropZone(130, 330);
       zone.pillar = p;
       for (let s = 0; s < 3; s++) {
-        const sy = 560 - s * 92;
-        const slot = this.add.circle(x, sy, 36, 0xffffff, 0.35).setStrokeStyle(4, HEX.ink, 0.6).setDepth(6);
+        const sy = 575 - s * 108;
+        const slot = this.add.circle(x, sy, 48, 0xffffff, 0.35).setStrokeStyle(4, HEX.ink, 0.6).setDepth(6);
         p.slots.push({ x, y: sy, slot, badge: null });
       }
       p.img = img; p.zone = zone; p.index = i;
@@ -106,20 +106,20 @@ export class BhcMission extends MissionBase {
 
     // dienblad met badges: bovenin, zodat je op iPhone niet vanaf de onderrand sleept
     // (dat is het veeg-gebaar om van app te wisselen)
-    const TRAY_Y = 150;
-    const tray = panel(this, width / 2, TRAY_Y, 980, 100).setDepth(8);
+    const TRAY_Y = 168;
+    const tray = panel(this, width / 2, TRAY_Y, 1140, 140).setDepth(8);
     void tray;
     const list = Phaser.Utils.Array.Shuffle(SECTORS.flatMap((s) => [s, s, s]));
     const names = { business: this.T('badges.business').slice(), education: this.T('badges.education').slice(), government: this.T('badges.government').slice() };
     this.badges = list.map((sec, i) => {
-      const x = width / 2 - 440 + i * 110, y = TRAY_Y - 6;
+      const x = width / 2 - 496 + i * 124, y = TRAY_Y - 10;
       const c = this.add.container(x, y).setDepth(20);
-      const glow = this.add.image(0, 0, 'glow').setTint(SECTOR_COLORS[sec]).setScale(0.7).setAlpha(0.6);
-      const b = this.add.image(0, 0, 'badge').setTint(SECTOR_COLORS[sec]).setScale(0.8);
-      const ic = this.add.image(0, -6, 'icons', SECTOR_ICONS[sec]).setDisplaySize(32, 32);
-      const nm = this.add.text(0, 34, names[sec].pop(), textStyle(13, P.ink, { stroke: '#fff', strokeThickness: 3 })).setOrigin(0.5);
+      const glow = this.add.image(0, 0, 'glow').setTint(SECTOR_COLORS[sec]).setScale(1).setAlpha(0.6);
+      const b = this.add.image(0, 0, 'badge').setTint(SECTOR_COLORS[sec]).setScale(1.15);
+      const ic = this.add.image(0, -8, 'icons', SECTOR_ICONS[sec]).setDisplaySize(46, 46);
+      const nm = this.add.text(0, 48, names[sec].pop(), textStyle(17, P.ink, { stroke: '#fff', strokeThickness: 4 })).setOrigin(0.5);
       c.add([glow, b, ic, nm]);
-      c.setSize(80, 80).setInteractive({ draggable: true, useHandCursor: true });
+      c.setSize(112, 120).setInteractive({ draggable: true, useHandCursor: true });
       c.sector = sec; c.home = { x, y }; c.placed = false;
       c.setScale(0);
       this.tweens.add({ targets: c, scale: 1, delay: 300 + i * 60, duration: 300, ease: 'Back.Out' });
@@ -193,7 +193,7 @@ export class BhcMission extends MissionBase {
     obj.placed = true;
     obj.disableInteractive();
     Audio.sfx('build');
-    this.tweens.add({ targets: obj, x: slot.x, y: slot.y, scale: 0.9, duration: 250, ease: 'Back.Out', onComplete: () => burst(this, slot.x, slot.y, 'stars', 10) });
+    this.tweens.add({ targets: obj, x: slot.x, y: slot.y, scale: 0.8, duration: 250, ease: 'Back.Out', onComplete: () => burst(this, slot.x, slot.y, 'stars', 10) });
     this.addScore(20, slot.x, slot.y - 40);
     if (p.sectors.size === 3) this.pillarDone(p);
   }

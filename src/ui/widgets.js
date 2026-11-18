@@ -1,4 +1,5 @@
 // Herbruikbare UI-bouwstenen in cartoonstijl.
+import { gameWidth } from '../core/layout.js';
 import { P, HEX, textStyle, titleStyle, textOn } from '../gfx/palette.js';
 import { Audio } from '../core/AudioEngine.js';
 
@@ -23,6 +24,10 @@ export function button(scene, x, y, label, onClick, opts = {}) {
   const bg = scene.add.nineslice(0, 0, 'ui_btn', undefined, w, h, 20, 20, 20, 24).setTint(color);
   const txt = scene.add.text(0, -4, label, textStyle(opts.size || 26, opts.textColor || (opts.color !== undefined ? textOn(opts.color) : P.ink))).setOrigin(0.5);
   c.add([bg, txt]);
+  // te lange labels (bijv. grotere letters op mobiel) passend maken
+  const room = w - (opts.icon ? 90 : 36);
+  let fsz = parseInt(txt.style.fontSize, 10);
+  while (txt.width > room && fsz > 14) { fsz -= 1; txt.setFontSize(fsz); }
   if (opts.icon) {
     const big = h > 80;
     const ic = scene.add.image(-w / 2 + (big ? 44 : 34), -4, 'icons', opts.icon).setScale(big ? 0.8 : 0.6);
@@ -101,6 +106,11 @@ export function transitionTo(scene, key, data, opts = {}) {
   Audio.sfx('whoosh');
   cam.fadeOut(opts.duration || 350, 15, 61, 92);
   cam.once('camerafadeoutcomplete', () => {
+    // net volledig scherm geworden vanuit het menu? breedte meteen goedzetten
+    if (scene.scene.key === 'Menu') {
+      const w = gameWidth();
+      if (Math.abs(w - scene.scale.width) >= 16) scene.scale.setGameSize(w, 720);
+    }
     if (opts.stopSelf === false) scene.scene.launch(key, data);
     else scene.scene.start(key, data);
   });

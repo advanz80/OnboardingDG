@@ -1,3 +1,4 @@
+import { canFullscreen, isFullscreen, enterFullscreen } from '../fullscreen.js';
 import Phaser from 'phaser';
 import { t } from '../core/i18n.js';
 import { P, HEX, textStyle, textOn } from '../gfx/palette.js';
@@ -40,6 +41,17 @@ export class HUDScene extends Phaser.Scene {
     // plattegrond
     this.mapBtn = roundButton(this, width - 194, 50, 'map', () => this.openMap(), 64, HEX.gold);
     this.add.text(width - 194, 92, t('hud.map'), textStyle(16, P.cream, { stroke: P.ink, strokeThickness: 4 })).setOrigin(0.5);
+
+    // volledig scherm (alleen waar de browser het toestaat; verdwijnt zodra het aan staat)
+    if (canFullscreen && isTouch(this)) {
+      const fsb = roundButton(this, width - 268, 50, 'fullscreen', () => enterFullscreen(), 64, HEX.green);
+      const fsl = this.add.text(width - 268, 92, t('hud.fullscreen'), textStyle(16, P.cream, { stroke: P.ink, strokeThickness: 4 })).setOrigin(0.5);
+      const sync = () => { const on = isFullscreen(); fsb.setVisible(!on); fsl.setVisible(!on); };
+      sync();
+      document.addEventListener('fullscreenchange', sync);
+      document.addEventListener('webkitfullscreenchange', sync);
+      this.events.once('shutdown', () => { document.removeEventListener('fullscreenchange', sync); document.removeEventListener('webkitfullscreenchange', sync); });
+    }
 
     // prompt
     this.prompt = this.add.container(width / 2, 640).setVisible(false);
