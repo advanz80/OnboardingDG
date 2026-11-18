@@ -168,16 +168,21 @@ export class HUDScene extends Phaser.Scene {
     const { width } = this.scale;
     if (!this.tutBar) {
       const c = this.add.container(width / 2, 170).setDepth(60);
-      const bg = this.add.nineslice(0, 0, 'ui_btn', undefined, 760, 84, 20, 20, 20, 24).setTint(0xfff3c4);
-      const tag = this.add.text(-360, -4, '', textStyle(18, P.cream, { backgroundColor: '#4cb35a', padding: { x: 8, y: 4 } })).setOrigin(0, 0.5);
+      const bg = this.add.nineslice(0, 0, 'ui_btn', undefined, 800, 92, 20, 20, 20, 24).setTint(0xfff3c4);
+      const tag = this.add.text(-380, -4, '', textStyle(18, P.cream, { backgroundColor: '#4cb35a', padding: { x: 8, y: 4 } })).setOrigin(0, 0.5);
       const tx = this.add.text(-250, -4, '', textStyle(24, P.ink, { wordWrap: { width: 470 } })).setOrigin(0, 0.5);
-      const skip = button(this, 300, -2, t('tutorial.skip'), () => onSkip?.(), { width: 140, height: 52, size: 18, color: HEX.cream });
+      const skip = button(this, 315, -2, t('tutorial.skip'), () => onSkip?.(), { width: 140, height: 52, size: 18, color: HEX.cream });
       c.add([bg, tag, tx, skip]); c.tag = tag; c.tx = tx;
       this.tutBar = c;
       c.setAlpha(0); this.tweens.add({ targets: c, alpha: 1, duration: 250 });
     }
-    this.tutBar.tag.setText(`${t('tutorial.label')} ${step}/${total}`);
-    this.tutBar.tx.setText(text);
+    const { tag, tx } = this.tutBar;
+    tag.setText(`${t('tutorial.label')} ${step}/${total}`);
+    // tekst altijd rechts naast het groene label, en op tijd afbreken vóór de knop
+    tx.setX(tag.x + tag.width + 14);
+    tx.setWordWrapWidth(300 - 70 - tx.x - 14);
+    tx.setText(text);
+    for (let f = parseInt(tx.style.fontSize, 10); tx.height > 70 && f > 14; f--) tx.setFontSize(f);
   }
 
   /** Gouden pijl die naar een HUD-knop wijst (null = weg). */

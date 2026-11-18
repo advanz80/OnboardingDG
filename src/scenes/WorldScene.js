@@ -105,17 +105,17 @@ export class WorldScene extends Phaser.Scene {
     if (s.tutorialDone) return this.afterTutorial();
     const p = this.player;
     // drie formulieren vlak bij de speler, op beloopbare plekken
-    const offs = [[260, -40], [380, 160], [120, 260], [-220, 180], [-300, -60], [200, -220]];
+    const offs = [[200, 80], [-200, 100], [110, 170], [-110, 175], [280, 20], [-280, 30], [0, 190]];   // dicht bij, weg van de schermhoeken
     const spots = offs.map(([dx, dy]) => [p.x + dx, p.y + dy]).filter(([x, y]) => this.walkable(x, y)).slice(0, 3);
     this.tut = { step: 1, sheets: spots.map(([x, y]) => {
-      const img = this.add.image(x, y, 'paper_sheet').setScale(1.6).setDepth(y);
-      const ring = this.add.circle(x, y, 30).setStrokeStyle(5, HEX.gold).setDepth(y - 1);
+      // altijd bovenop (niet achter bomen verstopt)
+      const img = this.add.image(x, y, 'paper_sheet').setScale(1.8).setDepth(8001);
+      const ring = this.add.circle(x, y, 34).setStrokeStyle(6, HEX.gold).setDepth(8000);
       this.tweens.add({ targets: img, y: y - 10, angle: { from: -8, to: 8 }, duration: 600, yoyo: true, repeat: -1 });
       this.tweens.add({ targets: ring, scale: 1.3, alpha: 0.4, duration: 600, yoyo: true, repeat: -1 });
       return { x, y, img, ring, taken: false };
     }) };
     if (!this.tut.sheets.length) return this.endTutorial();
-    this.say(this.buddyBubble || (this.buddyBubble = { spr: this.buddy, type: 'c', bubble: null }), t('tutorial.buddy1'));
     this.hud.tutorial(t('tutorial.step1', { n: 0, total: this.tut.sheets.length }), 1, 3, () => this.endTutorial(true));
   }
 
@@ -135,7 +135,6 @@ export class WorldScene extends Phaser.Scene {
       if (n === tu.sheets.length) {
         tu.step = 2;
         this.time.delayedCall(600, () => {
-          this.say(this.buddyBubble, t('tutorial.buddy2'));
           this.hud.tutorial(t('tutorial.step2'), 2, 3);
           this.hud.pointAt(this.hud.mapBtn);
           this.hud.events.once('map-opened', () => { if (this.tut) this.tut.step = 3; this.hud.pointAt(null); });

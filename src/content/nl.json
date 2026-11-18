@@ -148,7 +148,9 @@
     "skip": "Overslaan",
     "goal": "Wat moet je doen?",
     "noHint": "Nu even geen hint",
-    "stop": "stoppen"
+    "stop": "stoppen",
+    "hint": "Hint",
+    "hintTip": "Vast? Tik bovenin op de gele knop 💡 Hint"
   },
   "npc": {
     "petra": "Receptionist Petra",
@@ -1245,6 +1247,6 @@
     "step2": "Tik op de knop Kaart (rechtsboven) om de plattegrond te zien",
     "buddy1": "Eerst even oefenen! Raap die formulieren op.",
     "buddy2": "Top! Nu de kaart: daar zie je alle opdrachten.",
-    "buddyDone": "Klaar! Volg de pijl naar Brainport Human Campus. Kom je er niet uit? Tik op de 💡 in een opdracht."
+    "buddyDone": "Klaar! Volg de pijl naar Brainport Human Campus. Vast in een opdracht? Tik bovenin op de gele knop 💡 Hint."
   }
 }

@@ -13,6 +13,7 @@ import { burst, confettiRain, floatText, popIn, shake } from '../../core/Juice.j
 import { showDialog } from '../DialogScene.js';
 
 const HINT_COST = 25;
+const HINT_X = 895;   // tussen tijdbalk (eindigt rond 800) en score
 
 export class MissionBase extends Phaser.Scene {
   /**
@@ -78,8 +79,9 @@ export class MissionBase extends Phaser.Scene {
     const quit = roundButton(this, width - 54, 42, 'cross', () => this.askQuit(), MOBILE ? 64 : 54);
     quit.add(this.add.text(0, MOBILE ? 36 : 32, t('common.stop'), textStyle(13, P.ink, { backgroundColor: '#fff8e7', padding: { x: 4, y: 1 } })).setOrigin(0.5));
     // hintknop (kost punten); verschijnt zodra het spel loopt en de missie hints kent
-    this.hintBtn = roundButton(this, width - 300, 42, 'bulb', () => this.useHint(), MOBILE ? 64 : 54, HEX.gold).setVisible(false);
-    this.hintBtn.add(this.add.text(0, 30, `-${HINT_COST}`, textStyle(14, P.ink, { backgroundColor: '#fff8e7', padding: { x: 4, y: 1 } })).setOrigin(0.5));
+    // duidelijke gele knop met tekst "Hint" tussen de tijdbalk en de score
+    this.hintBtn = button(this, HINT_X, 42, `${t('common.hint')}  -${HINT_COST}`, () => this.useHint(), { width: MOBILE ? 190 : 170, height: MOBILE ? 64 : 56, size: 22, color: HEX.gold, icon: 'bulb' }).setVisible(false);
+    this.tweens.add({ targets: this.hintBtn.bg, alpha: 0.75, duration: 700, yoyo: true, repeat: -1 });
     this.header.add([bar, l, title, this.scoreText, quit, this.hintBtn]);
     if (this.opts.timeLimit) {
       this.timerIcon = this.add.image(width / 2 - 170, 42, 'icons', 'clock').setDisplaySize(40, 40);
@@ -95,15 +97,16 @@ export class MissionBase extends Phaser.Scene {
     const { width, height } = DESIGN;
     this.goalText = text;
     // kop: titel vervangen door het doel
-    this.titleText.setText(`🎯 ${text}`).setFontSize(MOBILE ? 24 : 20).setWordWrapWidth(this.opts.timeLimit ? 360 : 720).setLineSpacing(-2);
+    this.titleText.setText(`🎯 ${text}`).setFontSize(MOBILE ? 24 : 20).setWordWrapWidth(this.opts.timeLimit ? 360 : 640).setLineSpacing(-2);
     // past het niet in de kop? dan kleiner
     for (let f = MOBILE ? 24 : 20; this.titleText.height > 62 && f > 13; f--) this.titleText.setFontSize(f);
     // grote kaart in beeld, verdwijnt vanzelf of bij tikken
     const c = this.add.container(width / 2, height / 2 - 40).setDepth(2500);
     const tx = this.add.text(0, 6, text, textStyle(34, P.ink, { align: 'center', wordWrap: { width: 760 } })).setOrigin(0.5);
-    const bg = this.add.nineslice(0, 0, 'ui_card', undefined, Math.max(520, tx.width + 120), tx.height + 90, 18, 18, 18, 18).setTint(0xfff3c4);
+    const bg = this.add.nineslice(0, 20, 'ui_card', undefined, Math.max(560, tx.width + 120), tx.height + 130, 18, 18, 18, 18).setTint(0xfff3c4);
     const ic = this.add.text(0, -tx.height / 2 - 18, '🎯 ' + t('common.goal'), textStyle(22, P.inkSoft)).setOrigin(0.5);
-    c.add([bg, ic, tx]);
+    const tip = this.add.text(0, tx.height / 2 + 30, t('common.hintTip'), textStyle(18, P.inkSoft)).setOrigin(0.5);
+    c.add([bg, ic, tx, tip]);
     c.setScale(0.4).setAlpha(0);
     this.tweens.add({ targets: c, scale: 1, alpha: 1, duration: 250, ease: 'Back.Out' });
     const close = () => { if (!c.active) return; this.tweens.add({ targets: c, alpha: 0, y: 40, scale: 0.3, duration: 300, onComplete: () => c.destroy() }); };
@@ -117,9 +120,9 @@ export class MissionBase extends Phaser.Scene {
   useHint() {
     if (!this.running || this.finished || this.quitOpen) return;
     if (this.giveHint()) {
-      this.addScore(-HINT_COST, DESIGN.width - 300, 110);
+      this.addScore(-HINT_COST, HINT_X, 110);
       Audio.sfx('pop');
-    } else floatText(this, DESIGN.width - 300, 110, t('common.noHint'), P.cream, 22);
+    } else floatText(this, HINT_X, 110, t('common.noHint'), P.cream, 22);
   }
 
   /** Laat iets opvallen: gouden ring + stuiterende pijl. */
